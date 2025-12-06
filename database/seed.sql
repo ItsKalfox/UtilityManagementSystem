@@ -1,3 +1,5 @@
+USE ums_dev;
+
 INSERT INTO Users (full_name, email, nic, status)
 VALUES
 ('Super Admin', 'superadmin@example.com', '200312345678', 'ACTIVE'),
@@ -13,15 +15,19 @@ VALUES
 ('Cashier Two', 'cashiertwo@example.com', '200322345678', 'ACTIVE'),
 ('Customer One', 'customerone@example.com', '200323345678', 'ACTIVE'),
 ('Customer Two', 'customertwo@example.com', '200324345678', 'ACTIVE'),
-('Customer Three', 'customerthree@example.com', '200325345678', 'DEACTIVE'),
+('Customer Three', 'customerthree@example.com', '200325345678', 'INACTIVE'),
 ('Customer Four', 'customerfour@example.com', '200326345678', 'ACTIVE'),
 ('Customer Five', 'customerfive@example.com', '200327345678', 'ACTIVE'),
 ('Customer Six', 'customersix@example.com', '200328345678', 'ACTIVE');
 
+DELETE FROM Users;
+DBCC CHECKIDENT ('Users', RESEED, 0);
+DBCC CHECKIDENT ('PhoneNumber', RESEED, 0);
+
 INSERT INTO PhoneNumber VALUES
 (1, '0771234567', 'MOBILE'),
 (1, '0112345678', 'HOME'),
-(1, '0112345678', 'WORK'),
+(1, '0115345678', 'WORK'),
 (2, '0759876543', 'MOBILE'),
 (3, '0712223344', 'MOBILE'),
 (3, '0112345678', 'HOME'),
@@ -142,9 +148,97 @@ INSERT INTO Admin VALUES
 (2, 2),
 (3, 3),
 (4, 4),
-(5, 5);
+(5, 5),
+(7, 2);
 
 
 INSERT INTO AdminActionLog (admin_id, entity_type, entity_id, action) VALUES
 (1, 'Customer', '12', 'CREATE'),
 (5, 'Manager', '6', 'UPDATE');
+
+INSERT INTO Tariff (tariff_name, tariff_description, is_prorated, fixed_charge, tax_percentage, utility_type, status)
+VALUES
+('Domestic Plan A', 'Standard domestic electricity plan', 0, 150.00, 15.00, 'ELECTRICITY', 'ACTIVE'),
+('Domestic Plan B - Prorated', 'Prorated billing electricity plan', 1, 200.00, 12.00, 'ELECTRICITY', 'ACTIVE');
+
+INSERT INTO TariffSlab (tariff_id, slab_order, start_unit, end_unit, unit_rate)
+VALUES
+(1, 1, 1, 60, 7.00),
+(1, 2, 61, 120, 12.00),
+(1, 3, 121, NULL, 20.00),
+(2, 1, 1, 50, 5.50),
+(2, 2, 51, 100, 9.50),
+(2, 3, 101, NULL, 18.00);
+
+INSERT INTO UtilityConnection (customer_id, tariff_id, meter_serial_number, utility_type, install_date, status)
+VALUES
+(12, 1, 'ELX-1001', 'ELECTRICITY', '2025-01-01', 'ACTIVE'),
+(13, 2, 'ELX-2001', 'ELECTRICITY', '2025-01-01', 'ACTIVE');
+
+
+INSERT INTO MeterReading (field_officer_id, connection_id, reading_value)
+VALUES (8, 1, 300);
+INSERT INTO MeterReading (field_officer_id, connection_id, reading_value)
+VALUES (8, 1, 360);
+INSERT INTO MeterReading (field_officer_id, connection_id, reading_value)
+VALUES (8, 1, 450);
+
+INSERT INTO MeterReading (field_officer_id, connection_id, reading_value)
+VALUES (9, 2, 500);
+INSERT INTO MeterReading (field_officer_id, connection_id, reading_value)
+VALUES (9, 2, 580);
+
+SELECT * FROM MeterReading;
+SELECT * FROM Bill;
+
+-- Cash payment
+INSERT INTO Payment (bill_id, cashier_id, payment_method, amount)
+VALUES (1, 10, 'CASH', 200.00);
+INSERT INTO Cash (payment_id, amount_given, balance)
+VALUES (SCOPE_IDENTITY(), 200.00, 0.00);
+
+-- Card payment
+INSERT INTO Payment (bill_id, cashier_id, payment_method, amount)
+VALUES (1, 12, 'CARD', 300.00);
+INSERT INTO Card (payment_id, platform_name, card_type, approval_code)
+VALUES (SCOPE_IDENTITY(), 'VISA Gateway', 'DEBIT', 'APR12345');
+
+-- Bank transfer payment
+INSERT INTO Payment (bill_id, cashier_id, payment_method, amount)
+VALUES (1, 10, 'BANK TRANSFER', 155.00);
+INSERT INTO BankTransfer (payment_id, bank_name, account_number, transaction_num)
+VALUES (SCOPE_IDENTITY(), 'Commercial Bank', '1234567890', 'TXN99887');
+
+-- Cash payment
+INSERT INTO Payment (bill_id, cashier_id, payment_method, amount)
+VALUES (2, 11, 'CASH', 400.00);
+INSERT INTO Cash (payment_id, amount_given, balance)
+VALUES (SCOPE_IDENTITY(), 500.00, 100.00);
+
+SELECT 
+    p.payment_id,
+    p.bill_id,
+    p.cashier_id,
+    p.payment_method,
+    p.amount,
+    p.payment_date,
+
+    -- Cash details
+    c.amount_given AS cash_amount_given,
+    c.balance      AS cash_balance,
+
+    -- Card details
+    ca.platform_name AS card_platform,
+    ca.card_type     AS card_type,
+    ca.approval_code AS card_approval_code,
+
+    -- Bank Transfer details
+    bt.bank_name        AS bank_name,
+    bt.account_number   AS bank_account_number,
+    bt.transaction_num  AS bank_transaction_number
+
+FROM Payment p
+LEFT JOIN Cash c ON p.payment_id = c.payment_id
+LEFT JOIN Card ca ON p.payment_id = ca.payment_id
+LEFT JOIN BankTransfer bt ON p.payment_id = bt.payment_id
+ORDER BY p.payment_id;

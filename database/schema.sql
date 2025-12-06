@@ -8,7 +8,7 @@ CREATE TABLE Users (
     email VARCHAR(120) UNIQUE NOT NULL,
     nic VARCHAR(20) UNIQUE NOT NULL,
     password_hash VARCHAR(255),
-    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'DEACTIVE')),
+    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE')),
     created_at DATETIME DEFAULT GETDATE(),
     updated_at DATETIME DEFAULT GETDATE()
 );
@@ -122,3 +122,342 @@ CREATE TABLE AdminActionLog (
 
     FOREIGN KEY (admin_id) REFERENCES Admin(user_id)
 );
+
+CREATE TABLE Tariff (
+    tariff_id INT IDENTITY(1,1) PRIMARY KEY,
+    tariff_name VARCHAR(100) NOT NULL,
+    tariff_description VARCHAR(255),
+    is_prorated BIT NOT NULL DEFAULT 0,
+    fixed_charge DECIMAL(10,2) NOT NULL,
+    tax_percentage DECIMAL(5,2) NOT NULL,
+    utility_type VARCHAR(50) NOT NULL CHECK (utility_type IN ('ELECTRICITY', 'WATER', 'GAS')),
+    created_at DATETIME DEFAULT GETDATE(),
+    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE'))
+);
+
+CREATE TABLE TariffSlab (
+    slab_id INT IDENTITY(1,1) PRIMARY KEY,
+    tariff_id INT NOT NULL,
+    slab_order INT NOT NULL,
+    start_unit INT NOT NULL, 
+    end_unit INT,
+    unit_rate DECIMAL(10,2) NOT NULL,
+
+    FOREIGN KEY (tariff_id) REFERENCES Tariff(tariff_id)
+);
+
+DROP TABLE Connection;
+
+CREATE TABLE UtilityConnection (
+    Connection_id INT IDENTITY(1,1) PRIMARY KEY,
+    customer_id INT NOT NULL,
+    tariff_id INT NOT NULL,
+    meter_serial_number VARCHAR(50) UNIQUE NOT NULL,
+    utility_type VARCHAR(50) NOT NULL CHECK (utility_type IN ('ELECTRICITY', 'WATER', 'GAS')),
+    install_date DATETIME NOT NULL,
+    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE')),
+
+    FOREIGN KEY (customer_id) REFERENCES Customer(user_id),
+    FOREIGN KEY (tariff_id) REFERENCES Tariff(tariff_id)
+);
+
+CREATE TABLE MeterReading (
+    reading_id INT IDENTITY(1,1) PRIMARY KEY,
+    field_officer_id INT NOT NULL,  -- required entry
+    connection_id INT NOT NULL,  -- required entry
+    reading_value DECIMAL(10,2) NOT NULL,  -- required entry
+    consumption DECIMAL(10,2),
+    billing_period_start DATETIME,
+    billing_period_end DATETIME,
+
+    FOREIGN KEY (connection_id) REFERENCES UtilityConnection(Connection_id),
+    FOREIGN KEY (field_officer_id) REFERENCES FieldOfficer(user_id)
+);
+
+CREATE TABLE Bill (
+    bill_id INT IDENTITY(1,1) PRIMARY KEY,
+    connection_id INT NOT NULL,
+    period_start DATETIME NOT NULL,
+    period_end DATETIME NOT NULL,
+    total_bill_amount DECIMAL(10,2) NOT NULL,
+    outstanding_amount DECIMAL(10,2) NOT NULL,
+    status VARCHAR(10) NOT NULL CHECK (status IN ('PENDING', 'FULLY PAID', 'PARTIALLY PAID')),
+
+    FOREIGN KEY (connection_id) REFERENCES UtilityConnection(Connection_id)
+);
+
+CREATE TABLE Payment (
+    payment_id INT IDENTITY(1,1) PRIMARY KEY,
+    bill_id INT NOT NULL,
+    cashier_id INT NOT NULL,
+    payment_method VARCHAR(20) NOT NULL CHECK (payment_method IN ('CASH', 'CARD', 'BANK TRANSFER')),
+    amount DECIMAL(10,2) NOT NULL,
+    payment_date DATETIME DEFAULT GETDATE(),
+
+    FOREIGN KEY (bill_id) REFERENCES Bill(bill_id),
+    FOREIGN KEY (cashier_id) REFERENCES Cashier(user_id)
+);
+
+CREATE TABLE Cash (
+    payment_id INT PRIMARY KEY,
+    amount_given DECIMAL(10,2) NOT NULL,
+    balance DECIMAL(10,2),
+
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+);
+
+CREATE TABLE Card (
+    payment_id INT PRIMARY KEY,
+    platform_name VARCHAR(100) NOT NULL,
+    card_type VARCHAR(50) NOT NULL CHECK (card_type IN ('CREDIT', 'DEBIT')),
+    approval_code VARCHAR(50) NOT NULL,
+
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+);
+
+CREATE TABLE BankTransfer (
+    payment_id INT PRIMARY KEY,
+    bank_name VARCHAR(100) NOT NULL,
+    account_number VARCHAR(50) NOT NULL,
+    transaction_num VARCHAR(50) NOT NULL,
+
+    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+);
+
+CREATE TABLE Complaint (
+    complaint_id INT IDENTITY(1,1) PRIMARY KEY,
+    customer_id INT NOT NULL,
+    field_officer_id INT NOT NULL,
+    admin_id INT NOT NULL,
+    complaint_type VARCHAR(100) NOT NULL,
+    description VARCHAR(500) NOT NULL,
+    submitted_date DATETIME DEFAULT GETDATE(),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('OPEN', 'IN PROGRESS', 'RESOLVED')),
+    resolved_date DATETIME,
+    resolution_notes VARCHAR(500),
+
+    FOREIGN KEY (customer_id) REFERENCES Customer(user_id),
+    FOREIGN KEY (field_officer_id) REFERENCES FieldOfficer(user_id),
+    FOREIGN KEY (admin_id) REFERENCES Admin(user_id)
+);
+
+CREATE TRIGGER trg_after_meterreading_insert
+ON MeterReading
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -------------------------------------------------------------------
+    -- 1. Extract new reading info
+    -------------------------------------------------------------------
+    DECLARE 
+        @reading_id INT,
+        @connection_id INT,
+        @reading_value DECIMAL(10,2);
+
+    SELECT 
+        @reading_id = reading_id,
+        @connection_id = connection_id,
+        @reading_value = reading_value
+    FROM inserted;
+
+
+    -------------------------------------------------------------------
+    -- 2. Locate previous reading for this connection
+    -------------------------------------------------------------------
+    DECLARE 
+        @prev_reading_value DECIMAL(10,2),
+        @prev_period_end DATETIME;
+
+    SELECT TOP 1 
+        @prev_reading_value = reading_value,
+        @prev_period_end = billing_period_end
+    FROM MeterReading
+    WHERE connection_id = @connection_id
+      AND reading_id < @reading_id
+    ORDER BY billing_period_end DESC;
+
+
+    -------------------------------------------------------------------
+    -- 3. If first reading → no bill
+    -------------------------------------------------------------------
+    IF @prev_reading_value IS NULL
+    BEGIN
+        UPDATE MeterReading
+        SET consumption = 0,
+            billing_period_start = GETDATE(),
+            billing_period_end = GETDATE()
+        WHERE reading_id = @reading_id;
+
+        RETURN;
+    END;
+
+
+    -------------------------------------------------------------------
+    -- 4. Calculate consumption & dates
+    -------------------------------------------------------------------
+    DECLARE 
+        @consumption DECIMAL(10,2),
+        @period_start DATETIME,
+        @period_end DATETIME;
+
+    SET @consumption = @reading_value - @prev_reading_value;
+    SET @period_start = @prev_period_end;
+    SET @period_end = GETDATE();  -- current reading timestamp
+
+
+    UPDATE MeterReading
+    SET consumption = @consumption,
+        billing_period_start = @period_start,
+        billing_period_end = @period_end
+    WHERE reading_id = @reading_id;
+
+
+    -------------------------------------------------------------------
+    -- 5. Load tariff details
+    -------------------------------------------------------------------
+    DECLARE
+        @tariff_id INT,
+        @is_prorated BIT,
+        @fixed_charge DECIMAL(10,2),
+        @tax DECIMAL(5,2);
+
+    SELECT @tariff_id = tariff_id
+    FROM Connection
+    WHERE Connection_id = @connection_id;
+
+    SELECT 
+        @is_prorated = is_prorated,
+        @fixed_charge = fixed_charge,
+        @tax = tax_percentage
+    FROM Tariff
+    WHERE tariff_id = @tariff_id;
+
+
+    -------------------------------------------------------------------
+    -- 6. Billing days
+    -------------------------------------------------------------------
+    DECLARE @billing_days INT;
+
+    SET @billing_days =
+        CASE 
+            WHEN @is_prorated = 1 THEN DATEDIFF(DAY, @period_start, @period_end)
+            ELSE 30
+        END;
+
+
+    -------------------------------------------------------------------
+    -- 7. Slab calculation
+    -------------------------------------------------------------------
+    DECLARE 
+        @remaining_units DECIMAL(10,2),
+        @slab_start INT,
+        @slab_end INT,
+        @unit_rate DECIMAL(10,2),
+        @slab_total DECIMAL(18,2);
+
+    SET @remaining_units = @consumption;
+    SET @slab_total = 0;
+
+    DECLARE slab_cursor CURSOR FOR
+        SELECT start_unit, end_unit, unit_rate
+        FROM TariffSlab
+        WHERE tariff_id = @tariff_id
+        ORDER BY slab_order ASC;
+
+    OPEN slab_cursor;
+    FETCH NEXT FROM slab_cursor INTO @slab_start, @slab_end, @unit_rate;
+
+    WHILE @@FETCH_STATUS = 0 AND @remaining_units > 0
+    BEGIN
+        DECLARE @slab_units INT;
+
+        IF @slab_end IS NULL
+            SET @slab_units = @remaining_units;         -- infinite slab
+        ELSE
+            SET @slab_units = 
+                CASE 
+                    WHEN @remaining_units > (@slab_end - @slab_start + 1)
+                        THEN (@slab_end - @slab_start + 1)
+                    ELSE @remaining_units
+                END;
+
+        SET @slab_total += @slab_units * @unit_rate;
+        SET @remaining_units -= @slab_units;
+
+        FETCH NEXT FROM slab_cursor INTO @slab_start, @slab_end, @unit_rate;
+    END
+
+    CLOSE slab_cursor;
+    DEALLOCATE slab_cursor;
+
+
+    -------------------------------------------------------------------
+    -- 8. Prorate fixed charge
+    -------------------------------------------------------------------
+    DECLARE @final_fixed_charge DECIMAL(18,2);
+
+    SET @final_fixed_charge =
+        CASE 
+            WHEN @is_prorated = 1 THEN (@fixed_charge / 30.0) * @billing_days
+            ELSE @fixed_charge
+        END;
+
+
+    -------------------------------------------------------------------
+    -- 9. Total bill with tax
+    -------------------------------------------------------------------
+    DECLARE @total_bill DECIMAL(18,2);
+
+    SET @total_bill = @slab_total + @final_fixed_charge;
+    SET @total_bill = @total_bill + (@total_bill * @tax / 100.0);
+
+
+    -------------------------------------------------------------------
+    -- 10. Insert Bill
+    -------------------------------------------------------------------
+    INSERT INTO Bill (
+        connection_id,
+        period_start,
+        period_end,
+        total_bill_amount,
+        outstanding_amount,
+        status
+    )
+    VALUES (
+        @connection_id,
+        @period_start,
+        @period_end,
+        @total_bill,
+        @total_bill,
+        'PENDING'
+    );
+
+END;
+
+CREATE TRIGGER trg_after_payment
+ON Payment
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Update the bill's outstanding amount
+    UPDATE b
+    SET b.outstanding_amount = b.outstanding_amount - i.amount
+    FROM Bill b
+    INNER JOIN inserted i ON b.bill_id = i.bill_id;
+
+    -- Update status based on new outstanding amount
+    UPDATE b
+    SET b.status =
+        CASE 
+            WHEN b.outstanding_amount <= 0 THEN 'FULLY PAID'
+            ELSE 'PARTIALLY PAID'
+        END
+    FROM Bill b
+    INNER JOIN inserted i ON b.bill_id = i.bill_id;
+
+END;
+GO

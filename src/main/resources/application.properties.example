@@ -3,9 +3,9 @@ spring.application.name=UtilityManagementSystem
 # ================================
 # DATABASE CONFIG
 # ================================
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=ums_dev;encrypt=false
-spring.datasource.username=sa
-spring.datasource.password=NIPun@36303
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=DATABASE_NAME;encrypt=false
+spring.datasource.username=YOUR_USERNAME_HERE
+spring.datasource.password=YOUR_PASSWORD_HERE
 spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
 
 # ================================

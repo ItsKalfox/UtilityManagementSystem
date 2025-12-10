@@ -2,7 +2,7 @@ CREATE DATABASE ums_dev;
 
 USE ums_dev;
 
-CREATE TABLE Users (
+CREATE TABLE users (
     user_id INT IDENTITY(1,1) PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(120) UNIQUE NOT NULL,
@@ -13,20 +13,20 @@ CREATE TABLE Users (
     updated_at DATETIME DEFAULT GETDATE()
 );
 
-CREATE TABLE PhoneNumber (
+CREATE TABLE phone_number (
     phone_number_id INT IDENTITY(1,1) PRIMARY KEY,
     user_id INT NOT NULL,
     phone_number VARCHAR(20) NOT NULL,
     number_type VARCHAR(20) NOT NULL CHECK (number_type IN ('MOBILE', 'HOME', 'WORK')),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE Area (
+CREATE TABLE area (
     area_code VARCHAR(10) PRIMARY KEY,
     area_name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE Customer (
+CREATE TABLE customer (
     user_id INT PRIMARY KEY,
     customer_type VARCHAR(50) NOT NULL CHECK (customer_type IN ('HOUSEHOLD', 'BUSINESS', 'GOVERNMENT ORGANIZATION')),
     area_code VARCHAR(10) NOT NULL,
@@ -35,84 +35,84 @@ CREATE TABLE Customer (
     address_city VARCHAR(60) NOT NULL,
     address_postal_code VARCHAR(20),
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (area_code) REFERENCES Area(area_code)
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (area_code) REFERENCES area(area_code)
 );
 
-CREATE TABLE Household (
+CREATE TABLE household (
     customer_id INT PRIMARY KEY,
     household_size INT NOT NULL,
 
-    FOREIGN KEY (customer_id) REFERENCES Customer(user_id)
+    FOREIGN KEY (customer_id) REFERENCES customer(user_id)
 );
 
-CREATE TABLE Business (
+CREATE TABLE business (
     customer_id INT PRIMARY KEY,
     tax_id VARCHAR(50),
     business_regi_num VARCHAR(50),
     business_type VARCHAR(100),
 
-    FOREIGN KEY (customer_id) REFERENCES Customer(user_id)
+    FOREIGN KEY (customer_id) REFERENCES customer(user_id)
 );
 
-CREATE TABLE GovernmentOrganization (
+CREATE TABLE government_organization (
     customer_id INT PRIMARY KEY,
     government_id VARCHAR(50),
     department VARCHAR(100),
 
-    FOREIGN KEY (customer_id) REFERENCES Customer(user_id)
+    FOREIGN KEY (customer_id) REFERENCES customer(user_id)
 );
 
-CREATE TABLE Manager (
+CREATE TABLE manager (
     user_id INT PRIMARY KEY,
     department VARCHAR(100),
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE Cashier (
+CREATE TABLE cashier (
     user_id INT PRIMARY KEY,
     branch_name VARCHAR(120),
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE FieldOfficer (
+CREATE TABLE field_officer (
     user_id INT PRIMARY KEY,
     area_code VARCHAR(10),
     vehicle_no VARCHAR(20),
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (area_code) REFERENCES Area(area_code)
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (area_code) REFERENCES area(area_code)
 );
 
-CREATE TABLE Role (
+CREATE TABLE role (
     role_id INT IDENTITY(1,1) PRIMARY KEY,
     role_name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE Permission (
+CREATE TABLE permission (
     permission_id INT IDENTITY(1,1) PRIMARY KEY,
     permission_name VARCHAR(120) NOT NULL UNIQUE
 );
 
-CREATE TABLE RolePermission (
+CREATE TABLE role_permission (
     role_permission_id INT IDENTITY(1,1) PRIMARY KEY,
     role_id INT NOT NULL,
     permission_id INT NOT NULL,
-    FOREIGN KEY (role_id) REFERENCES Role(role_id),
-    FOREIGN KEY (permission_id) REFERENCES Permission(permission_id)
+    FOREIGN KEY (role_id) REFERENCES role(role_id),
+    FOREIGN KEY (permission_id) REFERENCES permission(permission_id)
 );
 
-CREATE TABLE Admin (
+CREATE TABLE admin (
     user_id INT PRIMARY KEY,
     role_id INT NOT NULL,
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (role_id) REFERENCES Role(role_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (role_id) REFERENCES role(role_id)
 );
 
-CREATE TABLE AdminActionLog (
+CREATE TABLE admin_action_log (
     log_id INT IDENTITY(1,1) PRIMARY KEY,
     admin_id INT NOT NULL,
     entity_type VARCHAR(100) NOT NULL,
@@ -120,10 +120,10 @@ CREATE TABLE AdminActionLog (
     action VARCHAR(20) NOT NULL CHECK (action IN ('CREATE','DELETE','UPDATE','ADD')),
     time_stamp DATETIME DEFAULT GETDATE(),
 
-    FOREIGN KEY (admin_id) REFERENCES Admin(user_id)
+    FOREIGN KEY (admin_id) REFERENCES admin(user_id)
 );
 
-CREATE TABLE Tariff (
+CREATE TABLE tariff (
     tariff_id INT IDENTITY(1,1) PRIMARY KEY,
     tariff_name VARCHAR(100) NOT NULL,
     tariff_description VARCHAR(255),
@@ -135,7 +135,7 @@ CREATE TABLE Tariff (
     status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE'))
 );
 
-CREATE TABLE TariffSlab (
+CREATE TABLE tariff_slab (
     slab_id INT IDENTITY(1,1) PRIMARY KEY,
     tariff_id INT NOT NULL,
     slab_order INT NOT NULL,
@@ -143,13 +143,11 @@ CREATE TABLE TariffSlab (
     end_unit INT,
     unit_rate DECIMAL(10,2) NOT NULL,
 
-    FOREIGN KEY (tariff_id) REFERENCES Tariff(tariff_id)
+    FOREIGN KEY (tariff_id) REFERENCES tariff(tariff_id)
 );
 
-DROP TABLE Connection;
-
-CREATE TABLE UtilityConnection (
-    Connection_id INT IDENTITY(1,1) PRIMARY KEY,
+CREATE TABLE utility_connection (
+    connection_id INT IDENTITY(1,1) PRIMARY KEY,
     customer_id INT NOT NULL,
     tariff_id INT NOT NULL,
     meter_serial_number VARCHAR(50) UNIQUE NOT NULL,
@@ -157,11 +155,11 @@ CREATE TABLE UtilityConnection (
     install_date DATETIME NOT NULL,
     status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE')),
 
-    FOREIGN KEY (customer_id) REFERENCES Customer(user_id),
-    FOREIGN KEY (tariff_id) REFERENCES Tariff(tariff_id)
+    FOREIGN KEY (customer_id) REFERENCES customer(user_id),
+    FOREIGN KEY (tariff_id) REFERENCES tariff(tariff_id)
 );
 
-CREATE TABLE MeterReading (
+CREATE TABLE meter_reading (
     reading_id INT IDENTITY(1,1) PRIMARY KEY,
     field_officer_id INT NOT NULL,  -- required entry
     connection_id INT NOT NULL,  -- required entry
@@ -170,23 +168,23 @@ CREATE TABLE MeterReading (
     billing_period_start DATETIME,
     billing_period_end DATETIME,
 
-    FOREIGN KEY (connection_id) REFERENCES UtilityConnection(Connection_id),
-    FOREIGN KEY (field_officer_id) REFERENCES FieldOfficer(user_id)
+    FOREIGN KEY (connection_id) REFERENCES utility_connection(connection_id),
+    FOREIGN KEY (field_officer_id) REFERENCES field_officer(user_id)
 );
 
-CREATE TABLE Bill (
+CREATE TABLE bill (
     bill_id INT IDENTITY(1,1) PRIMARY KEY,
     connection_id INT NOT NULL,
     period_start DATETIME NOT NULL,
     period_end DATETIME NOT NULL,
     total_bill_amount DECIMAL(10,2) NOT NULL,
     outstanding_amount DECIMAL(10,2) NOT NULL,
-    status VARCHAR(10) NOT NULL CHECK (status IN ('PENDING', 'FULLY PAID', 'PARTIALLY PAID')),
+    status VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'FULLY PAID', 'PARTIALLY PAID')),
 
-    FOREIGN KEY (connection_id) REFERENCES UtilityConnection(Connection_id)
+    FOREIGN KEY (connection_id) REFERENCES utility_connection(connection_id)
 );
 
-CREATE TABLE Payment (
+CREATE TABLE payment (
     payment_id INT IDENTITY(1,1) PRIMARY KEY,
     bill_id INT NOT NULL,
     cashier_id INT NOT NULL,
@@ -194,37 +192,37 @@ CREATE TABLE Payment (
     amount DECIMAL(10,2) NOT NULL,
     payment_date DATETIME DEFAULT GETDATE(),
 
-    FOREIGN KEY (bill_id) REFERENCES Bill(bill_id),
-    FOREIGN KEY (cashier_id) REFERENCES Cashier(user_id)
+    FOREIGN KEY (bill_id) REFERENCES bill(bill_id),
+    FOREIGN KEY (cashier_id) REFERENCES cashier(user_id)
 );
 
-CREATE TABLE Cash (
+CREATE TABLE cash (
     payment_id INT PRIMARY KEY,
     amount_given DECIMAL(10,2) NOT NULL,
     balance DECIMAL(10,2),
 
-    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+    FOREIGN KEY (payment_id) REFERENCES payment(payment_id)
 );
 
-CREATE TABLE Card (
+CREATE TABLE card (
     payment_id INT PRIMARY KEY,
     platform_name VARCHAR(100) NOT NULL,
     card_type VARCHAR(50) NOT NULL CHECK (card_type IN ('CREDIT', 'DEBIT')),
     approval_code VARCHAR(50) NOT NULL,
 
-    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+    FOREIGN KEY (payment_id) REFERENCES payment(payment_id)
 );
 
-CREATE TABLE BankTransfer (
+CREATE TABLE bank_transfer (
     payment_id INT PRIMARY KEY,
     bank_name VARCHAR(100) NOT NULL,
     account_number VARCHAR(50) NOT NULL,
     transaction_num VARCHAR(50) NOT NULL,
 
-    FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
+    FOREIGN KEY (payment_id) REFERENCES payment(payment_id)
 );
 
-CREATE TABLE Complaint (
+CREATE TABLE complaint (
     complaint_id INT IDENTITY(1,1) PRIMARY KEY,
     customer_id INT NOT NULL,
     field_officer_id INT NOT NULL,
@@ -236,13 +234,13 @@ CREATE TABLE Complaint (
     resolved_date DATETIME,
     resolution_notes VARCHAR(500),
 
-    FOREIGN KEY (customer_id) REFERENCES Customer(user_id),
-    FOREIGN KEY (field_officer_id) REFERENCES FieldOfficer(user_id),
-    FOREIGN KEY (admin_id) REFERENCES Admin(user_id)
+    FOREIGN KEY (customer_id) REFERENCES customer(user_id),
+    FOREIGN KEY (field_officer_id) REFERENCES field_officer(user_id),
+    FOREIGN KEY (admin_id) REFERENCES admin(user_id)
 );
 
 CREATE TRIGGER trg_after_meterreading_insert
-ON MeterReading
+ON meter_reading
 AFTER INSERT
 AS
 BEGIN
@@ -273,7 +271,7 @@ BEGIN
     SELECT TOP 1 
         @prev_reading_value = reading_value,
         @prev_period_end = billing_period_end
-    FROM MeterReading
+    FROM meter_reading
     WHERE connection_id = @connection_id
       AND reading_id < @reading_id
     ORDER BY billing_period_end DESC;
@@ -284,7 +282,7 @@ BEGIN
     -------------------------------------------------------------------
     IF @prev_reading_value IS NULL
     BEGIN
-        UPDATE MeterReading
+        UPDATE meter_reading
         SET consumption = 0,
             billing_period_start = GETDATE(),
             billing_period_end = GETDATE()
@@ -307,7 +305,7 @@ BEGIN
     SET @period_end = GETDATE();  -- current reading timestamp
 
 
-    UPDATE MeterReading
+    UPDATE meter_reading
     SET consumption = @consumption,
         billing_period_start = @period_start,
         billing_period_end = @period_end
@@ -324,14 +322,14 @@ BEGIN
         @tax DECIMAL(5,2);
 
     SELECT @tariff_id = tariff_id
-    FROM Connection
-    WHERE Connection_id = @connection_id;
+    FROM utility_connection
+    WHERE connection_id = @connection_id;
 
     SELECT 
         @is_prorated = is_prorated,
         @fixed_charge = fixed_charge,
         @tax = tax_percentage
-    FROM Tariff
+    FROM tariff
     WHERE tariff_id = @tariff_id;
 
 
@@ -362,7 +360,7 @@ BEGIN
 
     DECLARE slab_cursor CURSOR FOR
         SELECT start_unit, end_unit, unit_rate
-        FROM TariffSlab
+        FROM tariff_slab
         WHERE tariff_id = @tariff_id
         ORDER BY slab_order ASC;
 
@@ -417,7 +415,7 @@ BEGIN
     -------------------------------------------------------------------
     -- 10. Insert Bill
     -------------------------------------------------------------------
-    INSERT INTO Bill (
+    INSERT INTO bill (
         connection_id,
         period_start,
         period_end,
@@ -437,7 +435,7 @@ BEGIN
 END;
 
 CREATE TRIGGER trg_after_payment
-ON Payment
+ON payment
 AFTER INSERT
 AS
 BEGIN
@@ -446,7 +444,7 @@ BEGIN
     -- Update the bill's outstanding amount
     UPDATE b
     SET b.outstanding_amount = b.outstanding_amount - i.amount
-    FROM Bill b
+    FROM bill b
     INNER JOIN inserted i ON b.bill_id = i.bill_id;
 
     -- Update status based on new outstanding amount
@@ -456,7 +454,7 @@ BEGIN
             WHEN b.outstanding_amount <= 0 THEN 'FULLY PAID'
             ELSE 'PARTIALLY PAID'
         END
-    FROM Bill b
+    FROM bill b
     INNER JOIN inserted i ON b.bill_id = i.bill_id;
 
 END;

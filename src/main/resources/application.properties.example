@@ -1,0 +1,24 @@
+spring.application.name=UtilityManagementSystem
+
+# ================================
+# DATABASE CONFIG
+# ================================
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=ums_dev;encrypt=false
+spring.datasource.username=sa
+spring.datasource.password=NIPun@36303
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+# ================================
+# JPA / HIBERNATE
+# ================================
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.SQLServerDialect
+
+# Optional logging
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.orm.mapping=TRACE
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+spring.jpa.hibernate.naming.implicit-strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl

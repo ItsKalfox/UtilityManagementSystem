@@ -5,16 +5,19 @@ import java.util.List;
 
 public class LoginResponseDTO {
     private Integer userId;
+    private String fullName;
     private String email;
     private List<String> roles;
+    private String adminRole;
     private List<String> permissions = new ArrayList<>();
     private String token;
 
 
     public LoginResponseDTO() {}
 
-    public LoginResponseDTO(Integer userId, String email, List<String> roles) {
+    public LoginResponseDTO(Integer userId, String fullName, String email, List<String> roles) {
         this.userId = userId;
+        this.fullName = fullName;
         this.email = email;
         this.roles = roles;
     }
@@ -25,8 +28,14 @@ public class LoginResponseDTO {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+
     public List<String> getRoles() { return roles; }
     public void setRoles(List<String> roles) { this.roles = roles; }
+
+    public String getAdminRole() { return adminRole; }
+    public void setAdminRole(String adminRole) { this.adminRole = adminRole; }
 
     public List<String> getPermissions() { return permissions; }
     public void setPermissions(List<String> permissions) { this.permissions = permissions; }

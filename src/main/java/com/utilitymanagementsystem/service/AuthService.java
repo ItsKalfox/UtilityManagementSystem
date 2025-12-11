@@ -3,6 +3,7 @@ package com.utilitymanagementsystem.service;
 import com.utilitymanagementsystem.dto.LoginRequestDTO;
 import com.utilitymanagementsystem.dto.LoginResponseDTO;
 import com.utilitymanagementsystem.dto.PasswordSetupRequestDTO;
+import com.utilitymanagementsystem.model.Admin;
 import com.utilitymanagementsystem.model.User;
 import com.utilitymanagementsystem.repository.*;
 import com.utilitymanagementsystem.security.JwtUtil;
@@ -47,44 +48,60 @@ public class AuthService {
     }
 
     public LoginResponseDTO login(LoginRequestDTO request) {
+
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.UNAUTHORIZED, "Invalid email or password"));
 
-        String storedHash = user.getPasswordHash();
-        if (storedHash == null || !passwordEncoder.matches(request.getPassword(), storedHash)) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
         Integer userId = user.getUserId();
+        String fullName = user.getFullName();
         String email = user.getEmail();
 
         List<String> roles = new ArrayList<>();
         List<String> permissions = new ArrayList<>();
 
-        adminRepository.findByUser_UserId(userId).ifPresent(admin -> {
+        String adminRoleName = null;
+
+        // -----------------------------
+        // ADMIN CHECK
+        // -----------------------------
+        Admin admin = adminRepository.findByUser_UserId(userId).orElse(null);
+
+        if (admin != null) {
             roles.add("ADMIN");
 
-            Integer roleId = admin.getRole().getRoleId();  // From admin table
+            Integer roleId = admin.getRole().getRoleId();
+            adminRoleName = admin.getRole().getRoleName();
 
-            // Load permission names or IDs
-            permissions.addAll(
-                    permissionRepository.findPermissionNamesByRoleId(roleId)
-            );
-        });
+            permissions.addAll(permissionRepository.findPermissionNamesByRoleId(roleId));
+        }
 
-        managerRepository.findByUser_UserId(userId)
-                .ifPresent(m -> roles.add("MANAGER"));
+        // -----------------------------
+        // OTHER ROLES
+        // -----------------------------
+        if (managerRepository.findByUser_UserId(userId).isPresent()) {
+            roles.add("MANAGER");
+        }
 
-        cashierRepository.findByUser_UserId(userId)
-                .ifPresent(c -> roles.add("CASHIER"));
+        if (cashierRepository.findByUser_UserId(userId).isPresent()) {
+            roles.add("CASHIER");
+        }
 
-        fieldOfficerRepository.findByUser_UserId(userId)
-                .ifPresent(f -> roles.add("FIELD_OFFICER"));
+        if (fieldOfficerRepository.findByUser_UserId(userId).isPresent()) {
+            roles.add("FIELD_OFFICER");
+        }
 
+        // -----------------------------
+        // TOKEN
+        // -----------------------------
         String token = jwtUtil.generateToken(email);
 
-        LoginResponseDTO response = new LoginResponseDTO(userId, email, roles);
+        LoginResponseDTO response = new LoginResponseDTO(userId, fullName, email, roles);
+        response.setAdminRole(adminRoleName);
         response.setPermissions(permissions);
         response.setToken(token);
 

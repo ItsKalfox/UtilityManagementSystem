@@ -16,7 +16,8 @@ VALUES
 ('Customer Three', 'customerthree@example.com', '200325345678', 'INACTIVE'),
 ('Customer Four', 'customerfour@example.com', '200326345678', 'ACTIVE'),
 ('Customer Five', 'customerfive@example.com', '200327345678', 'ACTIVE'),
-('Customer Six', 'customersix@example.com', '200328345678', 'ACTIVE');
+('Customer Six', 'customersix@example.com', '200328345678', 'ACTIVE')
+('Admin Manager', 'adminmanager@example.com', '200328345679', 'ACTIVE');
 
 INSERT INTO phone_number VALUES
 (1, '0771234567', 'MOBILE'),
@@ -76,7 +77,8 @@ INSERT INTO government_organization VALUES
 
 INSERT INTO manager VALUES
 (6, 'Finance'),
-(7, 'HR');
+(7, 'HR'),
+(18, 'Operations');
 
 INSERT INTO cashier VALUES
 (10, 'Main Branch'),
@@ -130,7 +132,7 @@ INSERT INTO permission (permission_name) VALUES
 
 
 INSERT INTO role_permission (role_id, permission_id) VALUES
-(1,1),(1,2),(1,3),(1,4),(5,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),(1,20),(1,21),(1,22),(1,23),(1,24),(1,25),(1,26),(1,27),(1,28),(1,29),(1,30),(1,31),(1,32),(1,33),
+(1,1),(1,2),(1,3),(1,4),(1,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),(1,14),(1,15),(1,16),(1,17),(1,18),(1,19),(1,20),(1,21),(1,22),(1,23),(1,24),(1,25),(1,26),(1,27),(1,28),(1,29),(1,30),(1,31),(1,32),(1,33),
 (2,1),(2,5),(2,9),(2,13),(2,17),(2,21),(2,22),(2,23),(2,24),(2,29),(2,31),
 (3,1),(3,2),(3,5),(3,6),(3,9),(3,10),(3,13),(3,14),(3,17),(3,18),(3,21),(3,22),(3,23),(3,24),(3,25),(3,29),(3,31),
 (4,1),(4,4),(4,5),(4,8),(4,9),(4,12),(4,13),(4,16),(4,17),(4,20),(4,21),(4,22),(4,23),(4,24),(4,27),(4,29),(4,30),(4,31),(4,32),
@@ -143,7 +145,8 @@ INSERT INTO admin VALUES
 (3, 3),
 (4, 4),
 (5, 5),
-(7, 2);
+(7, 2),
+(18, 1);
 
 
 INSERT INTO admin_action_log (admin_id, entity_type, entity_id, action) VALUES

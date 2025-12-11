@@ -1,5 +1,7 @@
 package com.utilitymanagementsystem.config;
 
+import com.utilitymanagementsystem.security.JwtFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,10 +9,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private JwtFilter jwtFilter;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -20,14 +27,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // <-- FIXED, not deprecated
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // allow EVERYTHING
+                        .requestMatchers("/api/auth/login", "/api/auth/setup-password")
+                        .permitAll()
+                        .anyRequest().authenticated()
                 )
-                .formLogin(login -> login.disable()) // disable login
-                .logout(logout -> logout.disable())  // disable logout
-                .httpBasic(basic -> basic.disable()); // disable basic auth
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .httpBasic(basic -> basic.disable())
+                .formLogin(login -> login.disable());
 
         return http.build();
     }
 }
+

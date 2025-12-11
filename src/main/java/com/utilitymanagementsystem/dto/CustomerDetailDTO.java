@@ -1,0 +1,17 @@
+package com.utilitymanagementsystem.dto;
+
+import java.util.List;
+
+public record CustomerDetailDTO(
+        Integer userId,
+        String fullName,
+        String email,
+        String nic,
+        String status,
+        String customerType,
+        String addressLine1,
+        String addressLine2,
+        String addressCity,
+        String addressPostalCode,
+        List<PhoneNumberDTO> phoneNumbers
+) {}

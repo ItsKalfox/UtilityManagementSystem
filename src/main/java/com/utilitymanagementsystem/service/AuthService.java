@@ -49,12 +49,22 @@ public class AuthService {
 
     public LoginResponseDTO login(LoginRequestDTO request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED, "Invalid email or password"));
+        // 1. Validate request fields (return 400 if missing)
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new IllegalArgumentException("Email is required");
+        }
 
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+
+        // 2. Validate user existence (401)
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        // 3. Validate password (401)
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+            throw new RuntimeException("Invalid email or password");
         }
 
         Integer userId = user.getUserId();
@@ -66,9 +76,6 @@ public class AuthService {
 
         String adminRoleName = null;
 
-        // -----------------------------
-        // ADMIN CHECK
-        // -----------------------------
         Admin admin = adminRepository.findByUser_UserId(userId).orElse(null);
 
         if (admin != null) {
@@ -80,9 +87,6 @@ public class AuthService {
             permissions.addAll(permissionRepository.findPermissionNamesByRoleId(roleId));
         }
 
-        // -----------------------------
-        // OTHER ROLES
-        // -----------------------------
         if (managerRepository.findByUser_UserId(userId).isPresent()) {
             roles.add("MANAGER");
         }
@@ -95,10 +99,7 @@ public class AuthService {
             roles.add("FIELD_OFFICER");
         }
 
-        // -----------------------------
-        // TOKEN
-        // -----------------------------
-        String token = jwtUtil.generateToken(email);
+        String token = jwtUtil.generateToken(email, roles, permissions);
 
         LoginResponseDTO response = new LoginResponseDTO(userId, fullName, email, roles);
         response.setAdminRole(adminRoleName);

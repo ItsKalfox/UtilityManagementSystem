@@ -2,16 +2,19 @@ package com.utilitymanagementsystem.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.utilitymanagementsystem.exception.ApiError;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class JwtFilter implements Filter {
@@ -31,16 +34,41 @@ public class JwtFilter implements Filter {
         String authHeader = request.getHeader("Authorization");
 
         try {
-
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
+
                 String token = authHeader.substring(7);
 
-                jwtUtil.validateToken(token); // may throw exception
+                // VALIDATE TOKEN (may throw runtime exception)
+                jwtUtil.validateToken(token);
 
-                String email = jwtUtil.extractEmail(token);
+                // Extract all claims
+                Claims claims = jwtUtil.extractAllClaims(token);
 
+                String email = claims.getSubject(); // user email
+
+                // extract roles and permissions
+                List<String> roles = claims.get("roles", List.class);
+                List<String> permissions = claims.get("permissions", List.class);
+
+                // Convert permissions into GrantedAuthority objects
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+                if (permissions != null) {
+                    for (String p : permissions) {
+                        authorities.add(new SimpleGrantedAuthority(p));
+                    }
+                }
+
+                // You may also add roles as authorities, optional:
+                if (roles != null) {
+                    for (String r : roles) {
+                        authorities.add(new SimpleGrantedAuthority("ROLE_" + r));
+                    }
+                }
+
+                // Set authentication context
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(email, null, null);
+                        new UsernamePasswordAuthenticationToken(email, null, authorities);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
@@ -49,7 +77,7 @@ public class JwtFilter implements Filter {
 
         } catch (RuntimeException ex) {
 
-            // Create JSON response
+            // Build JSON error message
             ApiError error = new ApiError(401, ex.getMessage());
 
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

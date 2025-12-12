@@ -2,9 +2,11 @@ package com.utilitymanagementsystem.controller;
 
 import com.utilitymanagementsystem.dto.CustomerDetailDTO;
 import com.utilitymanagementsystem.service.CustomerService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
 @RequestMapping("/customers")
 public class CustomerController {
 

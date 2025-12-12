@@ -16,11 +16,10 @@ public interface PermissionRepository extends JpaRepository<Permission, Integer>
         """, nativeQuery = true)
     List<String> findPermissionNamesByRoleId(@Param("roleId") Integer roleId);
     @Query(value = """
-    SELECT p.permission_id
-    FROM permission p
-    JOIN role_permission rp ON rp.permission_id = p.permission_id
-    WHERE rp.role_id = :roleId
-    """, nativeQuery = true)
+        SELECT p.permission_id
+        FROM permission p
+        JOIN role_permission rp ON rp.permission_id = p.permission_id
+        WHERE rp.role_id = :roleId
+        """, nativeQuery = true)
     List<Integer> findPermissionIdsByRoleId(@Param("roleId") Integer roleId);
-
 }

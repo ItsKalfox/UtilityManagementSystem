@@ -2,6 +2,7 @@ package com.utilitymanagementsystem.service;
 
 import com.utilitymanagementsystem.dto.CustomerDetailDTO;
 import com.utilitymanagementsystem.dto.PhoneNumberDTO;
+import com.utilitymanagementsystem.exception.ResourceNotFoundException;
 import com.utilitymanagementsystem.model.Customer;
 import com.utilitymanagementsystem.model.User;
 import com.utilitymanagementsystem.repository.CustomerRepository;
@@ -18,7 +19,7 @@ public class CustomerService {
     }
 
     public CustomerDetailDTO getCustomerDetails(Integer customerId) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         User user = customer.getUser();
 

@@ -64,4 +64,12 @@ public class GlobalExceptionHandler {
                 HttpStatus.UNAUTHORIZED
         );
     }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiError> handleConflict(ConflictException ex) {
+        return new ResponseEntity<>(
+                new ApiError(409, ex.getMessage()),
+                HttpStatus.CONFLICT
+        );
+    }
 }

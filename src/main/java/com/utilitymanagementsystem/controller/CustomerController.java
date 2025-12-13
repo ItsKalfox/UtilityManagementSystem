@@ -1,6 +1,6 @@
 package com.utilitymanagementsystem.controller;
 
-import com.utilitymanagementsystem.dto.CustomerDetailDTO;
+import com.utilitymanagementsystem.dto.CustomerDetailView;
 import com.utilitymanagementsystem.dto.CustomerListDTO;
 import com.utilitymanagementsystem.service.CustomerService;
 import org.springframework.data.domain.Page;
@@ -39,7 +39,7 @@ public class CustomerController {
     // 🔹 GET single customer details
     @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
     @GetMapping("/{id}")
-    public CustomerDetailDTO getCustomer(@PathVariable Integer id) {
+    public CustomerDetailView getCustomer(@PathVariable Integer id) {
         return customerService.getCustomerDetails(id);
     }
 }

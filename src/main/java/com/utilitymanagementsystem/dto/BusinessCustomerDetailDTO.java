@@ -2,7 +2,7 @@ package com.utilitymanagementsystem.dto;
 
 import java.util.List;
 
-public record CustomerDetailDTO(
+public record BusinessCustomerDetailDTO(
         Integer userId,
         String fullName,
         String email,
@@ -13,5 +13,9 @@ public record CustomerDetailDTO(
         String addressLine2,
         String addressCity,
         String addressPostalCode,
+        String businessType,
+        String businessRegiNum,
+        String taxId,
         List<PhoneNumberDTO> phoneNumbers
-) {}
+) implements CustomerDetailView {}
+

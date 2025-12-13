@@ -1,11 +1,8 @@
 package com.utilitymanagementsystem.service;
 
-import com.utilitymanagementsystem.dto.CustomerDetailDTO;
-import com.utilitymanagementsystem.dto.CustomerListDTO;
-import com.utilitymanagementsystem.dto.PhoneNumberDTO;
+import com.utilitymanagementsystem.dto.*;
 import com.utilitymanagementsystem.exception.ResourceNotFoundException;
-import com.utilitymanagementsystem.model.Customer;
-import com.utilitymanagementsystem.model.User;
+import com.utilitymanagementsystem.model.*;
 import com.utilitymanagementsystem.repository.CustomerRepository;
 import com.utilitymanagementsystem.spec.CustomerSpecification;
 import org.springframework.data.domain.Page;
@@ -24,32 +21,80 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public CustomerDetailDTO getCustomerDetails(Integer customerId) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+    public CustomerDetailView getCustomerDetails(Integer customerId) {
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         User user = customer.getUser();
 
-        List<PhoneNumberDTO> phoneNumberDTOs = user.getPhoneNumbers().stream()
-                .map(p -> new PhoneNumberDTO(
-                        p.getPhoneNumber(),
-                        p.getNumberType()
-                ))
+        List<PhoneNumberDTO> phones = user.getPhoneNumbers().stream()
+                .map(p -> new PhoneNumberDTO(p.getPhoneNumber(), p.getNumberType()))
                 .toList();
 
-        return new CustomerDetailDTO(
-                user.getUserId(),
-                user.getFullName(),
-                user.getEmail(),
-                user.getNic(),
-                user.getStatus(),
-                customer.getCustomerType(),
-                customer.getAddressLine1(),
-                customer.getAddressLine2(),
-                customer.getAddressCity(),
-                customer.getAddressPostalCode(),
-                phoneNumberDTOs
-        );
+        return switch (customer.getCustomerType()) {
+
+            case "HOUSEHOLD" -> {
+                Household h = customer.getHousehold();
+                yield new HouseholdCustomerDetailDTO(
+                        user.getUserId(),
+                        user.getFullName(),
+                        user.getEmail(),
+                        user.getNic(),
+                        user.getStatus(),
+                        customer.getCustomerType(),
+                        customer.getAddressLine1(),
+                        customer.getAddressLine2(),
+                        customer.getAddressCity(),
+                        customer.getAddressPostalCode(),
+                        h.getHouseholdSize(),
+                        phones
+                );
+            }
+
+            case "BUSINESS" -> {
+                Business b = customer.getBusiness();
+                yield new BusinessCustomerDetailDTO(
+                        user.getUserId(),
+                        user.getFullName(),
+                        user.getEmail(),
+                        user.getNic(),
+                        user.getStatus(),
+                        customer.getCustomerType(),
+                        customer.getAddressLine1(),
+                        customer.getAddressLine2(),
+                        customer.getAddressCity(),
+                        customer.getAddressPostalCode(),
+                        b.getBusinessType(),
+                        b.getBusinessRegiNum(),
+                        b.getTaxId(),
+                        phones
+                );
+            }
+
+            case "GOVERNMENT ORGANIZATION" -> {
+                GovernmentOrganization g = customer.getGovernmentOrganization();
+                yield new GovernmentCustomerDetailDTO(
+                        user.getUserId(),
+                        user.getFullName(),
+                        user.getEmail(),
+                        user.getNic(),
+                        user.getStatus(),
+                        customer.getCustomerType(),
+                        customer.getAddressLine1(),
+                        customer.getAddressLine2(),
+                        customer.getAddressCity(),
+                        customer.getAddressPostalCode(),
+                        g.getGovernmentId(),
+                        g.getDepartment(),
+                        phones
+                );
+            }
+
+            default -> throw new IllegalStateException("Unknown customer type");
+        };
     }
+
     public Page<CustomerListDTO> getCustomers(
             String search,
             String type,

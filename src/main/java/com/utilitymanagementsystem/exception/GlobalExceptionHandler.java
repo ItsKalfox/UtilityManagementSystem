@@ -1,5 +1,6 @@
 package com.utilitymanagementsystem.exception;
 
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -10,21 +11,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 401 — Authentication Errors (invalid login, invalid token, expired token)
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiError> handleRuntime(RuntimeException ex) {
+    // 400 — Invalid sort / invalid property reference
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ApiError> handleInvalidProperty(PropertyReferenceException ex) {
         return new ResponseEntity<>(
-                new ApiError(401, ex.getMessage()),
-                HttpStatus.UNAUTHORIZED
-        );
-    }
-
-    // 403 — Authorization Errors (permission denied)
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex) {
-        return new ResponseEntity<>(
-                new ApiError(403, "Access Denied"),
-                HttpStatus.FORBIDDEN
+                new ApiError(400, "Invalid sort field"),
+                HttpStatus.BAD_REQUEST
         );
     }
 
@@ -55,5 +47,21 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // 403 — Authorization Errors (permission denied)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex) {
+        return new ResponseEntity<>(
+                new ApiError(403, "Access Denied"),
+                HttpStatus.FORBIDDEN
+        );
+    }
 
+    // 401 — Authentication Errors (invalid login, invalid token, expired token)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiError> handleRuntime(RuntimeException ex) {
+        return new ResponseEntity<>(
+                new ApiError(401, ex.getMessage()),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
 }

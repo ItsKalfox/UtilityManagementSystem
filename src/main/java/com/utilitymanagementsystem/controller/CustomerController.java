@@ -1,12 +1,13 @@
 package com.utilitymanagementsystem.controller;
 
 import com.utilitymanagementsystem.dto.CustomerDetailDTO;
+import com.utilitymanagementsystem.dto.CustomerListDTO;
 import com.utilitymanagementsystem.service.CustomerService;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
 @RequestMapping("/customers")
 public class CustomerController {
 
@@ -16,6 +17,27 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    // 🔹 LIST customers (pagination + search + filter + sort)
+    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
+    @GetMapping
+    public Page<CustomerListDTO> listCustomers(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "userId") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        return customerService.getCustomers(
+                search, type, status,
+                page, size,
+                sortBy, direction
+        );
+    }
+
+    // 🔹 GET single customer details
+    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
     @GetMapping("/{id}")
     public CustomerDetailDTO getCustomer(@PathVariable Integer id) {
         return customerService.getCustomerDetails(id);

@@ -8,11 +8,12 @@ public record HouseholdCustomerDetailDTO(
         String email,
         String nic,
         String status,
-        String customerType,
+        String areaCode,
         String addressLine1,
         String addressLine2,
         String addressCity,
         String addressPostalCode,
+        String customerType,
         Integer householdSize,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}

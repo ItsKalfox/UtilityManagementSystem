@@ -1,10 +1,12 @@
 package com.utilitymanagementsystem.controller;
 
+import com.utilitymanagementsystem.dto.CustomerCreateDTO;
 import com.utilitymanagementsystem.dto.CustomerDetailView;
 import com.utilitymanagementsystem.dto.CustomerListDTO;
 import com.utilitymanagementsystem.dto.CustomerUpdateDTO;
 import com.utilitymanagementsystem.service.CustomerService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,5 +54,13 @@ public class CustomerController {
     ) {
         return customerService.updateCustomer(id, request);
     }
+
+    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CustomerDetailView createCustomer(@RequestBody CustomerCreateDTO dto) {
+        return customerService.createCustomer(dto);
+    }
+
 
 }

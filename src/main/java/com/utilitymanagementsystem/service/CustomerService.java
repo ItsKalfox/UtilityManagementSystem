@@ -4,9 +4,7 @@ import com.utilitymanagementsystem.dto.*;
 import com.utilitymanagementsystem.exception.ConflictException;
 import com.utilitymanagementsystem.exception.ResourceNotFoundException;
 import com.utilitymanagementsystem.model.*;
-import com.utilitymanagementsystem.repository.BusinessRepository;
-import com.utilitymanagementsystem.repository.CustomerRepository;
-import com.utilitymanagementsystem.repository.UserRepository;
+import com.utilitymanagementsystem.repository.*;
 import com.utilitymanagementsystem.spec.CustomerSpecification;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.*;
@@ -21,15 +19,28 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final BusinessRepository businessRepository;
+    private final HouseholdRepository householdRepository;
+    private final GovernmentOrganizationRepository governmentRepository;
+    private final AreaRepository areaRepository;
+    private final PhoneNumberRepository phoneNumberRepository;
+
 
     public CustomerService(
             CustomerRepository customerRepository,
             UserRepository userRepository,
-            BusinessRepository businessRepository
+            BusinessRepository businessRepository,
+            HouseholdRepository householdRepository,
+            GovernmentOrganizationRepository governmentRepository,
+            AreaRepository areaRepository,
+            PhoneNumberRepository phoneNumberRepository
     ) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
         this.businessRepository = businessRepository;
+        this.householdRepository = householdRepository;
+        this.governmentRepository = governmentRepository;
+        this.areaRepository = areaRepository;
+        this.phoneNumberRepository = phoneNumberRepository;
     }
 
     /* =========================================================
@@ -57,11 +68,12 @@ public class CustomerService {
                         user.getEmail(),
                         user.getNic(),
                         user.getStatus(),
-                        customer.getCustomerType(),
+                        customer.getAreaCode().getAreaCode(),
                         customer.getAddressLine1(),
                         customer.getAddressLine2(),
                         customer.getAddressCity(),
                         customer.getAddressPostalCode(),
+                        customer.getCustomerType(),
                         h.getHouseholdSize(),
                         phones
                 );
@@ -75,11 +87,12 @@ public class CustomerService {
                         user.getEmail(),
                         user.getNic(),
                         user.getStatus(),
-                        customer.getCustomerType(),
+                        customer.getAreaCode().getAreaCode(),
                         customer.getAddressLine1(),
                         customer.getAddressLine2(),
                         customer.getAddressCity(),
                         customer.getAddressPostalCode(),
+                        customer.getCustomerType(),
                         b.getBusinessType(),
                         b.getBusinessRegiNum(),
                         b.getTaxId(),
@@ -95,11 +108,12 @@ public class CustomerService {
                         user.getEmail(),
                         user.getNic(),
                         user.getStatus(),
-                        customer.getCustomerType(),
+                        customer.getAreaCode().getAreaCode(),
                         customer.getAddressLine1(),
                         customer.getAddressLine2(),
                         customer.getAddressCity(),
                         customer.getAddressPostalCode(),
+                        customer.getCustomerType(),
                         g.getGovernmentId(),
                         g.getDepartment(),
                         phones
@@ -241,6 +255,154 @@ public class CustomerService {
     /* =========================================================
        LIST CUSTOMERS (PAGINATION + SEARCH + FILTER + SORT)
        ========================================================= */
+
+    @Transactional
+    public CustomerDetailView createCustomer(CustomerCreateDTO dto) {
+
+
+        /* ---------- BASIC VALIDATION ---------- */
+
+        if (dto.fullName() == null ||
+                dto.email() == null ||
+                dto.nic() == null ||
+                dto.areaCode() == null ||
+                dto.addressLine1() == null ||
+                dto.addressLine2() == null ||
+                dto.addressCity() == null ||
+                dto.addressPostalCode() == null ||
+                dto.customerType() == null ||
+                dto.phoneNumbers() == null || dto.phoneNumbers().isEmpty()) {
+            throw new IllegalArgumentException("Missing required fields");
+        }
+
+        switch (dto.customerType()) {
+            case "HOUSEHOLD" -> {
+                if (dto.householdSize() == null) {
+                    throw new IllegalArgumentException("Missing required fields");
+                }
+            }
+
+            case "BUSINESS" -> {
+                if (dto.businessType() == null ||
+                        dto.businessRegiNum() == null ||
+                        dto.taxId() == null) {
+                    throw new IllegalArgumentException("Missing required fields");
+                }
+                if (businessRepository.existsByBusinessRegiNum(dto.businessRegiNum())) {
+                    throw new ConflictException("Business registration number already exists");
+                }
+            }
+
+            case "GOVERNMENT ORGANIZATION" -> {
+                if (dto.governmentId() == null ||
+                        dto.department() == null) {
+                    throw new IllegalArgumentException("Missing required fields");
+                }
+            }
+
+            default -> throw new IllegalArgumentException("Unknown customer type");
+        }
+
+        Area area = areaRepository.findById(dto.areaCode())
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid area code"));
+
+        if (userRepository.existsByEmail(dto.email())) {
+            throw new ConflictException("Email already exists");
+        }
+
+        if (userRepository.existsByNic(dto.nic())) {
+            throw new ConflictException("NIC already exists");
+        }
+
+        User user = new User();
+        user.setFullName(dto.fullName());
+        user.setEmail(dto.email());
+        user.setNic(dto.nic());
+        user.setStatus("ACTIVE");
+
+        userRepository.save(user);
+
+        Customer customer = new Customer();
+        customer.setUser(user);
+        customer.setCustomerType(dto.customerType());
+        customer.setAreaCode(area);
+        customer.setAddressLine1(dto.addressLine1());
+        customer.setAddressLine2(dto.addressLine2());
+        customer.setAddressCity(dto.addressCity());
+        customer.setAddressPostalCode(dto.addressPostalCode());
+
+        customerRepository.save(customer);
+
+//        /* ---------- TYPE FLAGS ---------- */
+//
+//        boolean hasHousehold = dto.householdSize() != null;
+//        boolean hasBusiness =
+//                dto.businessType() != null ||
+//                        dto.businessRegiNum() != null ||
+//                        dto.taxId() != null;
+//        boolean hasGov =
+//                dto.governmentId() != null ||
+//                        dto.department() != null;
+//
+//        int typeCount =
+//                (hasHousehold ? 1 : 0) +
+//                        (hasBusiness ? 1 : 0) +
+//                        (hasGov ? 1 : 0);
+//
+//        if (typeCount != 1) {
+//            throw new IllegalArgumentException("Invalid or missing customer subtype data");
+//        }
+
+        /* ---------- SUBTYPE CREATION ---------- */
+
+        switch (dto.customerType()) {
+
+            case "HOUSEHOLD" -> {
+
+                Household h = new Household();
+                h.setCustomer(customer);
+                h.setHouseholdSize(dto.householdSize());
+
+                householdRepository.save(h);
+                customer.setHousehold(h);
+            }
+
+            case "BUSINESS" -> {
+
+                Business b = new Business();
+                b.setCustomer(customer);
+                b.setBusinessType(dto.businessType());
+                b.setBusinessRegiNum(dto.businessRegiNum());
+                b.setTaxId(dto.taxId());
+
+                businessRepository.save(b);
+                customer.setBusiness(b);
+            }
+
+            case "GOVERNMENT ORGANIZATION" -> {
+
+
+                GovernmentOrganization g = new GovernmentOrganization();
+                g.setCustomer(customer);
+                g.setGovernmentId(dto.governmentId());
+                g.setDepartment(dto.department());
+
+                governmentRepository.save(g);
+                customer.setGovernmentOrganization(g);
+            }
+
+            default -> throw new IllegalArgumentException("Unknown customer type");
+        }
+
+        for (PhoneNumberDTO p : dto.phoneNumbers()) {
+            PhoneNumber phone = new PhoneNumber();
+            phone.setUser(user);
+            phone.setPhoneNumber(p.phoneNumber());
+            phone.setNumberType(p.numberType()); // DB CHECK constraint
+            phoneNumberRepository.save(phone);
+        }
+        return getCustomerDetails(user.getUserId());
+    }
 
     public Page<CustomerListDTO> getCustomers(
             String search,

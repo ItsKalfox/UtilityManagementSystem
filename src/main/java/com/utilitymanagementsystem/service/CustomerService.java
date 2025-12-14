@@ -258,20 +258,19 @@ public class CustomerService {
 
     @Transactional
     public CustomerDetailView createCustomer(CustomerCreateDTO dto) {
-
-
         /* ---------- BASIC VALIDATION ---------- */
 
-        if (dto.fullName() == null ||
-                dto.email() == null ||
-                dto.nic() == null ||
+        if (dto.customerId() == null ||
+//                dto.fullName() == null ||
+//                dto.email() == null ||
+//                dto.nic() == null ||
                 dto.areaCode() == null ||
                 dto.addressLine1() == null ||
                 dto.addressLine2() == null ||
                 dto.addressCity() == null ||
                 dto.addressPostalCode() == null ||
-                dto.customerType() == null ||
-                dto.phoneNumbers() == null || dto.phoneNumbers().isEmpty()) {
+//                dto.phoneNumbers() == null || dto.phoneNumbers().isEmpty() ||
+                dto.customerType() == null) {
             throw new IllegalArgumentException("Missing required fields");
         }
 
@@ -303,24 +302,32 @@ public class CustomerService {
             default -> throw new IllegalArgumentException("Unknown customer type");
         }
 
+        User user = userRepository.findById(dto.customerId())
+                .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
+
+
+        if (customerRepository.findByUser_UserId(dto.customerId()).isPresent()) {
+            throw new ConflictException("Customer already exists");
+        }
+
         Area area = areaRepository.findById(dto.areaCode())
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid area code"));
 
-        if (userRepository.existsByEmail(dto.email())) {
-            throw new ConflictException("Email already exists");
-        }
+//        if (userRepository.existsByEmail(dto.email())) {
+//            throw new ConflictException("Email already exists");
+//        }
+//
+//        if (userRepository.existsByNic(dto.nic())) {
+//            throw new ConflictException("NIC already exists");
+//        }
 
-        if (userRepository.existsByNic(dto.nic())) {
-            throw new ConflictException("NIC already exists");
-        }
-
-        User user = new User();
-        user.setFullName(dto.fullName());
-        user.setEmail(dto.email());
-        user.setNic(dto.nic());
-        user.setStatus("ACTIVE");
-
-        userRepository.save(user);
+//        User user = new User();
+//        user.setFullName(dto.fullName());
+//        user.setEmail(dto.email());
+//        user.setNic(dto.nic());
+//        user.setStatus("ACTIVE");
+//
+//        userRepository.save(user);
 
         Customer customer = new Customer();
         customer.setUser(user);
@@ -394,14 +401,7 @@ public class CustomerService {
             default -> throw new IllegalArgumentException("Unknown customer type");
         }
 
-        for (PhoneNumberDTO p : dto.phoneNumbers()) {
-            PhoneNumber phone = new PhoneNumber();
-            phone.setUser(user);
-            phone.setPhoneNumber(p.phoneNumber());
-            phone.setNumberType(p.numberType()); // DB CHECK constraint
-            phoneNumberRepository.save(phone);
-        }
-        return getCustomerDetails(user.getUserId());
+        return getCustomerDetails(dto.customerId());
     }
 
     public Page<CustomerListDTO> getCustomers(
@@ -437,4 +437,14 @@ public class CustomerService {
                 )
         );
     }
+
+    @Transactional
+    public void deleteCustomer(Integer customerId) {
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        customerRepository.delete(customer);
+    }
+
 }

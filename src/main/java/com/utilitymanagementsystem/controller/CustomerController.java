@@ -7,6 +7,7 @@ import com.utilitymanagementsystem.dto.CustomerUpdateDTO;
 import com.utilitymanagementsystem.service.CustomerService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,5 +63,11 @@ public class CustomerController {
         return customerService.createCustomer(dto);
     }
 
-
+    // 🔹 DELETE customer (cascades to Household / Business / GovernmentOrganization)
+    @PreAuthorize("hasAuthority('DELETE_CUSTOMER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Integer id) {
+        customerService.deleteCustomer(id);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
 }

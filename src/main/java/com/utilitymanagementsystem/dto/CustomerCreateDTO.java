@@ -3,9 +3,7 @@ package com.utilitymanagementsystem.dto;
 import java.util.List;
 
 public record CustomerCreateDTO(
-        String fullName,
-        String email,
-        String nic,
+        Integer customerId,
         String areaCode,
 
         String addressLine1,
@@ -25,7 +23,5 @@ public record CustomerCreateDTO(
 
         // Government
         String governmentId,
-        String department,
-
-        List<PhoneNumberDTO> phoneNumbers
+        String department
 ) {}

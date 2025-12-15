@@ -1,5 +1,6 @@
 package com.utilitymanagementsystem.dto;
 
+import java.time.Instant;
 import java.util.List;
 
 public record GovernmentCustomerDetailDTO(
@@ -8,6 +9,8 @@ public record GovernmentCustomerDetailDTO(
         String email,
         String nic,
         String status,
+        Instant createdAt,
+        Instant updatedAt,
         String areaCode,
         String addressLine1,
         String addressLine2,

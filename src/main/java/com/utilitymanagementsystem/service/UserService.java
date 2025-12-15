@@ -1,0 +1,77 @@
+package com.utilitymanagementsystem.service;
+
+import com.utilitymanagementsystem.dto.*;
+import com.utilitymanagementsystem.exception.ResourceNotFoundException;
+import com.utilitymanagementsystem.model.*;
+import com.utilitymanagementsystem.repository.*;
+import com.utilitymanagementsystem.spec.CustomerSpecification;
+import com.utilitymanagementsystem.spec.UserSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
+    private final AdminRepository adminRepository;
+    private final ManagerRepository managerRepository;
+    private final FieldOfficerRepository fieldOfficerRepository;
+    private final CashierRepository cashierRepository;
+
+
+    public UserService(
+            UserRepository userRepository,
+            CustomerRepository customerRepository,
+            AdminRepository adminRepository,
+            ManagerRepository managerRepository,
+            FieldOfficerRepository fieldOfficerRepository,
+            CashierRepository cashierRepository
+    ) {
+        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
+        this.adminRepository = adminRepository;
+        this.managerRepository = managerRepository;
+        this.fieldOfficerRepository = fieldOfficerRepository;
+        this.cashierRepository = cashierRepository;
+    }
+
+    public Page<UserListDTO> getUsers(
+            String search,
+            String profile,
+            String status,
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Specification<User> spec =
+                UserSpecification.hasSearch(search)
+                        .and(UserSpecification.hasStatus(status))
+                        .and(UserSpecification.hasProfile(profile));
+
+        Page<User> users = userRepository.findAll(spec, pageable);
+
+        return users.map(u ->
+                new UserListDTO(
+                        u.getUserId(),
+                        u.getFullName(),
+                        u.getNic(),
+                        u.getStatus()
+                )
+        );
+    }
+}

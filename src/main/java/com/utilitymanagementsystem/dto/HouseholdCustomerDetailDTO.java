@@ -1,5 +1,6 @@
 package com.utilitymanagementsystem.dto;
 
+import java.time.Instant;
 import java.util.List;
 
 public record HouseholdCustomerDetailDTO(
@@ -8,6 +9,8 @@ public record HouseholdCustomerDetailDTO(
         String email,
         String nic,
         String status,
+        Instant createdAt,
+        Instant updatedAt,
         String areaCode,
         String addressLine1,
         String addressLine2,

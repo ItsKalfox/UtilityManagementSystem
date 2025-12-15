@@ -33,4 +33,9 @@ public class UserController {
                 sortBy, direction
         );
     }
+    @PreAuthorize("hasAuthority('READ_CUSTOMER')")
+    @GetMapping("/{id}")
+    public UserDetailDTO getUser(@PathVariable Integer id) {
+        return userService.getUserDetails(id);
+    }
 }

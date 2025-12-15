@@ -25,8 +25,7 @@ public class UserService {
     private final ManagerRepository managerRepository;
     private final FieldOfficerRepository fieldOfficerRepository;
     private final CashierRepository cashierRepository;
-
-
+    
     public UserService(
             UserRepository userRepository,
             CustomerRepository customerRepository,
@@ -72,6 +71,50 @@ public class UserService {
                         u.getNic(),
                         u.getStatus()
                 )
+        );
+    }
+
+    public UserDetailDTO getUserDetails(Integer userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        List<PhoneNumberDTO> phones = user.getPhoneNumbers().stream()
+                .map(p -> new PhoneNumberDTO(p.getPhoneNumber(), p.getNumberType()))
+                .toList();
+
+        List<String> profiles = new ArrayList<>();
+
+        if (customerRepository.findByUser_UserId(userId).isPresent()) {
+            profiles.add("CUSTOMER");
+        }
+
+        if (adminRepository.findByUser_UserId(userId).isPresent()) {
+            profiles.add("ADMIN");
+        }
+
+        if (managerRepository.findByUser_UserId(userId).isPresent()) {
+            profiles.add("MANAGER");
+        }
+
+        if (fieldOfficerRepository.findByUser_UserId(userId).isPresent()) {
+            profiles.add("FIELD_OFFICER");
+        }
+
+        if (cashierRepository.findByUser_UserId(userId).isPresent()) {
+            profiles.add("CASHIER");
+        }
+
+        return new UserDetailDTO(
+                user.getUserId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getNic(),
+                user.getStatus(),
+                user.getCreatedAt(),
+                user.getUpdatedAt(),
+                phones,
+                profiles
         );
     }
 }

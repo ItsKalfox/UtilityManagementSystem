@@ -1,0 +1,16 @@
+package com.utilitymanagementsystem.dto;
+
+import java.time.Instant;
+import java.util.List;
+
+public record UserDetailDTO(
+        Integer userId,
+        String fullName,
+        String email,
+        String nic,
+        String status,
+        Instant createdAt,
+        Instant updatedAt,
+        List<PhoneNumberDTO> phoneNumbers,
+        List<String> profiles
+) {}

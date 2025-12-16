@@ -26,3 +26,5 @@ spring.jpa.hibernate.naming.implicit-strategy=org.hibernate.boot.model.naming.Im
 jwt.secret=SECRET_KEY(32)
 jwt.expiration=3600000
 # 1 hour in ms
+
+spring.jackson.deserialization.fail-on-unknown-properties=true

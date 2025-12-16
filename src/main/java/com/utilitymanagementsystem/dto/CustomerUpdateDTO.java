@@ -1,5 +1,7 @@
 package com.utilitymanagementsystem.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.List;
 
 public record CustomerUpdateDTO(
@@ -7,7 +9,9 @@ public record CustomerUpdateDTO(
         String email,
         String nic,
         String status,
+        String password,
 
+        String areaCode,
         String addressLine1,
         String addressLine2,
         String addressCity,

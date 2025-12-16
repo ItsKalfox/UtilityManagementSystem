@@ -1,15 +1,15 @@
 package com.utilitymanagementsystem.dto;
 
-import java.util.List;
+import jakarta.validation.constraints.NotBlank;
 
 public record CustomerCreateDTO(
         Integer customerId,
         String areaCode,
 
-        String addressLine1,
-        String addressLine2,
-        String addressCity,
-        String addressPostalCode,
+        @NotBlank String addressLine1,
+        @NotBlank String addressLine2,
+        @NotBlank String addressCity,
+        @NotBlank String addressPostalCode,
 
         String customerType,
 

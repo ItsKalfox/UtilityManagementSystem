@@ -2,11 +2,14 @@ package com.utilitymanagementsystem.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "admin_action_log")
+@EntityListeners(AuditingEntityListener.class)
 public class AdminActionLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +29,8 @@ public class AdminActionLog {
     @Column(name = "\"action\"", nullable = false, length = 20)
     private String action;
 
-    @ColumnDefault("getdate()")
-    @Column(name = "time_stamp")
+    @CreatedDate
+    @Column(name = "time_stamp", nullable = false, updatable = false)
     private Instant timeStamp;
 
     public Integer getLogId() {

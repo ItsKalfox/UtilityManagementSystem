@@ -5,6 +5,7 @@ import com.utilitymanagementsystem.dto.CustomerDetailView;
 import com.utilitymanagementsystem.dto.CustomerListDTO;
 import com.utilitymanagementsystem.dto.CustomerUpdateDTO;
 import com.utilitymanagementsystem.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,7 @@ public class CustomerController {
     @PatchMapping("/{id}")
     public CustomerDetailView updateCustomer(
             @PathVariable Integer id,
-            @RequestBody CustomerUpdateDTO request
+            @Valid @RequestBody CustomerUpdateDTO request
     ) {
         return customerService.updateCustomer(id, request);
     }
@@ -59,7 +60,7 @@ public class CustomerController {
     @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerDetailView createCustomer(@RequestBody CustomerCreateDTO dto) {
+    public CustomerDetailView createCustomer(@Valid @RequestBody CustomerCreateDTO dto) {
         return customerService.createCustomer(dto);
     }
 

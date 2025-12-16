@@ -26,7 +26,7 @@ public class AuthService {
     private final FieldOfficerRepository fieldOfficerRepository;
     private final PermissionRepository permissionRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil; // <-- ADD THIS
+    private final JwtUtil jwtUtil;
 
     @Autowired
     public AuthService(UserRepository userRepository,
@@ -36,7 +36,7 @@ public class AuthService {
                        FieldOfficerRepository fieldOfficerRepository,
                        PermissionRepository permissionRepository,
                        PasswordEncoder passwordEncoder,
-                       JwtUtil jwtUtil) {                      // <-- ADD HERE TOO
+                       JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.adminRepository = adminRepository;
         this.managerRepository = managerRepository;
@@ -44,12 +44,11 @@ public class AuthService {
         this.fieldOfficerRepository = fieldOfficerRepository;
         this.permissionRepository = permissionRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtUtil = jwtUtil;                              // <-- STORE IT
+        this.jwtUtil = jwtUtil;
     }
 
     public LoginResponseDTO login(LoginRequestDTO request) {
 
-        // 1. Validate request fields (return 400 if missing)
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email is required");
         }
@@ -58,11 +57,9 @@ public class AuthService {
             throw new IllegalArgumentException("Password is required");
         }
 
-        // 2. Validate user existence (401)
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-        // 3. Validate password (401)
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Invalid email or password");
         }

@@ -6,7 +6,7 @@ import com.utilitymanagementsystem.exception.ResourceNotFoundException;
 import com.utilitymanagementsystem.model.*;
 import com.utilitymanagementsystem.repository.*;
 import com.utilitymanagementsystem.spec.CustomerSpecification;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,6 +49,7 @@ public class CustomerService {
         this.phoneNumberRepository = phoneNumberRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<CustomerListDTO> getCustomers(
             String search,
             String type,
@@ -82,6 +83,7 @@ public class CustomerService {
         );
     }
 
+    @Transactional(readOnly = true)
     public CustomerDetailView getCustomerDetails(Integer customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));

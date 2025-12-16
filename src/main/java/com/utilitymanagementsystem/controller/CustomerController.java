@@ -38,7 +38,6 @@ public class CustomerController {
         );
     }
 
-    // 🔹 GET single customer details
     @PreAuthorize("hasAuthority('READ_CUSTOMER')")
     @GetMapping("/{id}")
     public CustomerDetailView getCustomer(@PathVariable Integer id) {

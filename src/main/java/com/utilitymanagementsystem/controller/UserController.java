@@ -2,6 +2,7 @@ package com.utilitymanagementsystem.controller;
 
 import com.utilitymanagementsystem.dto.*;
 import com.utilitymanagementsystem.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +39,15 @@ public class UserController {
     @GetMapping("/{id}")
     public UserDetailDTO getUser(@PathVariable Integer id) {
         return userService.getUserDetails(id);
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_CUSTOMER')")
+    @PatchMapping("/{id}")
+    public UserDetailDTO updateUser(
+            @PathVariable Integer id,
+            @Valid @RequestBody UserUpdateDTO request
+    ) {
+        return userService.updateUser(id, request);
     }
 
     @PreAuthorize("hasAuthority('DELETE_CUSTOMER')")

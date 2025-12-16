@@ -9,6 +9,7 @@ public record UserDetailDTO(
         String email,
         String nic,
         String status,
+        boolean systemAccess,
         Instant createdAt,
         Instant updatedAt,
         List<PhoneNumberDTO> phoneNumbers,

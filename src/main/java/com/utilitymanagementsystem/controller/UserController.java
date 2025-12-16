@@ -3,6 +3,7 @@ package com.utilitymanagementsystem.controller;
 import com.utilitymanagementsystem.dto.*;
 import com.utilitymanagementsystem.service.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,5 +38,12 @@ public class UserController {
     @GetMapping("/{id}")
     public UserDetailDTO getUser(@PathVariable Integer id) {
         return userService.getUserDetails(id);
+    }
+
+    @PreAuthorize("hasAuthority('DELETE_CUSTOMER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 }

@@ -1,9 +1,6 @@
 package com.utilitymanagementsystem.controller;
 
-import com.utilitymanagementsystem.dto.CustomerCreateDTO;
-import com.utilitymanagementsystem.dto.CustomerDetailView;
-import com.utilitymanagementsystem.dto.CustomerListDTO;
-import com.utilitymanagementsystem.dto.CustomerUpdateDTO;
+import com.utilitymanagementsystem.dto.*;
 import com.utilitymanagementsystem.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -62,6 +59,13 @@ public class CustomerController {
     @ResponseStatus(HttpStatus.CREATED)
     public CustomerDetailView createCustomer(@Valid @RequestBody CustomerCreateDTO dto) {
         return customerService.createCustomer(dto);
+    }
+
+    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
+    @PostMapping("/full")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CustomerDetailView createFullCustomer(@Valid @RequestBody CustomerCreateFullDTO dto) {
+        return customerService.createFullCustomer(dto);
     }
 
     // 🔹 DELETE customer (cascades to Household / Business / GovernmentOrganization)

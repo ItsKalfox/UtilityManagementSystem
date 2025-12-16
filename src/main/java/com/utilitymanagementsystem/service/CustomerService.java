@@ -5,18 +5,14 @@ import com.utilitymanagementsystem.exception.ConflictException;
 import com.utilitymanagementsystem.exception.ResourceNotFoundException;
 import com.utilitymanagementsystem.model.*;
 import com.utilitymanagementsystem.repository.*;
-import com.utilitymanagementsystem.security.SecurityUtil;
 import com.utilitymanagementsystem.spec.CustomerSpecification;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
 
 @Service
 public class CustomerService {
@@ -53,12 +49,40 @@ public class CustomerService {
         this.phoneNumberRepository = phoneNumberRepository;
     }
 
-    /* =========================================================
-       GET SINGLE CUSTOMER (POLYMORPHIC RESPONSE)
-       ========================================================= */
+    public Page<CustomerListDTO> getCustomers(
+            String search,
+            String type,
+            String status,
+            int page,
+            int size,
+            String sortBy,
+            String direction
+    ) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Specification<Customer> spec =
+                CustomerSpecification.hasSearch(search)
+                        .and(CustomerSpecification.hasType(type))
+                        .and(CustomerSpecification.hasStatus(status));
+
+        Page<Customer> customers = customerRepository.findAll(spec, pageable);
+
+        return customers.map(c ->
+                new CustomerListDTO(
+                        c.getUser().getUserId(),
+                        c.getUser().getFullName(),
+                        c.getUser().getNic(),
+                        c.getCustomerType(),
+                        c.getUser().getStatus()
+                )
+        );
+    }
 
     public CustomerDetailView getCustomerDetails(Integer customerId) {
-
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
@@ -67,6 +91,8 @@ public class CustomerService {
         List<PhoneNumberDTO> phones = user.getPhoneNumbers().stream()
                 .map(p -> new PhoneNumberDTO(p.getPhoneNumber(), p.getNumberType()))
                 .toList();
+
+        boolean systemAccess = user.getPasswordHash() != null;
 
         return switch (customer.getCustomerType()) {
 
@@ -78,6 +104,7 @@ public class CustomerService {
                         user.getEmail(),
                         user.getNic(),
                         user.getStatus(),
+                        systemAccess,
                         user.getCreatedAt(),
                         user.getUpdatedAt(),
                         customer.getAreaCode().getAreaCode(),
@@ -99,6 +126,7 @@ public class CustomerService {
                         user.getEmail(),
                         user.getNic(),
                         user.getStatus(),
+                        systemAccess,
                         user.getCreatedAt(),
                         user.getUpdatedAt(),
                         customer.getAreaCode().getAreaCode(),
@@ -122,6 +150,7 @@ public class CustomerService {
                         user.getEmail(),
                         user.getNic(),
                         user.getStatus(),
+                        systemAccess,
                         user.getCreatedAt(),
                         user.getUpdatedAt(),
                         customer.getAreaCode().getAreaCode(),
@@ -140,13 +169,8 @@ public class CustomerService {
         };
     }
 
-    /* =========================================================
-       UPDATE CUSTOMER (PATCH – PARTIAL UPDATE)
-       ========================================================= */
-
     @Transactional
     public CustomerDetailView updateCustomer(Integer customerId, CustomerUpdateDTO dto) {
-
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
@@ -205,9 +229,10 @@ public class CustomerService {
                 throw new IllegalArgumentException("password field cannot be blank");
             }
             else {
-                if (dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
+                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
                     throw new IllegalArgumentException("Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character");
                 }
+
                 user.setPasswordHash(passwordEncoder.encode(dto.password()));
             }
         }
@@ -216,6 +241,7 @@ public class CustomerService {
             if (dto.areaCode().isBlank()) {
                 throw new IllegalArgumentException("areaCode field cannot be blank");
             }
+
             Area area = areaRepository.findById(dto.areaCode())
                     .orElseThrow(() -> new ResourceNotFoundException("Area code does not exist"));
 
@@ -226,6 +252,7 @@ public class CustomerService {
             if (dto.addressLine1().isBlank()) {
                 throw new IllegalArgumentException("addressLine1 field cannot be blank");
             }
+
             customer.setAddressLine1(dto.addressLine1());
         }
 
@@ -233,6 +260,7 @@ public class CustomerService {
             if (dto.addressLine2().isBlank()) {
                 throw new IllegalArgumentException("addressLine2 field cannot be blank");
             }
+
             customer.setAddressLine2(dto.addressLine2());
         }
 
@@ -240,6 +268,7 @@ public class CustomerService {
             if (dto.addressCity().isBlank()) {
                 throw new IllegalArgumentException("addressCity field cannot be blank");
             }
+
             customer.setAddressCity(dto.addressCity());
         }
 
@@ -247,20 +276,15 @@ public class CustomerService {
             if (dto.addressPostalCode().isBlank()) {
                 throw new IllegalArgumentException("addressPostalCode field cannot be blank");
             }
+
             customer.setAddressPostalCode(dto.addressPostalCode());
         }
 
-        boolean hasBusinessFields =
-                dto.businessType() != null || dto.businessRegiNum() != null || dto.taxId() != null;
+        boolean hasBusinessFields = dto.businessType() != null || dto.businessRegiNum() != null || dto.taxId() != null;
+        boolean hasHouseholdFields = dto.householdSize() != null;
+        boolean hasGovFields = dto.governmentId() != null || dto.department() != null;
 
-        boolean hasHouseholdFields =
-                dto.householdSize() != null;
-
-        boolean hasGovFields =
-                dto.governmentId() != null || dto.department() != null;
-
-        int typeCount =
-                (hasBusinessFields ? 1 : 0) +
+        int typeCount = (hasBusinessFields ? 1 : 0) +
                         (hasHouseholdFields ? 1 : 0) +
                         (hasGovFields ? 1 : 0);
 
@@ -269,7 +293,6 @@ public class CustomerService {
         }
 
         switch (type) {
-
             case "BUSINESS" -> {
                 if (hasHouseholdFields || hasGovFields) {
                     throw new IllegalArgumentException("Invalid fields for BUSINESS customer");
@@ -355,21 +378,8 @@ public class CustomerService {
 
     @Transactional
     public CustomerDetailView createCustomer(CustomerCreateDTO dto) {
-        /* ---------- BASIC VALIDATION ---------- */
-
-//        if (dto.customerId() == null ||
-//                dto.areaCode() == null ||
-//                dto.addressLine1() == null ||
-//                dto.addressLine2() == null ||
-//                dto.addressCity() == null ||
-//                dto.addressPostalCode() == null ||
-////                dto.phoneNumbers() == null || dto.phoneNumbers().isEmpty() ||
-//                dto.customerType() == null) {
-//            throw new IllegalArgumentException("Missing required fields");
-//        }
         User user = userRepository.findById(dto.customerId())
                 .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
-
 
         if (customerRepository.findByUser_UserId(dto.customerId()).isPresent()) {
             throw new ConflictException("Customer already exists");
@@ -378,20 +388,15 @@ public class CustomerService {
         if (dto.areaCode() == null || dto.areaCode().isBlank()) {
             throw new IllegalArgumentException("Invalid area field");
         }
+
         Area area = areaRepository.findById(dto.areaCode())
                 .orElseThrow(() -> new ResourceNotFoundException("Area code does not exist"));
 
-        boolean hasBusinessFields =
-                dto.businessType() != null || dto.businessRegiNum() != null || dto.taxId() != null;
+        boolean hasBusinessFields = dto.businessType() != null || dto.businessRegiNum() != null || dto.taxId() != null;
+        boolean hasHouseholdFields = dto.householdSize() != null;
+        boolean hasGovFields = dto.governmentId() != null || dto.department() != null;
 
-        boolean hasHouseholdFields =
-                dto.householdSize() != null;
-
-        boolean hasGovFields =
-                dto.governmentId() != null || dto.department() != null;
-
-        int typeCount =
-                (hasBusinessFields ? 1 : 0) +
+        int typeCount = (hasBusinessFields ? 1 : 0) +
                         (hasHouseholdFields ? 1 : 0) +
                         (hasGovFields ? 1 : 0);
 
@@ -437,24 +442,6 @@ public class CustomerService {
             default -> throw new IllegalArgumentException("Unknown customer type");
         }
 
-
-
-//        if (userRepository.existsByEmail(dto.email())) {
-//            throw new ConflictException("Email already exists");
-//        }
-//
-//        if (userRepository.existsByNic(dto.nic())) {
-//            throw new ConflictException("NIC already exists");
-//        }
-
-//        User user = new User();
-//        user.setFullName(dto.fullName());
-//        user.setEmail(dto.email());
-//        user.setNic(dto.nic());
-//        user.setStatus("ACTIVE");
-//
-//        userRepository.save(user);
-
         Customer customer = new Customer();
         customer.setUser(user);
         customer.setCustomerType(dto.customerType());
@@ -467,7 +454,6 @@ public class CustomerService {
         customerRepository.save(customer);
 
         switch (dto.customerType()) {
-
             case "HOUSEHOLD" -> {
 
                 Household h = new Household();
@@ -513,43 +499,188 @@ public class CustomerService {
         return getCustomerDetails(dto.customerId());
     }
 
-    public Page<CustomerListDTO> getCustomers(
-            String search,
-            String type,
-            String status,
-            int page,
-            int size,
-            String sortBy,
-            String direction
-    ) {
+    @Transactional
+    public CustomerDetailView createFullCustomer(CustomerCreateFullDTO dto) {
+        if (!dto.email().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
 
-        Sort sort = direction.equalsIgnoreCase("desc")
-                ? Sort.by(sortBy).descending()
-                : Sort.by(sortBy).ascending();
+        if (userRepository.existsByEmail(dto.email())) {
+            throw new ConflictException("Email already exists");
+        }
 
-        Pageable pageable = PageRequest.of(page, size, sort);
+        if (!dto.nic().matches("\\d{9}[VvXx]|\\d{12}")) {
+            throw new IllegalArgumentException("Invalid NIC format");
+        }
 
-        Specification<Customer> spec =
-                CustomerSpecification.hasSearch(search)
-                        .and(CustomerSpecification.hasType(type))
-                        .and(CustomerSpecification.hasStatus(status));
+        if (userRepository.existsByNic(dto.nic())) {
+            throw new ConflictException("NIC already exists");
+        }
 
-        Page<Customer> customers = customerRepository.findAll(spec, pageable);
+        Area area = areaRepository.findById(dto.areaCode())
+                .orElseThrow(() -> new ResourceNotFoundException("Area code does not exist"));
 
-        return customers.map(c ->
-                new CustomerListDTO(
-                        c.getUser().getUserId(),
-                        c.getUser().getFullName(),
-                        c.getUser().getNic(),
-                        c.getCustomerType(),
-                        c.getUser().getStatus()
-                )
+        boolean hasBusinessFields = dto.businessType() != null || dto.businessRegiNum() != null || dto.taxId() != null;
+        boolean hasHouseholdFields = dto.householdSize() != null;
+        boolean hasGovFields = dto.governmentId() != null || dto.department() != null;
+
+        int typeCount = (hasBusinessFields ? 1 : 0) +
+                        (hasHouseholdFields ? 1 : 0) +
+                        (hasGovFields ? 1 : 0);
+
+        if (typeCount > 1) {
+            throw new IllegalArgumentException("Malformed fields");
+        }
+
+        switch (dto.customerType()) {
+            case "HOUSEHOLD" -> {
+                if (dto.householdSize() == null || dto.householdSize() <= 0 || dto.addressCity().isBlank()) {
+                    throw new IllegalArgumentException("Invalid householdSize field");
+                }
+            }
+
+            case "BUSINESS" -> {
+                if (dto.businessType() == null || dto.businessType().isBlank()) {
+                    throw new IllegalArgumentException("Invalid businessType field");
+                }
+
+                if (dto.businessRegiNum() == null ||  dto.businessRegiNum().isBlank()) {
+                    throw new IllegalArgumentException("Invalid businessRegiNum field");
+                }
+
+                if (businessRepository.existsByBusinessRegiNum(dto.businessRegiNum())) {
+                    throw new ConflictException("Business registration number already exists");
+                }
+
+                if (dto.taxId() == null || dto.taxId().isBlank()) {
+                    throw new IllegalArgumentException("Invalid taxId field");
+                }
+            }
+
+            case "GOVERNMENT ORGANIZATION" -> {
+                if (dto.governmentId() == null || dto.governmentId().isBlank()) {
+                    throw new IllegalArgumentException("Invalid governmentId field");
+                }
+
+                if (dto.department() == null || dto.department().isBlank()) {
+                    throw new IllegalArgumentException("Invalid department field");
+                }
+            }
+
+            default -> throw new IllegalArgumentException("Unknown customer type");
+        }
+
+        User user = new User();
+
+        if (dto.password() != null) {
+            if (dto.password().isEmpty()) {
+                user.setPasswordHash(null);
+            }
+            else if (dto.password().isBlank()) {
+                throw new IllegalArgumentException("password field cannot be blank");
+            }
+            else {
+                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
+                    throw new IllegalArgumentException(
+                            "Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character"
+                    );
+                }
+
+                user.setPasswordHash(passwordEncoder.encode(dto.password()));
+            }
+        }
+
+        user.setFullName(dto.fullName());
+        user.setEmail(dto.email());
+        user.setNic(dto.nic());
+        user.setStatus("ACTIVE");
+
+        userRepository.save(user);
+
+        for (PhoneNumberDTO p : dto.phoneNumbers()) {
+            if (p.phoneNumber() == null || p.phoneNumber().isBlank()) {
+                throw new IllegalArgumentException("phoneNumber cannot be blank");
+            }
+
+            if (!p.phoneNumber().matches("^\\+[1-9]\\d{7,14}$")) {
+                throw new IllegalArgumentException("Phone number must be in E.164 format");
+            }
+
+            if (p.numberType() == null) {
+                throw new IllegalArgumentException("numberType field cannot be null");
+            }
+
+            if (!p.numberType().equals("MOBILE") && !p.numberType().equals("HOME") && !p.numberType().equals("WORK")) {
+                throw new IllegalArgumentException("numberType is invalid");
+            }
+
+            PhoneNumber phone = new PhoneNumber();
+            phone.setUser(user);
+            phone.setPhoneNumber(p.phoneNumber());
+            phone.setNumberType(p.numberType());
+
+            phoneNumberRepository.save(phone);
+        }
+
+        Customer customer = new Customer();
+        customer.setUser(user);
+        customer.setAreaCode(area);
+        customer.setCustomerType(dto.customerType());
+        customer.setAddressLine1(dto.addressLine1());
+        customer.setAddressLine2(dto.addressLine2());
+        customer.setAddressCity(dto.addressCity());
+        customer.setAddressPostalCode(dto.addressPostalCode());
+
+        customerRepository.save(customer);
+
+        switch (dto.customerType()) {
+            case "HOUSEHOLD" -> {
+
+                Household h = new Household();
+                h.setCustomer(customer);
+                h.setHouseholdSize(dto.householdSize());
+
+                householdRepository.save(h);
+                customer.setHousehold(h);
+            }
+
+            case "BUSINESS" -> {
+
+                Business b = new Business();
+                b.setCustomer(customer);
+                b.setBusinessType(dto.businessType());
+                b.setBusinessRegiNum(dto.businessRegiNum());
+                b.setTaxId(dto.taxId());
+
+                businessRepository.save(b);
+                customer.setBusiness(b);
+            }
+
+            case "GOVERNMENT ORGANIZATION" -> {
+
+                GovernmentOrganization g = new GovernmentOrganization();
+                g.setCustomer(customer);
+                g.setGovernmentId(dto.governmentId());
+                g.setDepartment(dto.department());
+
+                governmentRepository.save(g);
+                customer.setGovernmentOrganization(g);
+            }
+
+            default -> throw new IllegalArgumentException("Unknown customer type");
+        }
+
+        adminActionLogService.logAction(
+                "CUSTOMER",
+                user.getUserId().toString(),
+                "CREATE"
         );
+
+        return getCustomerDetails(user.getUserId());
     }
 
     @Transactional
     public void deleteCustomer(Integer customerId) {
-
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
@@ -561,5 +692,4 @@ public class CustomerService {
 
         customerRepository.delete(customer);
     }
-
 }

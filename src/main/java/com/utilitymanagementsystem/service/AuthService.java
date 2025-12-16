@@ -48,7 +48,6 @@ public class AuthService {
     }
 
     public LoginResponseDTO login(LoginRequestDTO request) {
-
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email is required");
         }

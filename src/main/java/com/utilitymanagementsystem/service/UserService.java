@@ -25,6 +25,7 @@ public class UserService {
     private final ManagerRepository managerRepository;
     private final FieldOfficerRepository fieldOfficerRepository;
     private final CashierRepository cashierRepository;
+    private final AdminActionLogService adminActionLogService;
 
     public UserService(
             UserRepository userRepository,
@@ -32,7 +33,8 @@ public class UserService {
             AdminRepository adminRepository,
             ManagerRepository managerRepository,
             FieldOfficerRepository fieldOfficerRepository,
-            CashierRepository cashierRepository
+            CashierRepository cashierRepository,
+            AdminActionLogService adminActionLogService
     ) {
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
@@ -40,6 +42,7 @@ public class UserService {
         this.managerRepository = managerRepository;
         this.fieldOfficerRepository = fieldOfficerRepository;
         this.cashierRepository = cashierRepository;
+        this.adminActionLogService = adminActionLogService;
     }
 
     @Transactional(readOnly = true)
@@ -52,7 +55,6 @@ public class UserService {
             String sortBy,
             String direction
     ) {
-
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -77,7 +79,6 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDetailDTO getUserDetails(Integer userId) {
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -107,16 +108,33 @@ public class UserService {
             profiles.add("CASHIER");
         }
 
+        boolean systemAccess = user.getPasswordHash() != null;
+
         return new UserDetailDTO(
                 user.getUserId(),
                 user.getFullName(),
                 user.getEmail(),
                 user.getNic(),
                 user.getStatus(),
+                systemAccess,
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
                 phones,
                 profiles
         );
+    }
+
+    @Transactional
+    public void deleteUser(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        adminActionLogService.logAction(
+                "CUSTOMER",
+                userId.toString(),
+                "DELETE"
+        );
+
+        userRepository.delete(user);
     }
 }

@@ -11,7 +11,7 @@ public record CustomerCreateDTO(
         @NotBlank String addressCity,
         @NotBlank String addressPostalCode,
 
-        String customerType,
+        @NotBlank String customerType,
 
         // Household
         Integer householdSize,

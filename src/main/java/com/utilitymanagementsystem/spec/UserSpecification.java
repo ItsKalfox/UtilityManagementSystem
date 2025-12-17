@@ -60,7 +60,7 @@ public class UserSpecification {
                     return cb.exists(sub);
                 }
 
-                case "FIELD_OFFICER" -> {
+                case "FIELD-OFFICER" -> {
                     var sub = query.subquery(Integer.class);
                     var officer = sub.from(FieldOfficer.class);
                     sub.select(cb.literal(1))

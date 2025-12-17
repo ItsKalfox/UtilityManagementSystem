@@ -43,15 +43,15 @@ public class ManagerController {
     public ManagerDetailDTO getManager(@PathVariable Integer id) {
         return managerService.getManagerDetails(id);
     }
-//
-//    @PreAuthorize("hasAuthority('UPDATE_CUSTOMER')")
-//    @PatchMapping("/{id}")
-//    public CustomerDetailView updateCustomer(
-//            @PathVariable Integer id,
-//            @Valid @RequestBody CustomerUpdateDTO request
-//    ) {
-//        return customerService.updateCustomer(id, request);
-//    }
+
+    @PreAuthorize("hasAuthority('UPDATE_MANAGER')")
+    @PatchMapping("/{id}")
+    public ManagerDetailDTO updateManage(
+            @PathVariable Integer id,
+            @Valid @RequestBody ManagerUpdateDTO request
+    ) {
+        return managerService.updateManager(id, request);
+    }
 
 //    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
 //    @PostMapping

@@ -113,12 +113,11 @@ public class ManagerService {
     }
 
     @Transactional
-    public CustomerDetailView updateCustomer(Integer customerId, CustomerUpdateDTO dto) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+    public ManagerDetailDTO updateManager(Integer managerId, ManagerUpdateDTO dto) {
+        Manager manager = managerRepository.findById(managerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
 
-        User user = customer.getUser();
-        String type = customer.getCustomerType();
+        User user = manager.getUser();
 
         if (dto.fullName() != null) {
             if (dto.fullName().isBlank()) {
@@ -180,102 +179,12 @@ public class ManagerService {
             }
         }
 
-        if (dto.areaCode() != null) {
-            if (dto.areaCode().isBlank()) {
-                throw new IllegalArgumentException("areaCode field cannot be blank");
+        if (dto.department() != null) {
+            if (dto.department().isBlank()) {
+                throw new IllegalArgumentException("department field cannot be blank");
             }
 
-            Area area = areaRepository.findById(dto.areaCode())
-                    .orElseThrow(() -> new ResourceNotFoundException("Area code does not exist"));
-
-            customer.setAreaCode(area);
-        }
-
-        if (dto.addressLine1() != null) {
-            if (dto.addressLine1().isBlank()) {
-                throw new IllegalArgumentException("addressLine1 field cannot be blank");
-            }
-
-            customer.setAddressLine1(dto.addressLine1());
-        }
-
-        if (dto.addressLine2() != null) {
-            if (dto.addressLine2().isBlank()) {
-                throw new IllegalArgumentException("addressLine2 field cannot be blank");
-            }
-
-            customer.setAddressLine2(dto.addressLine2());
-        }
-
-        if (dto.addressCity() != null) {
-            if (dto.addressCity().isBlank()) {
-                throw new IllegalArgumentException("addressCity field cannot be blank");
-            }
-
-            customer.setAddressCity(dto.addressCity());
-        }
-
-        if (dto.addressPostalCode() != null) {
-            if (dto.addressPostalCode().isBlank()) {
-                throw new IllegalArgumentException("addressPostalCode field cannot be blank");
-            }
-
-            customer.setAddressPostalCode(dto.addressPostalCode());
-        }
-
-        boolean hasBusinessFields = dto.businessType() != null || dto.businessRegiNum() != null || dto.taxId() != null;
-        boolean hasHouseholdFields = dto.householdSize() != null;
-        boolean hasGovFields = dto.governmentId() != null || dto.department() != null;
-
-        int typeCount = (hasBusinessFields ? 1 : 0) +
-                        (hasHouseholdFields ? 1 : 0) +
-                        (hasGovFields ? 1 : 0);
-
-        if (typeCount > 1) {
-            throw new IllegalArgumentException("Cannot update multiple customer types at once");
-        }
-
-        switch (type) {
-            case "BUSINESS" -> {
-                if (hasHouseholdFields || hasGovFields) {
-                    throw new IllegalArgumentException("Invalid fields for BUSINESS customer");
-                }
-
-                Business business = customer.getBusiness();
-
-                if (dto.businessRegiNum() != null &&
-                        businessRepository.existsByBusinessRegiNumAndCustomerIdNot(
-                                dto.businessRegiNum(), customerId)) {
-
-                    throw new ConflictException("Business registration number already exists");
-                }
-
-                if (dto.businessType() != null) business.setBusinessType(dto.businessType());
-                if (dto.businessRegiNum() != null) business.setBusinessRegiNum(dto.businessRegiNum());
-                if (dto.taxId() != null) business.setTaxId(dto.taxId());
-            }
-
-            case "HOUSEHOLD" -> {
-                if (hasBusinessFields || hasGovFields) {
-                    throw new IllegalArgumentException("Invalid fields for HOUSEHOLD customer");
-                }
-
-                if (dto.householdSize() != null) {
-                    customer.getHousehold().setHouseholdSize(dto.householdSize());
-                }
-            }
-
-            case "GOVERNMENT ORGANIZATION" -> {
-                if (hasBusinessFields || hasHouseholdFields) {
-                    throw new IllegalArgumentException("Invalid fields for GOVERNMENT customer");
-                }
-
-                GovernmentOrganization gov = customer.getGovernmentOrganization();
-                if (dto.governmentId() != null) gov.setGovernmentId(dto.governmentId());
-                if (dto.department() != null) gov.setDepartment(dto.department());
-            }
-
-            default -> throw new IllegalStateException("Unknown customer type");
+            manager.setDepartment(dto.department());
         }
 
         if (dto.phoneNumbers() != null) {
@@ -311,12 +220,12 @@ public class ManagerService {
         }
 
         adminActionLogService.logAction(
-                "CUSTOMER",
-                customerId.toString(),
+                "MANAGER",
+                managerId.toString(),
                 "UPDATE"
         );
 
-        return getManagerDetails(customerId);
+        return getManagerDetails(managerId);
     }
 
     @Transactional

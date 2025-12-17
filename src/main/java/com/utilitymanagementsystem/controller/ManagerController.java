@@ -59,19 +59,18 @@ public class ManagerController {
     public ManagerDetailDTO createManager(@Valid @RequestBody ManagerCreateDTO dto) {
         return managerService.createManager(dto);
     }
-//
-//    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
-//    @PostMapping("/full")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public CustomerDetailView createFullCustomer(@Valid @RequestBody CustomerCreateFullDTO dto) {
-//        return customerService.createFullCustomer(dto);
-//    }
-//
-//    // 🔹 DELETE customer (cascades to Household / Business / GovernmentOrganization)
-//    @PreAuthorize("hasAuthority('DELETE_CUSTOMER')")
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteCustomer(@PathVariable Integer id) {
-//        customerService.deleteCustomer(id);
-//        return ResponseEntity.noContent().build(); // 204 No Content
-//    }
+
+    @PreAuthorize("hasAuthority('CREATE_MANAGER')")
+    @PostMapping("/full")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ManagerDetailDTO createFullManager(@Valid @RequestBody ManagerCreateFullDTO dto) {
+        return managerService.createFullManager(dto);
+    }
+
+    @PreAuthorize("hasAuthority('DELETE_MANAGER')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteManager(@PathVariable Integer id) {
+        managerService.deleteManager(id);
+        return ResponseEntity.noContent().build();
+    }
 }

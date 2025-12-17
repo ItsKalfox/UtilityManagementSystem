@@ -253,7 +253,7 @@ public class ManagerService {
     }
 
     @Transactional
-    public CustomerDetailView createFullCustomer(CustomerCreateFullDTO dto) {
+    public ManagerDetailDTO createFullManager(ManagerCreateFullDTO dto) {
         if (!dto.email().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             throw new IllegalArgumentException("Invalid email format");
         }
@@ -268,59 +268,6 @@ public class ManagerService {
 
         if (userRepository.existsByNic(dto.nic())) {
             throw new ConflictException("NIC already exists");
-        }
-
-        Area area = areaRepository.findById(dto.areaCode())
-                .orElseThrow(() -> new ResourceNotFoundException("Area code does not exist"));
-
-        boolean hasBusinessFields = dto.businessType() != null || dto.businessRegiNum() != null || dto.taxId() != null;
-        boolean hasHouseholdFields = dto.householdSize() != null;
-        boolean hasGovFields = dto.governmentId() != null || dto.department() != null;
-
-        int typeCount = (hasBusinessFields ? 1 : 0) +
-                        (hasHouseholdFields ? 1 : 0) +
-                        (hasGovFields ? 1 : 0);
-
-        if (typeCount > 1) {
-            throw new IllegalArgumentException("Malformed fields");
-        }
-
-        switch (dto.customerType()) {
-            case "HOUSEHOLD" -> {
-                if (dto.householdSize() == null || dto.householdSize() <= 0 || dto.addressCity().isBlank()) {
-                    throw new IllegalArgumentException("Invalid householdSize field");
-                }
-            }
-
-            case "BUSINESS" -> {
-                if (dto.businessType() == null || dto.businessType().isBlank()) {
-                    throw new IllegalArgumentException("Invalid businessType field");
-                }
-
-                if (dto.businessRegiNum() == null ||  dto.businessRegiNum().isBlank()) {
-                    throw new IllegalArgumentException("Invalid businessRegiNum field");
-                }
-
-                if (businessRepository.existsByBusinessRegiNum(dto.businessRegiNum())) {
-                    throw new ConflictException("Business registration number already exists");
-                }
-
-                if (dto.taxId() == null || dto.taxId().isBlank()) {
-                    throw new IllegalArgumentException("Invalid taxId field");
-                }
-            }
-
-            case "GOVERNMENT ORGANIZATION" -> {
-                if (dto.governmentId() == null || dto.governmentId().isBlank()) {
-                    throw new IllegalArgumentException("Invalid governmentId field");
-                }
-
-                if (dto.department() == null || dto.department().isBlank()) {
-                    throw new IllegalArgumentException("Invalid department field");
-                }
-            }
-
-            default -> throw new IllegalArgumentException("Unknown customer type");
         }
 
         User user = new User();
@@ -375,56 +322,14 @@ public class ManagerService {
             user.getPhoneNumbers().add(phone);
         }
 
-        Customer customer = new Customer();
-        customer.setUser(user);
-        customer.setAreaCode(area);
-        customer.setCustomerType(dto.customerType());
-        customer.setAddressLine1(dto.addressLine1());
-        customer.setAddressLine2(dto.addressLine2());
-        customer.setAddressCity(dto.addressCity());
-        customer.setAddressPostalCode(dto.addressPostalCode());
+        Manager manager = new Manager();
+        manager.setUser(user);
+        manager.setDepartment(dto.department());
 
-        customerRepository.save(customer);
-
-        switch (dto.customerType()) {
-            case "HOUSEHOLD" -> {
-
-                Household h = new Household();
-                h.setCustomer(customer);
-                h.setHouseholdSize(dto.householdSize());
-
-                householdRepository.save(h);
-                customer.setHousehold(h);
-            }
-
-            case "BUSINESS" -> {
-
-                Business b = new Business();
-                b.setCustomer(customer);
-                b.setBusinessType(dto.businessType());
-                b.setBusinessRegiNum(dto.businessRegiNum());
-                b.setTaxId(dto.taxId());
-
-                businessRepository.save(b);
-                customer.setBusiness(b);
-            }
-
-            case "GOVERNMENT ORGANIZATION" -> {
-
-                GovernmentOrganization g = new GovernmentOrganization();
-                g.setCustomer(customer);
-                g.setGovernmentId(dto.governmentId());
-                g.setDepartment(dto.department());
-
-                governmentRepository.save(g);
-                customer.setGovernmentOrganization(g);
-            }
-
-            default -> throw new IllegalArgumentException("Unknown customer type");
-        }
+        managerRepository.save(manager);
 
         adminActionLogService.logAction(
-                "CUSTOMER",
+                "MANAGER",
                 user.getUserId().toString(),
                 "CREATE"
         );
@@ -433,16 +338,16 @@ public class ManagerService {
     }
 
     @Transactional
-    public void deleteCustomer(Integer customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+    public void deleteManager(Integer managerId) {
+        Manager manager = managerRepository.findById(managerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
 
         adminActionLogService.logAction(
-                "CUSTOMER",
-                customerId.toString(),
+                "MANAGER",
+                managerId.toString(),
                 "DELETE"
         );
 
-        customerRepository.delete(customer);
+        managerRepository.delete(manager);
     }
 }

@@ -25,7 +25,6 @@ public class CustomerService {
     private final AreaRepository areaRepository;
     private final PasswordEncoder passwordEncoder;
     private final AdminActionLogService adminActionLogService;
-    private final PhoneNumberRepository phoneNumberRepository;
 
     public CustomerService(
             CustomerRepository customerRepository,
@@ -35,8 +34,7 @@ public class CustomerService {
             GovernmentOrganizationRepository governmentRepository,
             AreaRepository areaRepository,
             PasswordEncoder passwordEncoder,
-            AdminActionLogService adminActionLogService,
-            PhoneNumberRepository phoneNumberRepository
+            AdminActionLogService adminActionLogService
     ) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
@@ -46,7 +44,6 @@ public class CustomerService {
         this.areaRepository = areaRepository;
         this.passwordEncoder = passwordEncoder;
         this.adminActionLogService = adminActionLogService;
-        this.phoneNumberRepository = phoneNumberRepository;
     }
 
     @Transactional(readOnly = true)
@@ -621,7 +618,7 @@ public class CustomerService {
             phone.setPhoneNumber(p.phoneNumber());
             phone.setNumberType(p.numberType());
 
-            phoneNumberRepository.save(phone);
+            user.getPhoneNumbers().add(phone);
         }
 
         Customer customer = new Customer();

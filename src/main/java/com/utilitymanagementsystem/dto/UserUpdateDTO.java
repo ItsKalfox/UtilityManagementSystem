@@ -8,6 +8,5 @@ public record UserUpdateDTO(
         String nic,
         String status,
         String password,
-
         List<PhoneNumberDTO> phoneNumbers
 ) {}

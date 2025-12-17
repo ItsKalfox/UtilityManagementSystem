@@ -4,6 +4,7 @@ import com.utilitymanagementsystem.dto.*;
 import com.utilitymanagementsystem.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +49,13 @@ public class UserController {
             @Valid @RequestBody UserUpdateDTO request
     ) {
         return userService.updateUser(id, request);
+    }
+
+    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDetailDTO createUser(@Valid @RequestBody UserCreateDTO dto) {
+        return userService.createUser(dto);
     }
 
     @PreAuthorize("hasAuthority('DELETE_CUSTOMER')")

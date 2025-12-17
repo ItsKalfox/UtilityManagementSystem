@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.reactive.TransactionalOperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +39,7 @@ public class UserService {
             FieldOfficerRepository fieldOfficerRepository,
             CashierRepository cashierRepository,
             AdminActionLogService adminActionLogService,
-            PasswordEncoder passwordEncoder
-    ) {
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
         this.adminRepository = adminRepository;
@@ -233,6 +233,79 @@ public class UserService {
         );
 
         return getUserDetails(userId);
+    }
+
+    @Transactional
+    public UserDetailDTO createUser(UserCreateDTO dto) {
+        if (!dto.email().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+
+        if (userRepository.existsByEmail(dto.email())) {
+            throw new ConflictException("Email already exists");
+        }
+
+        if (!dto.nic().matches("\\d{9}[VvXx]|\\d{12}")) {
+            throw new IllegalArgumentException("Invalid NIC format");
+        }
+
+        if (userRepository.existsByNic(dto.nic())) {
+            throw new ConflictException("NIC already exists");
+        }
+
+        User user = new User();
+
+        if (dto.password() != null) {
+            if (dto.password().isEmpty()) {
+                user.setPasswordHash(null);
+            }
+            else if (dto.password().isBlank()) {
+                throw new IllegalArgumentException("password field cannot be blank");
+            }
+            else {
+                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
+                    throw new IllegalArgumentException(
+                            "Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character"
+                    );
+                }
+
+                user.setPasswordHash(passwordEncoder.encode(dto.password()));
+            }
+        }
+
+        user.setFullName(dto.fullName());
+        user.setEmail(dto.email());
+        user.setNic(dto.nic());
+        user.setStatus("ACTIVE");
+
+        userRepository.save(user);
+
+        for (PhoneNumberDTO p : dto.phoneNumbers()) {
+            if (p.phoneNumber() == null || p.phoneNumber().isBlank()) {
+                throw new IllegalArgumentException("phoneNumber cannot be blank");
+            }
+
+            if (!p.phoneNumber().matches("^\\+[1-9]\\d{7,14}$")) {
+                throw new IllegalArgumentException("Phone number must be in E.164 format");
+            }
+
+            if (p.numberType() == null) {
+                throw new IllegalArgumentException("numberType field cannot be null");
+            }
+
+            if (!p.numberType().equals("MOBILE") && !p.numberType().equals("HOME") && !p.numberType().equals("WORK")) {
+                throw new IllegalArgumentException("numberType is invalid");
+            }
+
+            PhoneNumber phone = new PhoneNumber();
+            phone.setUser(user);
+            phone.setPhoneNumber(p.phoneNumber());
+            phone.setNumberType(p.numberType());
+
+            user.getPhoneNumbers().add(phone);
+        }
+
+        return getUserDetails(user.getUserId());
     }
 
     @Transactional

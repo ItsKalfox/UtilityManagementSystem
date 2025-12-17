@@ -1,6 +1,6 @@
 package com.utilitymanagementsystem.service;
 
-import com.utilitymanagementsystem.dto.*;
+import com.utilitymanagementsystem.dto.user.*;
 import com.utilitymanagementsystem.exception.ConflictException;
 import com.utilitymanagementsystem.exception.ResourceNotFoundException;
 import com.utilitymanagementsystem.model.*;
@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.reactive.TransactionalOperator;
 
 import java.util.ArrayList;
 import java.util.List;

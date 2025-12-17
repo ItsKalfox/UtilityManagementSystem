@@ -1,4 +1,6 @@
-package com.utilitymanagementsystem.dto;
+package com.utilitymanagementsystem.dto.manager;
+
+import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 
 import java.util.List;
 

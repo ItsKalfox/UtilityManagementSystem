@@ -1,8 +1,8 @@
 package com.utilitymanagementsystem.service;
 
-import com.utilitymanagementsystem.dto.LoginRequestDTO;
-import com.utilitymanagementsystem.dto.LoginResponseDTO;
-import com.utilitymanagementsystem.dto.PasswordSetupRequestDTO;
+import com.utilitymanagementsystem.dto.auth.LoginRequestDTO;
+import com.utilitymanagementsystem.dto.auth.LoginResponseDTO;
+import com.utilitymanagementsystem.dto.auth.PasswordSetupRequestDTO;
 import com.utilitymanagementsystem.model.Admin;
 import com.utilitymanagementsystem.model.User;
 import com.utilitymanagementsystem.repository.*;

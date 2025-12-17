@@ -1,6 +1,7 @@
 package com.utilitymanagementsystem.service;
 
-import com.utilitymanagementsystem.dto.*;
+import com.utilitymanagementsystem.dto.customer.*;
+import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 import com.utilitymanagementsystem.exception.ConflictException;
 import com.utilitymanagementsystem.exception.ResourceNotFoundException;
 import com.utilitymanagementsystem.model.*;

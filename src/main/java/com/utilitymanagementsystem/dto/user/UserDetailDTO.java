@@ -1,4 +1,4 @@
-package com.utilitymanagementsystem.dto;
+package com.utilitymanagementsystem.dto.user;
 
 import java.time.Instant;
 import java.util.List;

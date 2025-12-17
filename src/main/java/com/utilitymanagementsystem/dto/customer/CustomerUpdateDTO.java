@@ -1,6 +1,6 @@
-package com.utilitymanagementsystem.dto;
+package com.utilitymanagementsystem.dto.customer;
 
-import jakarta.validation.constraints.NotBlank;
+import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 
 import java.util.List;
 

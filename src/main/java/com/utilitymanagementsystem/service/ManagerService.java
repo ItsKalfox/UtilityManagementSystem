@@ -1,11 +1,11 @@
 package com.utilitymanagementsystem.service;
 
-import com.utilitymanagementsystem.dto.*;
+import com.utilitymanagementsystem.dto.manager.*;
+import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 import com.utilitymanagementsystem.exception.ConflictException;
 import com.utilitymanagementsystem.exception.ResourceNotFoundException;
 import com.utilitymanagementsystem.model.*;
 import com.utilitymanagementsystem.repository.*;
-import com.utilitymanagementsystem.spec.CustomerSpecification;
 import com.utilitymanagementsystem.spec.ManagerSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,33 +21,18 @@ import java.util.List;
 @Service
 public class ManagerService {
 
-    private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
-    private final BusinessRepository businessRepository;
-    private final HouseholdRepository householdRepository;
-    private final GovernmentOrganizationRepository governmentRepository;
-    private final AreaRepository areaRepository;
     private final PasswordEncoder passwordEncoder;
     private final AdminActionLogService adminActionLogService;
     private final ManagerRepository managerRepository;
 
     public ManagerService(
-            CustomerRepository customerRepository,
             UserRepository userRepository,
-            BusinessRepository businessRepository,
-            HouseholdRepository householdRepository,
-            GovernmentOrganizationRepository governmentRepository,
-            AreaRepository areaRepository,
             PasswordEncoder passwordEncoder,
             AdminActionLogService adminActionLogService,
             ManagerRepository managerRepository
     ) {
-        this.customerRepository = customerRepository;
         this.userRepository = userRepository;
-        this.businessRepository = businessRepository;
-        this.householdRepository = householdRepository;
-        this.governmentRepository = governmentRepository;
-        this.areaRepository = areaRepository;
         this.passwordEncoder = passwordEncoder;
         this.adminActionLogService = adminActionLogService;
         this.managerRepository = managerRepository;

@@ -1,10 +1,8 @@
 package com.utilitymanagementsystem.service;
 
-import com.utilitymanagementsystem.dto.ActionLogListDTO;
-import com.utilitymanagementsystem.dto.UserListDTO;
+import com.utilitymanagementsystem.dto.auth.ActionLogListDTO;
 import com.utilitymanagementsystem.model.Admin;
 import com.utilitymanagementsystem.model.AdminActionLog;
-import com.utilitymanagementsystem.model.User;
 import com.utilitymanagementsystem.repository.AdminActionLogRepository;
 import com.utilitymanagementsystem.security.SecurityUtil;
 import com.utilitymanagementsystem.spec.ActionLogSpecification;
@@ -16,9 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class AdminActionLogService {

@@ -1,7 +1,6 @@
 package com.utilitymanagementsystem.controller;
 
-import com.utilitymanagementsystem.dto.*;
-import com.utilitymanagementsystem.service.CustomerService;
+import com.utilitymanagementsystem.dto.manager.*;
 import com.utilitymanagementsystem.service.ManagerService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

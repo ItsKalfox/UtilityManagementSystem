@@ -1,8 +1,8 @@
 package com.utilitymanagementsystem.controller;
 
-import com.utilitymanagementsystem.dto.LoginRequestDTO;
-import com.utilitymanagementsystem.dto.LoginResponseDTO;
-import com.utilitymanagementsystem.dto.PasswordSetupRequestDTO;
+import com.utilitymanagementsystem.dto.auth.LoginRequestDTO;
+import com.utilitymanagementsystem.dto.auth.LoginResponseDTO;
+import com.utilitymanagementsystem.dto.auth.PasswordSetupRequestDTO;
 import com.utilitymanagementsystem.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

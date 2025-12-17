@@ -1,9 +1,11 @@
-package com.utilitymanagementsystem.dto;
+package com.utilitymanagementsystem.dto.customer;
+
+import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 
 import java.time.Instant;
 import java.util.List;
 
-public record HouseholdCustomerDetailDTO(
+public record BusinessCustomerDetailDTO(
         Integer userId,
         String fullName,
         String email,
@@ -18,7 +20,9 @@ public record HouseholdCustomerDetailDTO(
         String addressCity,
         String addressPostalCode,
         String customerType,
-        Integer householdSize,
+        String businessType,
+        String businessRegiNum,
+        String taxId,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}
 

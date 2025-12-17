@@ -1,4 +1,7 @@
-package com.utilitymanagementsystem.dto;
+package com.utilitymanagementsystem.dto.manager;
+
+import com.utilitymanagementsystem.dto.customer.CustomerDetailView;
+import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 
 import java.time.Instant;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.utilitymanagementsystem.dto;
+package com.utilitymanagementsystem.dto.user;
 
 public record PhoneNumberDTO(
         String phoneNumber,

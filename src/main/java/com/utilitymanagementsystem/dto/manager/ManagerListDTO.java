@@ -1,15 +1,17 @@
-package com.utilitymanagementsystem.dto;
+package com.utilitymanagementsystem.dto.manager;
 
-public class UserListDTO {
+public class ManagerListDTO {
     private Integer userId;
     private String fullName;
     private String nic;
+    private String department;
     private String status;
 
-    public UserListDTO(Integer userId, String fullName, String nic, String status) {
+    public ManagerListDTO(Integer userId, String fullName, String nic, String department, String status) {
         this.userId = userId;
         this.fullName = fullName;
         this.nic = nic;
+        this.department = department;
         this.status = status;
     }
 
@@ -23,6 +25,10 @@ public class UserListDTO {
 
     public String getNic() {
         return nic;
+    }
+
+    public String getDepartment() {
+        return department;
     }
 
     public String getStatus() {

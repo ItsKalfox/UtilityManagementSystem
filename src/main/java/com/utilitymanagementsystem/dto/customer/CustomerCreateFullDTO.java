@@ -1,10 +1,10 @@
-package com.utilitymanagementsystem.dto;
+package com.utilitymanagementsystem.dto.customer;
 
+import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.time.Instant;
 import java.util.List;
 
 public record CustomerCreateFullDTO(

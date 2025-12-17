@@ -1,4 +1,4 @@
-package com.utilitymanagementsystem.dto;
+package com.utilitymanagementsystem.dto.customer;
 
 import jakarta.validation.constraints.NotBlank;
 

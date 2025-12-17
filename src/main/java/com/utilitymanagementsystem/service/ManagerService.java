@@ -86,11 +86,11 @@ public class ManagerService {
     }
 
     @Transactional(readOnly = true)
-    public CustomerDetailView getCustomerDetails(Integer customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+    public ManagerDetailDTO getManagerDetails(Integer managerId) {
+        Manager manager = managerRepository.findById(managerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
 
-        User user = customer.getUser();
+        User user = manager.getUser();
 
         List<PhoneNumberDTO> phones = user.getPhoneNumbers().stream()
                 .map(p -> new PhoneNumberDTO(p.getPhoneNumber(), p.getNumberType()))
@@ -98,79 +98,18 @@ public class ManagerService {
 
         boolean systemAccess = user.getPasswordHash() != null;
 
-        return switch (customer.getCustomerType()) {
-
-            case "HOUSEHOLD" -> {
-                Household h = customer.getHousehold();
-                yield new HouseholdCustomerDetailDTO(
-                        user.getUserId(),
-                        user.getFullName(),
-                        user.getEmail(),
-                        user.getNic(),
-                        user.getStatus(),
-                        systemAccess,
-                        user.getCreatedAt(),
-                        user.getUpdatedAt(),
-                        customer.getAreaCode().getAreaCode(),
-                        customer.getAddressLine1(),
-                        customer.getAddressLine2(),
-                        customer.getAddressCity(),
-                        customer.getAddressPostalCode(),
-                        customer.getCustomerType(),
-                        h.getHouseholdSize(),
-                        phones
-                );
-            }
-
-            case "BUSINESS" -> {
-                Business b = customer.getBusiness();
-                yield new BusinessCustomerDetailDTO(
-                        user.getUserId(),
-                        user.getFullName(),
-                        user.getEmail(),
-                        user.getNic(),
-                        user.getStatus(),
-                        systemAccess,
-                        user.getCreatedAt(),
-                        user.getUpdatedAt(),
-                        customer.getAreaCode().getAreaCode(),
-                        customer.getAddressLine1(),
-                        customer.getAddressLine2(),
-                        customer.getAddressCity(),
-                        customer.getAddressPostalCode(),
-                        customer.getCustomerType(),
-                        b.getBusinessType(),
-                        b.getBusinessRegiNum(),
-                        b.getTaxId(),
-                        phones
-                );
-            }
-
-            case "GOVERNMENT ORGANIZATION" -> {
-                GovernmentOrganization g = customer.getGovernmentOrganization();
-                yield new GovernmentCustomerDetailDTO(
-                        user.getUserId(),
-                        user.getFullName(),
-                        user.getEmail(),
-                        user.getNic(),
-                        user.getStatus(),
-                        systemAccess,
-                        user.getCreatedAt(),
-                        user.getUpdatedAt(),
-                        customer.getAreaCode().getAreaCode(),
-                        customer.getAddressLine1(),
-                        customer.getAddressLine2(),
-                        customer.getAddressCity(),
-                        customer.getAddressPostalCode(),
-                        customer.getCustomerType(),
-                        g.getGovernmentId(),
-                        g.getDepartment(),
-                        phones
-                );
-            }
-
-            default -> throw new IllegalStateException("Unknown customer type");
-        };
+        return new ManagerDetailDTO(
+                user.getUserId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getNic(),
+                user.getStatus(),
+                systemAccess,
+                user.getCreatedAt(),
+                user.getUpdatedAt(),
+                manager.getDepartment(),
+                phones
+        );
     }
 
     @Transactional
@@ -377,7 +316,7 @@ public class ManagerService {
                 "UPDATE"
         );
 
-        return getCustomerDetails(customerId);
+        return getManagerDetails(customerId);
     }
 
     @Transactional
@@ -500,7 +439,7 @@ public class ManagerService {
                 "CREATE"
         );
 
-        return getCustomerDetails(dto.customerId());
+        return getManagerDetails(dto.customerId());
     }
 
     @Transactional
@@ -680,7 +619,7 @@ public class ManagerService {
                 "CREATE"
         );
 
-        return getCustomerDetails(user.getUserId());
+        return getManagerDetails(user.getUserId());
     }
 
     @Transactional

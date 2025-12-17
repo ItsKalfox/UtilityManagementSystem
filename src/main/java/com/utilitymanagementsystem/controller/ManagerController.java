@@ -38,11 +38,11 @@ public class ManagerController {
         );
     }
 
-//    @PreAuthorize("hasAuthority('READ_CUSTOMER')")
-//    @GetMapping("/{id}")
-//    public CustomerDetailView getCustomer(@PathVariable Integer id) {
-//        return customerService.getCustomerDetails(id);
-//    }
+    @PreAuthorize("hasAuthority('READ_MANAGER')")
+    @GetMapping("/{id}")
+    public ManagerDetailDTO getManager(@PathVariable Integer id) {
+        return managerService.getManagerDetails(id);
+    }
 //
 //    @PreAuthorize("hasAuthority('UPDATE_CUSTOMER')")
 //    @PatchMapping("/{id}")
@@ -52,7 +52,7 @@ public class ManagerController {
 //    ) {
 //        return customerService.updateCustomer(id, request);
 //    }
-//
+
 //    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
 //    @PostMapping
 //    @ResponseStatus(HttpStatus.CREATED)

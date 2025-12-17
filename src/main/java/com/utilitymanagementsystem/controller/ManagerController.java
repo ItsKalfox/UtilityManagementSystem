@@ -53,12 +53,12 @@ public class ManagerController {
         return managerService.updateManager(id, request);
     }
 
-//    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public CustomerDetailView createCustomer(@Valid @RequestBody CustomerCreateDTO dto) {
-//        return customerService.createCustomer(dto);
-//    }
+    @PreAuthorize("hasAuthority('CREATE_MANAGER')")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ManagerDetailDTO createManager(@Valid @RequestBody ManagerCreateDTO dto) {
+        return managerService.createManager(dto);
+    }
 //
 //    @PreAuthorize("hasAuthority('CREATE_CUSTOMER')")
 //    @PostMapping("/full")

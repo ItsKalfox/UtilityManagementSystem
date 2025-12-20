@@ -6,7 +6,7 @@ public record UserUpdateDTO(
         String fullName,
         String email,
         String nic,
-        String status,
-        String password,
+//        String status,
+//        String password,
         List<PhoneNumberDTO> phoneNumbers
 ) {}

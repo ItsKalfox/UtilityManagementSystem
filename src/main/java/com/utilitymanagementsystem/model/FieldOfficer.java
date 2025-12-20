@@ -24,6 +24,12 @@ public class FieldOfficer {
     @Column(name = "vehicle_no", length = 20)
     private String vehicleNo;
 
+    @Column(name = "password_hash")
+    private String passwordHash;
+
+    @Column(name = "status", nullable = false, length = 10)
+    private String status;
+
     @OneToMany(mappedBy = "fieldOfficer")
     private Set<Complaint> complaints = new LinkedHashSet<>();
 
@@ -61,6 +67,14 @@ public class FieldOfficer {
     public void setVehicleNo(String vehicleNo) {
         this.vehicleNo = vehicleNo;
     }
+
+    public String getPasswordHash() { return passwordHash; }
+
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    public String getStatus() { return status; }
+
+    public void setStatus(String status) { this.status = status; }
 
     public Set<Complaint> getComplaints() {
         return complaints;

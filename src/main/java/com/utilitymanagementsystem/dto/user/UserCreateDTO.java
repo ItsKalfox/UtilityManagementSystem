@@ -10,7 +10,7 @@ public record UserCreateDTO(
         @NotBlank String fullName,
         @NotBlank String email,
         @NotBlank String nic,
-        @NotNull String password,
+//        @NotNull String password,
         @NotNull
         @Size(min = 1)
         List<PhoneNumberDTO> phoneNumbers

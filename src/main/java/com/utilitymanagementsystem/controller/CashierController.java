@@ -73,4 +73,25 @@ public class CashierController {
         cashierService.deleteCashier(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasAuthority('UPDATE_CASHIER')")
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<Void> resetCashierPassword(@PathVariable Integer id) {
+        cashierService.resetCashierPassword(id);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_CASHIER')")
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<Void> activateCashier(@PathVariable Integer id) {
+        cashierService.activateCashier(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_CASHIER')")
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivateCashier(@PathVariable Integer id) {
+        cashierService.deactivateCashier(id);
+        return ResponseEntity.noContent().build();
+    }
 }

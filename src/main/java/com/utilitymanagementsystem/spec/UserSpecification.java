@@ -23,12 +23,12 @@ public class UserSpecification {
         };
     }
 
-    public static Specification<User> hasStatus(String status) {
-        return (root, query, cb) -> {
-            if (status == null || status.isBlank()) return null;
-            return cb.equal(root.get("status"), status);
-        };
-    }
+//    public static Specification<User> hasStatus(String status) {
+//        return (root, query, cb) -> {
+//            if (status == null || status.isBlank()) return null;
+//            return cb.equal(root.get("status"), status);
+//        };
+//    }
 
     public static Specification<User> hasProfile(String profile) {
         return (root, query, cb) -> {

@@ -8,8 +8,8 @@ public record CustomerUpdateDTO(
         String fullName,
         String email,
         String nic,
-        String status,
-        String password,
+//        String status,
+//        String password,
 
         String areaCode,
         String addressLine1,

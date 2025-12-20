@@ -72,4 +72,25 @@ public class ManagerController {
         managerService.deleteManager(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasAuthority('UPDATE_MANAGER')")
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<Void> resetManagerPassword(@PathVariable Integer id) {
+        managerService.resetManagerPassword(id);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_MANAGER')")
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<Void> activateManager(@PathVariable Integer id) {
+        managerService.activateManager(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_MANAGER')")
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivateManager(@PathVariable Integer id) {
+        managerService.deactivateManager(id);
+        return ResponseEntity.noContent().build();
+    }
 }

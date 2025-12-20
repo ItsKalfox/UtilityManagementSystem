@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -75,6 +76,15 @@ public class GlobalExceptionHandler {
                 HttpStatus.CONFLICT
         );
     }
+
+    @ExceptionHandler(EmailSendException.class)
+    public ResponseEntity<ApiError> handleEmailError(EmailSendException ex) {
+        return new ResponseEntity<>(
+                new ApiError(500, ex.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(
             MethodArgumentNotValidException ex
@@ -89,4 +99,12 @@ public class GlobalExceptionHandler {
         );
     }
 
+//    @ExceptionHandler(EmailSendException.class)
+//    public ResponseEntity<?> handleEmailError(EmailSendException ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(Map.of(
+//                        "error", "EMAIL_SEND_FAILED",
+//                        "message", ex.getMessage()
+//                ));
+//    }
 }

@@ -11,7 +11,6 @@ public record CustomerCreateFullDTO(
         @NotBlank String fullName,
         @NotBlank String email,
         @NotBlank String nic,
-        @NotNull String password,
         @NotBlank String areaCode,
 
         @NotBlank String addressLine1,

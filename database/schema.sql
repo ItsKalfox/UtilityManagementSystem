@@ -7,10 +7,6 @@ CREATE TABLE users (
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(120) UNIQUE NOT NULL,
     nic VARCHAR(20) UNIQUE NOT NULL,
-    password_hash VARCHAR(255),
-    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE')),
-    created_at DATETIME DEFAULT GETDATE(),
-    updated_at DATETIME DEFAULT GETDATE()
 );
 
 CREATE TABLE phone_number (
@@ -34,6 +30,10 @@ CREATE TABLE customer (
     address_line2 VARCHAR(120),
     address_city VARCHAR(60) NOT NULL,
     address_postal_code VARCHAR(20),
+    password_hash VARCHAR(255),
+    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE')),
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
 
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (area_code) REFERENCES area(area_code)
@@ -66,6 +66,10 @@ CREATE TABLE government_organization (
 CREATE TABLE manager (
     user_id INT PRIMARY KEY,
     department VARCHAR(100),
+    password_hash VARCHAR(255),
+    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE')),
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
 
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
@@ -73,6 +77,10 @@ CREATE TABLE manager (
 CREATE TABLE cashier (
     user_id INT PRIMARY KEY,
     branch_name VARCHAR(120),
+    password_hash VARCHAR(255),
+    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE')),
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
 
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
@@ -81,6 +89,10 @@ CREATE TABLE field_officer (
     user_id INT PRIMARY KEY,
     area_code VARCHAR(10),
     vehicle_no VARCHAR(20),
+    password_hash VARCHAR(255),
+    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE')),
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
 
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (area_code) REFERENCES area(area_code)
@@ -107,6 +119,10 @@ CREATE TABLE role_permission (
 CREATE TABLE admin (
     user_id INT PRIMARY KEY,
     role_id INT NOT NULL,
+    password_hash VARCHAR(255),
+    status VARCHAR(10) NOT NULL CHECK (status IN ('ACTIVE', 'INACTIVE')),
+    created_at DATETIME DEFAULT GETDATE(),
+    updated_at DATETIME DEFAULT GETDATE(),
 
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (role_id) REFERENCES role(role_id)
@@ -117,7 +133,7 @@ CREATE TABLE admin_action_log (
     admin_id INT NOT NULL,
     entity_type VARCHAR(100) NOT NULL,
     entity_id VARCHAR(50) NOT NULL,
-    action VARCHAR(20) NOT NULL CHECK (action IN ('CREATE','DELETE','UPDATE','ADD')),
+    action VARCHAR(20) NOT NULL,
     time_stamp DATETIME DEFAULT GETDATE(),
 
     FOREIGN KEY (admin_id) REFERENCES admin(user_id)

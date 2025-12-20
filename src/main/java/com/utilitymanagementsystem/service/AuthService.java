@@ -1,10 +1,8 @@
 package com.utilitymanagementsystem.service;
 
-import com.utilitymanagementsystem.dto.auth.LoginRequestDTO;
-import com.utilitymanagementsystem.dto.auth.LoginResponseDTO;
-import com.utilitymanagementsystem.dto.auth.PasswordSetupRequestDTO;
-import com.utilitymanagementsystem.model.Admin;
-import com.utilitymanagementsystem.model.User;
+import com.utilitymanagementsystem.dto.auth.*;
+import com.utilitymanagementsystem.exception.ResourceNotFoundException;
+import com.utilitymanagementsystem.model.*;
 import com.utilitymanagementsystem.repository.*;
 import com.utilitymanagementsystem.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +19,7 @@ import java.util.Objects;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
     private final AdminRepository adminRepository;
     private final ManagerRepository managerRepository;
     private final CashierRepository cashierRepository;
@@ -31,6 +30,7 @@ public class AuthService {
 
     @Autowired
     public AuthService(UserRepository userRepository,
+                       CustomerRepository customerRepository,
                        AdminRepository adminRepository,
                        ManagerRepository managerRepository,
                        CashierRepository cashierRepository,
@@ -39,6 +39,7 @@ public class AuthService {
                        PasswordEncoder passwordEncoder,
                        JwtUtil jwtUtil) {
         this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
         this.adminRepository = adminRepository;
         this.managerRepository = managerRepository;
         this.cashierRepository = cashierRepository;
@@ -48,7 +49,7 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-    public LoginResponseDTO login(LoginRequestDTO request) {
+    public LoginAdminResponseDTO adminLogin(LoginRequestDTO request) {
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email is required");
         }
@@ -60,11 +61,14 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-        if (Objects.equals(user.getStatus(), "INACTIVE")) {
+        Admin admin = adminRepository.findByUser_UserId(user.getUserId())
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        if (Objects.equals(admin.getStatus(), "INACTIVE")) {
             throw new RuntimeException("User is deactivated");
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getPassword(), admin.getPasswordHash())) {
             throw new RuntimeException("Invalid email or password");
         }
 
@@ -77,32 +81,14 @@ public class AuthService {
 
         String adminRoleName = null;
 
-        Admin admin = adminRepository.findByUser_UserId(userId).orElse(null);
+        Integer roleId = admin.getRole().getRoleId();
+        adminRoleName = admin.getRole().getRoleName();
 
-        if (admin != null) {
-            roles.add("ADMIN");
-
-            Integer roleId = admin.getRole().getRoleId();
-            adminRoleName = admin.getRole().getRoleName();
-
-            permissions.addAll(permissionRepository.findPermissionNamesByRoleId(roleId));
-        }
-
-        if (managerRepository.findByUser_UserId(userId).isPresent()) {
-            roles.add("MANAGER");
-        }
-
-        if (cashierRepository.findByUser_UserId(userId).isPresent()) {
-            roles.add("CASHIER");
-        }
-
-        if (fieldOfficerRepository.findByUser_UserId(userId).isPresent()) {
-            roles.add("FIELD_OFFICER");
-        }
+        permissions.addAll(permissionRepository.findPermissionNamesByRoleId(roleId));
 
         String token = jwtUtil.generateToken(email, roles, permissions);
 
-        LoginResponseDTO response = new LoginResponseDTO(userId, fullName, email, roles);
+        LoginAdminResponseDTO response = new LoginAdminResponseDTO(userId, fullName, email);
         response.setAdminRole(adminRoleName);
         response.setPermissions(permissions);
         response.setToken(token);
@@ -111,12 +97,207 @@ public class AuthService {
     }
 
     public void setupPassword(PasswordSetupRequestDTO request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        String hashed = passwordEncoder.encode(request.getNewPassword());
-        user.setPasswordHash(hashed);
+        switch (request.getUserType()) {
+            case "ADMIN" -> {
+                Admin admin = adminRepository.findByUser_UserId(request.getUserId())
+                        .orElseThrow(() -> new RuntimeException("Admin not found"));
 
-        userRepository.save(user);
+                String hashed = passwordEncoder.encode(request.getNewPassword());
+                admin.setPasswordHash(hashed);
+
+                adminRepository.save(admin);
+            }
+
+            case "CUSTOMER" -> {
+                Customer customer = customerRepository.findByUser_UserId(request.getUserId())
+                        .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+                String hashed = passwordEncoder.encode(request.getNewPassword());
+                customer.setPasswordHash(hashed);
+
+                customerRepository.save(customer);
+            }
+
+            case "MANAGER" -> {
+                Manager manager = managerRepository.findByUser_UserId(request.getUserId())
+                        .orElseThrow(() -> new RuntimeException("Manager not found"));
+
+                String hashed = passwordEncoder.encode(request.getNewPassword());
+                manager.setPasswordHash(hashed);
+
+                managerRepository.save(manager);
+            }
+
+            case "CASHIER" -> {
+                Cashier cashier = cashierRepository.findByUser_UserId(request.getUserId())
+                        .orElseThrow(() -> new RuntimeException("Cashier not found"));
+
+                String hashed = passwordEncoder.encode(request.getNewPassword());
+                cashier.setPasswordHash(hashed);
+
+                cashierRepository.save(cashier);
+            }
+
+            case "FIELD OFFICER" -> {
+                FieldOfficer fieldOfficer = fieldOfficerRepository.findByUser_UserId(request.getUserId())
+                        .orElseThrow(() -> new RuntimeException("FieldOfficer not found"));
+
+                String hashed = passwordEncoder.encode(request.getNewPassword());
+                fieldOfficer.setPasswordHash(hashed);
+
+                fieldOfficerRepository.save(fieldOfficer);
+            }
+
+            default -> throw new IllegalStateException("Unknown user type");
+        }
+    }
+
+    public LoginResponseDTO customerLogin(LoginRequestDTO request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        Customer customer = customerRepository.findByUser_UserId(user.getUserId())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (Objects.equals(customer.getStatus(), "INACTIVE")) {
+            throw new RuntimeException("User is deactivated");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), customer.getPasswordHash())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        Integer userId = user.getUserId();
+        String fullName = user.getFullName();
+        String email = user.getEmail();
+
+        List<String> roles = new ArrayList<>();
+        List<String> permissions = new ArrayList<>();
+
+        String token = jwtUtil.generateToken(email, roles, permissions);
+        LoginResponseDTO response = new LoginResponseDTO(userId, fullName, email);
+        response.setToken(token);
+
+        return response;
+    }
+
+    public LoginResponseDTO managerLogin(LoginRequestDTO request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        Manager manager = managerRepository.findByUser_UserId(user.getUserId())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (Objects.equals(manager.getStatus(), "INACTIVE")) {
+            throw new RuntimeException("User is deactivated");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), manager.getPasswordHash())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        Integer userId = user.getUserId();
+        String fullName = user.getFullName();
+        String email = user.getEmail();
+
+        List<String> roles = new ArrayList<>();
+        List<String> permissions = new ArrayList<>();
+
+        String token = jwtUtil.generateToken(email, roles, permissions);
+        LoginResponseDTO response = new LoginResponseDTO(userId, fullName, email);
+        response.setToken(token);
+
+        return response;
+    }
+
+    public LoginResponseDTO cashierLogin(LoginRequestDTO request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        Cashier cashier = cashierRepository.findByUser_UserId(user.getUserId())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (Objects.equals(cashier.getStatus(), "INACTIVE")) {
+            throw new RuntimeException("User is deactivated");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), cashier.getPasswordHash())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        Integer userId = user.getUserId();
+        String fullName = user.getFullName();
+        String email = user.getEmail();
+
+        List<String> roles = new ArrayList<>();
+        List<String> permissions = new ArrayList<>();
+
+        String token = jwtUtil.generateToken(email, roles, permissions);
+        LoginResponseDTO response = new LoginResponseDTO(userId, fullName, email);
+        response.setToken(token);
+
+        return response;
+    }
+
+    public LoginResponseDTO fieldOfficerLogin(LoginRequestDTO request) {
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        FieldOfficer fieldOfficer= fieldOfficerRepository.findByUser_UserId(user.getUserId())
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+
+        if (Objects.equals(fieldOfficer.getStatus(), "INACTIVE")) {
+            throw new RuntimeException("User is deactivated");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), fieldOfficer.getPasswordHash())) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        Integer userId = user.getUserId();
+        String fullName = user.getFullName();
+        String email = user.getEmail();
+
+        List<String> roles = new ArrayList<>();
+        List<String> permissions = new ArrayList<>();
+
+        String token = jwtUtil.generateToken(email, roles, permissions);
+        LoginResponseDTO response = new LoginResponseDTO(userId, fullName, email);
+        response.setToken(token);
+
+        return response;
     }
 }

@@ -11,7 +11,7 @@ public record BusinessCustomerDetailDTO(
         String email,
         String nic,
         String status,
-        boolean systemAccess,
+//        boolean systemAccess,
         Instant createdAt,
         Instant updatedAt,
         String areaCode,

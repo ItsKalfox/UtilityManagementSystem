@@ -3,15 +3,19 @@ package com.utilitymanagementsystem.service;
 import com.utilitymanagementsystem.dto.customer.*;
 import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 import com.utilitymanagementsystem.exception.ConflictException;
+import com.utilitymanagementsystem.exception.EmailSendException;
 import com.utilitymanagementsystem.exception.ResourceNotFoundException;
 import com.utilitymanagementsystem.model.*;
 import com.utilitymanagementsystem.repository.*;
+import com.utilitymanagementsystem.security.PasswordGenerator;
 import com.utilitymanagementsystem.spec.CustomerSpecification;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -26,6 +30,7 @@ public class CustomerService {
     private final AreaRepository areaRepository;
     private final PasswordEncoder passwordEncoder;
     private final AdminActionLogService adminActionLogService;
+    private final EmailService emailService;
 
     public CustomerService(
             CustomerRepository customerRepository,
@@ -35,7 +40,8 @@ public class CustomerService {
             GovernmentOrganizationRepository governmentRepository,
             AreaRepository areaRepository,
             PasswordEncoder passwordEncoder,
-            AdminActionLogService adminActionLogService
+            AdminActionLogService adminActionLogService,
+            EmailService emailService
     ) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
@@ -45,6 +51,7 @@ public class CustomerService {
         this.areaRepository = areaRepository;
         this.passwordEncoder = passwordEncoder;
         this.adminActionLogService = adminActionLogService;
+        this.emailService = emailService;
     }
 
     @Transactional(readOnly = true)
@@ -76,7 +83,7 @@ public class CustomerService {
                         c.getUser().getFullName(),
                         c.getUser().getNic(),
                         c.getCustomerType(),
-                        c.getUser().getStatus()
+                        c.getStatus()
                 )
         );
     }
@@ -92,8 +99,6 @@ public class CustomerService {
                 .map(p -> new PhoneNumberDTO(p.getPhoneNumber(), p.getNumberType()))
                 .toList();
 
-        boolean systemAccess = user.getPasswordHash() != null;
-
         return switch (customer.getCustomerType()) {
 
             case "HOUSEHOLD" -> {
@@ -103,10 +108,9 @@ public class CustomerService {
                         user.getFullName(),
                         user.getEmail(),
                         user.getNic(),
-                        user.getStatus(),
-                        systemAccess,
-                        user.getCreatedAt(),
-                        user.getUpdatedAt(),
+                        customer.getStatus(),
+                        customer.getCreatedAt(),
+                        customer.getUpdatedAt(),
                         customer.getAreaCode().getAreaCode(),
                         customer.getAddressLine1(),
                         customer.getAddressLine2(),
@@ -125,10 +129,9 @@ public class CustomerService {
                         user.getFullName(),
                         user.getEmail(),
                         user.getNic(),
-                        user.getStatus(),
-                        systemAccess,
-                        user.getCreatedAt(),
-                        user.getUpdatedAt(),
+                        customer.getStatus(),
+                        customer.getCreatedAt(),
+                        customer.getUpdatedAt(),
                         customer.getAreaCode().getAreaCode(),
                         customer.getAddressLine1(),
                         customer.getAddressLine2(),
@@ -149,10 +152,9 @@ public class CustomerService {
                         user.getFullName(),
                         user.getEmail(),
                         user.getNic(),
-                        user.getStatus(),
-                        systemAccess,
-                        user.getCreatedAt(),
-                        user.getUpdatedAt(),
+                        customer.getStatus(),
+                        customer.getCreatedAt(),
+                        customer.getUpdatedAt(),
                         customer.getAreaCode().getAreaCode(),
                         customer.getAddressLine1(),
                         customer.getAddressLine2(),
@@ -214,28 +216,28 @@ public class CustomerService {
             user.setNic(dto.nic());
         }
 
-        if (dto.status() != null) {
-            if (!dto.status().equals("ACTIVE") && !dto.status().equals("INACTIVE")) {
-                throw new IllegalArgumentException("Invalid status");
-            }
-            user.setStatus(dto.status());
-        }
-
-        if (dto.password() != null) {
-            if (dto.password().isEmpty()) {
-                user.setPasswordHash(null);
-            }
-            else if (dto.password().isBlank()) {
-                throw new IllegalArgumentException("password field cannot be blank");
-            }
-            else {
-                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
-                    throw new IllegalArgumentException("Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character");
-                }
-
-                user.setPasswordHash(passwordEncoder.encode(dto.password()));
-            }
-        }
+//        if (dto.status() != null) {
+//            if (!dto.status().equals("ACTIVE") && !dto.status().equals("INACTIVE")) {
+//                throw new IllegalArgumentException("Invalid status");
+//            }
+//            user.setStatus(dto.status());
+//        }
+//
+//        if (dto.password() != null) {
+//            if (dto.password().isEmpty()) {
+//                user.setPasswordHash(null);
+//            }
+//            else if (dto.password().isBlank()) {
+//                throw new IllegalArgumentException("password field cannot be blank");
+//            }
+//            else {
+//                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
+//                    throw new IllegalArgumentException("Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character");
+//                }
+//
+//                user.setPasswordHash(passwordEncoder.encode(dto.password()));
+//            }
+//        }
 
         if (dto.areaCode() != null) {
             if (dto.areaCode().isBlank()) {
@@ -450,6 +452,8 @@ public class CustomerService {
         customer.setAddressLine2(dto.addressLine2());
         customer.setAddressCity(dto.addressCity());
         customer.setAddressPostalCode(dto.addressPostalCode());
+        customer.setPasswordHash("password");
+        customer.setStatus("INACTIVE");
 
         customerRepository.save(customer);
 
@@ -572,28 +576,28 @@ public class CustomerService {
 
         User user = new User();
 
-        if (dto.password() != null) {
-            if (dto.password().isEmpty()) {
-                user.setPasswordHash(null);
-            }
-            else if (dto.password().isBlank()) {
-                throw new IllegalArgumentException("password field cannot be blank");
-            }
-            else {
-                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
-                    throw new IllegalArgumentException(
-                            "Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character"
-                    );
-                }
-
-                user.setPasswordHash(passwordEncoder.encode(dto.password()));
-            }
-        }
+//        if (dto.password() != null) {
+//            if (dto.password().isEmpty()) {
+//                user.setPasswordHash(null);
+//            }
+//            else if (dto.password().isBlank()) {
+//                throw new IllegalArgumentException("password field cannot be blank");
+//            }
+//            else {
+//                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
+//                    throw new IllegalArgumentException(
+//                            "Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character"
+//                    );
+//                }
+//
+//                user.setPasswordHash(passwordEncoder.encode(dto.password()));
+//            }
+//        }
 
         user.setFullName(dto.fullName());
         user.setEmail(dto.email());
         user.setNic(dto.nic());
-        user.setStatus("ACTIVE");
+//        user.setStatus("ACTIVE");
 
         userRepository.save(user);
 
@@ -630,6 +634,8 @@ public class CustomerService {
         customer.setAddressLine2(dto.addressLine2());
         customer.setAddressCity(dto.addressCity());
         customer.setAddressPostalCode(dto.addressPostalCode());
+        customer.setPasswordHash("password");
+        customer.setStatus("INACTIVE");
 
         customerRepository.save(customer);
 
@@ -691,5 +697,82 @@ public class CustomerService {
         );
 
         customerRepository.delete(customer);
+    }
+
+    @Transactional
+    public void resetCustomerPassword(Integer userId) {
+
+        Customer customer = customerRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        String rawPassword = PasswordGenerator.generate(14);
+        String hashedPassword = passwordEncoder.encode(rawPassword);
+
+        customer.setPasswordHash(hashedPassword);
+        customerRepository.save(customer);
+
+        User user = customer.getUser();
+
+        try {
+            emailService.sendEmail(
+                    user.getEmail(),
+                    "Your Password Has Been Reset",
+                    """
+                            Hello %s,
+                            
+                            Your password is:
+                            
+                            %s
+                            
+                            Utility Management System
+                            """.formatted(user.getFullName(), rawPassword)
+            );
+        } catch (Exception e) {
+            throw new EmailSendException("Failed to send password reset email");
+        }
+
+        adminActionLogService.logAction(
+                "CUSTOMER",
+                user.getUserId().toString(),
+                "Customer Password Reset"
+        );
+    }
+
+    @Transactional
+    public void activateCustomer(Integer userId) {
+        Customer customer = customerRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        if (customer.getStatus().equals("ACTIVE")) {
+            throw new RuntimeException("Customer is already Active");
+        }
+
+        customer.setStatus("ACTIVE");
+        customerRepository.save(customer);
+
+        adminActionLogService.logAction(
+                "CUSTOMER",
+                customer.getUserId().toString(),
+                "Customer Account activated"
+        );
+    }
+
+    @Transactional
+    public void deactivateCustomer(Integer userId) {
+        Customer customer = customerRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        if (customer.getStatus().equals("INACTIVE")) {
+            throw new RuntimeException("Customer is already Inactive");
+        }
+
+        customer.setStatus("INACTIVE");
+        customerRepository.save(customer);
+
+        adminActionLogService.logAction(
+                "CUSTOMER",
+                customer.getUserId().toString(),
+                "Customer Account deactivated"
+        );
     }
 }

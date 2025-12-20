@@ -53,7 +53,7 @@ public class UserService {
     public Page<UserListDTO> getUsers(
             String search,
             String profile,
-            String status,
+//            String status,
             int page,
             int size,
             String sortBy,
@@ -66,7 +66,7 @@ public class UserService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Specification<User> spec =
                 UserSpecification.hasSearch(search)
-                        .and(UserSpecification.hasStatus(status))
+//                        .and(UserSpecification.hasStatus(status))
                         .and(UserSpecification.hasProfile(profile));
 
         Page<User> users = userRepository.findAll(spec, pageable);
@@ -75,8 +75,8 @@ public class UserService {
                 new UserListDTO(
                         u.getUserId(),
                         u.getFullName(),
-                        u.getNic(),
-                        u.getStatus()
+                        u.getNic()
+//                        u.getStatus()
                 )
         );
     }
@@ -112,17 +112,17 @@ public class UserService {
             profiles.add("CASHIER");
         }
 
-        boolean systemAccess = user.getPasswordHash() != null;
+//        boolean systemAccess = user.getPasswordHash() != null;
 
         return new UserDetailDTO(
                 user.getUserId(),
                 user.getFullName(),
                 user.getEmail(),
                 user.getNic(),
-                user.getStatus(),
-                systemAccess,
-                user.getCreatedAt(),
-                user.getUpdatedAt(),
+//                user.getStatus(),
+//                systemAccess,
+//                user.getCreatedAt(),
+//                user.getUpdatedAt(),
                 phones,
                 profiles
         );
@@ -170,28 +170,28 @@ public class UserService {
             user.setNic(dto.nic());
         }
 
-        if (dto.status() != null) {
-            if (!dto.status().equals("ACTIVE") && !dto.status().equals("INACTIVE")) {
-                throw new IllegalArgumentException("Invalid status");
-            }
-            user.setStatus(dto.status());
-        }
-
-        if (dto.password() != null) {
-            if (dto.password().isEmpty()) {
-                user.setPasswordHash(null);
-            }
-            else if (dto.password().isBlank()) {
-                throw new IllegalArgumentException("password field cannot be blank");
-            }
-            else {
-                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
-                    throw new IllegalArgumentException("Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character");
-                }
-
-                user.setPasswordHash(passwordEncoder.encode(dto.password()));
-            }
-        }
+//        if (dto.status() != null) {
+//            if (!dto.status().equals("ACTIVE") && !dto.status().equals("INACTIVE")) {
+//                throw new IllegalArgumentException("Invalid status");
+//            }
+//            user.setStatus(dto.status());
+//        }
+//
+//        if (dto.password() != null) {
+//            if (dto.password().isEmpty()) {
+//                user.setPasswordHash(null);
+//            }
+//            else if (dto.password().isBlank()) {
+//                throw new IllegalArgumentException("password field cannot be blank");
+//            }
+//            else {
+//                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
+//                    throw new IllegalArgumentException("Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character");
+//                }
+//
+//                user.setPasswordHash(passwordEncoder.encode(dto.password()));
+//            }
+//        }
 
         if (dto.phoneNumbers() != null) {
             if (dto.phoneNumbers().isEmpty()) {
@@ -254,28 +254,28 @@ public class UserService {
 
         User user = new User();
 
-        if (dto.password() != null) {
-            if (dto.password().isEmpty()) {
-                user.setPasswordHash(null);
-            }
-            else if (dto.password().isBlank()) {
-                throw new IllegalArgumentException("password field cannot be blank");
-            }
-            else {
-                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
-                    throw new IllegalArgumentException(
-                            "Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character"
-                    );
-                }
-
-                user.setPasswordHash(passwordEncoder.encode(dto.password()));
-            }
-        }
+//        if (dto.password() != null) {
+//            if (dto.password().isEmpty()) {
+//                user.setPasswordHash(null);
+//            }
+//            else if (dto.password().isBlank()) {
+//                throw new IllegalArgumentException("password field cannot be blank");
+//            }
+//            else {
+//                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
+//                    throw new IllegalArgumentException(
+//                            "Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character"
+//                    );
+//                }
+//
+//                user.setPasswordHash(passwordEncoder.encode(dto.password()));
+//            }
+//        }
 
         user.setFullName(dto.fullName());
         user.setEmail(dto.email());
         user.setNic(dto.nic());
-        user.setStatus("ACTIVE");
+//        user.setStatus("ACTIVE");
 
         userRepository.save(user);
 

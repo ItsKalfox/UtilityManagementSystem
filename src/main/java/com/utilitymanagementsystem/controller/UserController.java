@@ -34,7 +34,7 @@ public class UserController {
             @RequestParam(defaultValue = "asc") String direction
     ) {
         return userService.getUsers(
-                search, profile, status,
+                search, profile,
                 page, size,
                 sortBy, direction
         );

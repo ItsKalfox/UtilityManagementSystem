@@ -28,7 +28,7 @@ public class ManagerSpecification {
     public static Specification<Manager> hasStatus(String status) {
         return (root, query, cb) -> {
             if (status == null || status.isBlank()) return null;
-            return cb.equal(root.get("user").get("status"), status);
+            return cb.equal(root.get("status"), status);
         };
     }
 }

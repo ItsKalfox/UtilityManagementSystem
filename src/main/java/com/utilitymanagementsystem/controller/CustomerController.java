@@ -74,4 +74,26 @@ public class CustomerController {
         customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build(); // 204 No Content
     }
+
+    @PreAuthorize("hasAuthority('UPDATE_CUSTOMER')")
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<Void> resetCustomerPassword(@PathVariable Integer id) {
+        customerService.resetCustomerPassword(id);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_CUSTOMER')")
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<Void> activateCustomer(@PathVariable Integer id) {
+        customerService.activateCustomer(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAuthority('UPDATE_CUSTOMER')")
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivateCustomer(@PathVariable Integer id) {
+        customerService.deactivateCustomer(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

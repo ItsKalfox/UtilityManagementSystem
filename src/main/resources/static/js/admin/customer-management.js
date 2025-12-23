@@ -6,8 +6,11 @@ let filterType = 'all';
 let filterStatus = 'all';
 let sortBy = 'userId';
 let sortDirection = 'asc';
-
 let cachedAreas = null;
+let linkedUserId = null;
+let nicCheckInProgress = false;
+let lastCheckedNic = null;
+
 
 async function fetchAreas() {
     if (cachedAreas) return cachedAreas;
@@ -223,6 +226,8 @@ window.addRecord = async function () {
     const modal = document.getElementById('recordModal');
     const overlay = document.getElementById('modalOverlay');
 
+    linkedUserId = null; // 🔄 RESET every time modal opens
+
     let areas = [];
     try {
         areas = await fetchAreas();
@@ -336,6 +341,20 @@ window.addRecord = async function () {
 
     modal.classList.add('active');
     overlay.classList.add('active');
+
+    // ✅ ATTACH NIC LISTENERS *AFTER* HTML EXISTS
+    const nicInput = modal.querySelector('#nic');
+
+    nicInput.addEventListener('blur', () => handleNicCheck(nicInput));
+    nicInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleNicCheck(nicInput);
+        }
+    });
+
+    // 🔄 Reset identity if NIC changes again
+    nicInput.addEventListener('input', () => resetIdentityFields());
 };
 
 window.renderCustomerTypeFields = function (type) {
@@ -413,6 +432,116 @@ window.addPhoneNew = function () {
 };
 
 window.removePhoneNew = function () {}
+
+function resetIdentityFields() {
+    const modal = document.getElementById('recordModal');
+
+    linkedUserId = null;
+    lastCheckedNic = null;
+
+    ['fullName', 'email'].forEach(id => {
+        const el = modal.querySelector(`#${id}`);
+        if (el) {
+            el.disabled = false;
+            el.value = '';
+        }
+    });
+
+    modal.querySelector('#newPhoneNumbers').innerHTML = '';
+}
+
+async function handleNicCheck(nicInput) {
+    const nic = nicInput.value.trim();
+    if (!nic || nicCheckInProgress || nic === lastCheckedNic) return;
+
+    lastCheckedNic = nic;
+    nicCheckInProgress = true;
+
+    try {
+        const res = await fetch(`/customers/check-nic/${nic}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+
+        // ❌ Customer already exists
+        if (data.exists && data.hasCustomerProfile) {
+            showToast('Customer already exists.', 'error');
+
+            // 🧹 Clear NIC field + refocus
+            nicInput.value = '';
+            nicInput.focus();
+
+            // 🔄 Reset any previously linked state
+            resetIdentityFields();
+            lastCheckedNic = null;
+
+            return;
+        }
+
+        // 👤 Existing system user (ADMIN / MANAGER / etc)
+        if (data.exists && !data.hasCustomerProfile && data.userId) {
+            await hydrateExistingUser(data.userId);
+        }
+
+    } catch (err) {
+        console.error(err);
+    } finally {
+        nicCheckInProgress = false;
+    }
+}
+
+async function hydrateExistingUser(userId) {
+    try {
+        const res = await fetch(`/users/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!res.ok) return;
+
+        const user = await res.json();
+        linkedUserId = user.userId;
+
+        const modal = document.getElementById('recordModal');
+
+        // 🔹 Autofill
+        modal.querySelector('#fullName').value = user.fullName;
+        modal.querySelector('#email').value = user.email;
+
+        // 🔹 Disable identity fields
+        modal.querySelector('#fullName').disabled = true;
+        modal.querySelector('#email').disabled = true;
+        modal.querySelector('#nic').disabled = true;
+
+        // 🔹 Phones
+        const phoneContainer = modal.querySelector('#newPhoneNumbers');
+        phoneContainer.innerHTML = '';
+
+        user.phoneNumbers.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'phone-item';
+            div.innerHTML = `
+                <input class="phone-number" value="${p.phoneNumber}" disabled>
+                <select class="phone-category" disabled>
+                    <option selected>${p.numberType}</option>
+                </select>
+            `;
+            phoneContainer.appendChild(div);
+        });
+
+        showToast('Existing user detected. Customer details only.', 'info');
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 
 window.saveNewCustomer = async function () {
     const modal = document.getElementById('recordModal');
@@ -506,9 +635,26 @@ window.saveNewCustomer = async function () {
         payload.department = department;
     }
 
+    // 🔹 Decide API based on linked user
+    const isExistingUser = linkedUserId !== null;
+
+    const endpoint = isExistingUser
+        ? '/customers'
+        : '/customers/full';
+
+    if (isExistingUser) {
+        payload.customerId = linkedUserId;
+
+        // ❌ Remove user creation fields
+        delete payload.fullName;
+        delete payload.email;
+        delete payload.nic;
+        delete payload.phoneNumbers;
+    }
+
     // 🔹 Submit
     try {
-        const response = await fetch('/customers/full', {
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -537,8 +683,6 @@ window.saveNewCustomer = async function () {
         showToast('Unexpected error occurred', 'error');
     }
 };
-
-
 
 window.viewRecord = async function (id) {
     try {
@@ -818,9 +962,6 @@ window.disableEdit = function(id) {
     closeModal();
     viewRecord(id);
 }
-
-
-
 
 window.enableEdit = async function() {
     isEditMode = true;

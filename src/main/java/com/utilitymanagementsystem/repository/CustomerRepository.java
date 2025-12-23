@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<Customer, Integer>, JpaSpecificationExecutor<Customer> {
     Optional<Customer> findByUser_UserId(Integer userId);
+    boolean existsByUserId(Integer userId);
 }

@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -30,21 +30,43 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/setup-password",
+                        // ✅ STATIC FRONTEND FILES
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/temp.php",
+                                "/*.html",
+                                "/css/**",
+                                "/js/**",
+                                "/login/**",
+                                "/admin/**",
+                                "/images/**",
+                                "/favicon.ico"
+                        ).permitAll()
+
+                        // ✅ AUTH APIs
+                        .requestMatchers(
+                                "/api/auth/setup-password",
                                 "/api/auth/admin/login",
                                 "/api/auth/customer/login",
                                 "/api/auth/manager/login",
                                 "/api/auth/cashier/login",
-                                "/api/auth/field-officer/login")
-                        .permitAll()
+                                "/api/auth/field-officer/login"
+                        ).permitAll()
+
+                        // 🔒 EVERYTHING ELSE NEEDS JWT
                         .anyRequest().authenticated()
                 )
+
+                // ✅ JWT FILTER
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+
+                // ❌ Disable defaults
                 .httpBasic(basic -> basic.disable())
                 .formLogin(login -> login.disable());
 
         return http.build();
     }
 }
-

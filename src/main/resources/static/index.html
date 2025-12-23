@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Management System - Staff Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="theme-toggle-container">
+        <label class="theme-toggle">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="staff-selection-container">
+        <div class="staff-selection-card">
+            <h1>Utility Management System</h1>
+            <p class="subtitle">Select Your Role</p>
+
+            <div class="staff-buttons">
+                <button class="staff-btn" onclick="navigateToLogin('admin')">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                    </svg>
+                    <span>Admin</span>
+                </button>
+
+                <button class="staff-btn" onclick="navigateToLogin('manager')">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>Manager</span>
+                </button>
+
+                <button class="staff-btn" onclick="navigateToLogin('cashier')">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                    <span>Cashier</span>
+                </button>
+
+                <button class="staff-btn" onclick="navigateToLogin('field-officer')">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span>Field Officer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common/theme.js"></script>
+    <script>
+        function navigateToLogin(role) {
+            const sharedLoginRoles = ['field-officer', 'cashier', 'manager'];
+
+            if (sharedLoginRoles.includes(role)) {
+                window.location.href = 'temp.html';
+                return;
+            }
+
+            window.location.href = `login/${role}-login.html`;
+        }
+    </script>
+</body>
+</html>

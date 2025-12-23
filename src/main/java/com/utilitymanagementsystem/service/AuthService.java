@@ -62,7 +62,7 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
         Admin admin = adminRepository.findByUser_UserId(user.getUserId())
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
+                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
         if (Objects.equals(admin.getStatus(), "INACTIVE")) {
             throw new RuntimeException("User is deactivated");

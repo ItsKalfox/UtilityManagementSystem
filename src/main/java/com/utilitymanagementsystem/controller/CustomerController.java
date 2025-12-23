@@ -44,6 +44,11 @@ public class CustomerController {
         return customerService.getCustomerDetails(id);
     }
 
+    @GetMapping("check-nic/{nic}")
+    public CustomerNICCheckDTO checkCustomer(@PathVariable String nic) {
+        return customerService.checkCustomer(nic);
+    }
+
     @PreAuthorize("hasAuthority('UPDATE_CUSTOMER')")
     @PatchMapping("/{id}")
     public CustomerDetailView updateCustomer(

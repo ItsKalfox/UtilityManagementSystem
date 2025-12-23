@@ -1,0 +1,25 @@
+:root {
+  --bg: #f4f6fb;
+  --card: white;
+  --text: #111;
+  --sidebar: #0b1d3a;
+}
+
+.dark-theme {
+  --bg: #0b1220;
+  --card: #1f2937;
+  --text: #f9fafb;
+  --sidebar: #020617;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial;
+  margin: 0;
+}
+
+button {
+  padding: 8px;
+  margin: 5px 0;
+}

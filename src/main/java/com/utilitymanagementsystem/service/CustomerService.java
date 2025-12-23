@@ -15,6 +15,7 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -86,6 +87,19 @@ public class CustomerService {
                         c.getStatus()
                 )
         );
+    }
+
+    @Transactional(readOnly = true)
+    public CustomerNICCheckDTO checkCustomer(@PathVariable String nic) {
+        User user = userRepository.findByNic(nic).orElse(null);
+        if (user == null) {
+            return new CustomerNICCheckDTO(false, false, null);
+        }
+        boolean hasCustomerProfile = customerRepository.existsByUserId(user.getUserId());
+        if (hasCustomerProfile) {
+            return new CustomerNICCheckDTO(true, true, null);
+        }
+        return new CustomerNICCheckDTO(true, false, user.getUserId());
     }
 
     @Transactional(readOnly = true)

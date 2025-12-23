@@ -28,15 +28,17 @@ function initDashboard() {
 }
 
 window.handleLogout = async function() {
-    const confirmed = await showConfirmModal({
-    title: 'Logout',
-    message: 'Are you sure you want to logout?',
-    confirmText: 'Yes',
-    cancelText: 'No',
-    danger: true
+    const result = await showConfirmModal({
+        title: 'Logout',
+        message: 'Are you sure you want to logout?',
+        confirmText: 'Yes',
+        cancelText: 'No',
+        danger: true
     });
 
-    if (!confirmed) return;
+    if (!result || !result.confirmed) {
+        return;
+    }
 
     // preserve theme
     const theme = localStorage.getItem('theme');

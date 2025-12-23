@@ -56,6 +56,38 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
+.info-box {
+    background: var(--gray-50);
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 14px;
+    padding-top: 12px;
+    padding-bottom: 3px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.info-box h4 {
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.info-box ul {
+    padding-left: 18px;
+}
+
+.info-box li {
+    margin-bottom: 6px;
+}
+
+.info-note {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--warning-color);
+}
+
+
 .theme-toggle-container {
     position: fixed;
     bottom: 20px;
@@ -765,6 +797,17 @@ input:checked + .slider:before {
     display: block;
 }
 
+/* Confirm overlay sits ABOVE main modal */
+.confirm-overlay {
+    z-index: 1500;
+}
+
+/* Confirm modal sits ABOVE everything */
+#confirmModal {
+    z-index: 1600;
+}
+
+
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -874,10 +917,26 @@ input:checked + .slider:before {
     font-size: 1rem;
 }
 
+.detail-value-number {
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.detail-value-number input,
+.detail-value-number select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--gray-50);
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
 .phone-numbers {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
 }
 
 .phone-item {
@@ -898,7 +957,7 @@ input:checked + .slider:before {
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.9rem;
-    margin-top: 10px;
+    margin-top: 13px;
 }
 
 .add-phone-btn:hover {

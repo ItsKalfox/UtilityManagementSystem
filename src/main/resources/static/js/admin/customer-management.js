@@ -11,7 +11,6 @@ let linkedUserId = null;
 let nicCheckInProgress = false;
 let lastCheckedNic = null;
 
-
 async function fetchAreas() {
     if (cachedAreas) return cachedAreas;
 
@@ -172,7 +171,6 @@ window.goToPage = function (page) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-
     fetchCustomers();
 
     const searchInput = document.getElementById('searchInput');
@@ -226,7 +224,7 @@ window.addRecord = async function () {
     const modal = document.getElementById('recordModal');
     const overlay = document.getElementById('modalOverlay');
 
-    linkedUserId = null; // 🔄 RESET every time modal opens
+    linkedUserId = null;
 
     let areas = [];
     try {
@@ -254,6 +252,32 @@ window.addRecord = async function () {
         <div class="modal-body">
             <div class="detail-grid-top">
                 <div>
+                    <div class="info-box">
+                        <div style="display: flex; gap: 10px;">
+                            <img src="../../images/info-icon.svg" alt="Info" style="width: 18px; height: 18px; margin-top: 2px; filter: var(--icon-filter); transition: filter 0.3s ease;">
+                            <h4>How customer creation works</h4>
+                        </div>
+                        <ul>
+                            <li>
+                                <strong>Enter NIC first</strong> and press <kbd>Enter</kbd>.
+                                The system will automatically check NIC availability.
+                            </li>
+                            <li>
+                                After saving:
+                                <ul>
+                                    <li>User is created in <strong>deactivated</strong> state</li>
+                                    <li>Activate the account and use <strong>Reset Password</strong> to send login credentials in next page</li>    
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="detail-item">
+                        <span class="detail-label">NIC</span>
+                        <input class="detail-value detail-input" id="nic">
+                    </div>
                     <div class="detail-item">
                         <span class="detail-label">Full Name</span>
                         <input class="detail-value detail-input" id="fullName">
@@ -262,21 +286,14 @@ window.addRecord = async function () {
                         <span class="detail-label">Email</span>
                         <input class="detail-value detail-input" id="email" type="email">
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">NIC</span>
-                        <input class="detail-value detail-input" id="nic">
-                    </div>
                 </div>
 
                 <div>
                     <div class="detail-item" style="grid-column: 1 / -1;">
                         <span class="detail-label">Phone Numbers</span>
-                        <div class="detail-value phone-numbers" id="newPhoneNumbers"></div>
+                        <div class="detail-value-number phone-numbers" id="newPhoneNumbers"></div>
                         <button class="add-phone-btn" onclick="addPhoneNew()">Add Phone</button>
                     </div>
-                </div>
-
-                <div>
                 </div>
             </div>
 
@@ -341,8 +358,8 @@ window.addRecord = async function () {
 
     modal.classList.add('active');
     overlay.classList.add('active');
+    addPhoneNew();
 
-    // ✅ ATTACH NIC LISTENERS *AFTER* HTML EXISTS
     const nicInput = modal.querySelector('#nic');
 
     nicInput.addEventListener('blur', () => handleNicCheck(nicInput));
@@ -353,7 +370,6 @@ window.addRecord = async function () {
         }
     });
 
-    // 🔄 Reset identity if NIC changes again
     nicInput.addEventListener('input', () => resetIdentityFields());
 };
 
@@ -410,28 +426,50 @@ window.addPhoneNew = function () {
         return;
     }
 
-    const index = container.children.length;
-
     const div = document.createElement('div');
     div.className = 'phone-item';
-    div.dataset.index = index;
 
     div.innerHTML = `
-        <input class="phone-number" placeholder="+947XXXXXXXX">
+        <input class="phone-number" placeholder="+947XXXXXXX">
         <select class="phone-category">
             <option value="MOBILE">Mobile</option>
             <option value="HOME">Home</option>
             <option value="WORK">Work</option>
         </select>
-        <button class="remove-phone-btn" onclick="this.closest('.phone-item').remove()">
-            ✕
+        <button class="remove-phone-btn" onclick="removePhoneNew(this)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
         </button>
     `;
 
     container.appendChild(div);
+
+    updatePhoneRemoveButtons();
 };
 
-window.removePhoneNew = function () {}
+function removePhoneNew(btn) {
+    const container = document.getElementById('newPhoneNumbers');
+
+    if (container.children.length <= 1) {
+        return;
+    }
+
+    btn.closest('.phone-item').remove();
+    updatePhoneRemoveButtons();
+}
+
+function updatePhoneRemoveButtons() {
+    const items = document.querySelectorAll('#newPhoneNumbers .phone-item');
+
+    items.forEach((item, index) => {
+        const removeBtn = item.querySelector('.remove-phone-btn');
+        if (!removeBtn) return;
+
+        removeBtn.style.display = items.length > 1 ? 'inline-flex' : 'none';
+    });
+}
 
 function resetIdentityFields() {
     const modal = document.getElementById('recordModal');
@@ -448,6 +486,13 @@ function resetIdentityFields() {
     });
 
     modal.querySelector('#newPhoneNumbers').innerHTML = '';
+
+    const addPhoneBtn = modal.querySelector('.add-phone-btn');
+    if (addPhoneBtn) {
+        addPhoneBtn.disabled = false;
+        addPhoneBtn.style.display = 'inline-flex';
+    }
+    addPhoneNew();
 }
 
 async function handleNicCheck(nicInput) {
@@ -468,23 +513,36 @@ async function handleNicCheck(nicInput) {
 
         const data = await res.json();
 
-        // ❌ Customer already exists
         if (data.exists && data.hasCustomerProfile) {
             showToast('Customer already exists.', 'error');
 
-            // 🧹 Clear NIC field + refocus
             nicInput.value = '';
             nicInput.focus();
 
-            // 🔄 Reset any previously linked state
             resetIdentityFields();
             lastCheckedNic = null;
 
             return;
         }
 
-        // 👤 Existing system user (ADMIN / MANAGER / etc)
         if (data.exists && !data.hasCustomerProfile && data.userId) {
+            const result = await showConfirmModal({
+                title: 'Details Found',
+                message: 'An existing user was found with this NIC. Do you want to link to this user and create a customer profile?',
+                confirmText: 'Yes',
+                cancelText: 'No', 
+                danger: false
+            });
+            
+            if (!result || !result.confirmed) {
+                nicInput.value = '';
+                nicInput.focus();
+                resetIdentityFields();
+                lastCheckedNic = null;
+                return;
+            }
+            
+            result.close();
             await hydrateExistingUser(data.userId);
         }
 
@@ -497,29 +555,56 @@ async function handleNicCheck(nicInput) {
 
 async function hydrateExistingUser(userId) {
     try {
-        const res = await fetch(`/users/${userId}`, {
+        const response = await fetch(`/users/${userId}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         });
 
-        if (!res.ok) return;
+        if (response.status === 401) {
+            let data = {};
+            try {
+                data = await response.json();
+            } catch {}
 
-        const user = await res.json();
+            if (data.message === 'Token expired') {
+                result.close();
+                const confirmed = await handleTokenExpired();
+                if (!confirmed) return;
+
+                const theme = localStorage.getItem('theme');
+                localStorage.clear();
+                if (theme !== null) localStorage.setItem('theme', theme);
+
+                window.location.replace('../../index.html');
+                return;
+            }
+        }
+
+        if (!response.ok) {
+            let message = 'Failed to load user details';
+
+            try {
+                const err = await response.json();
+                if (err.message) message = err.message;
+            } catch {}
+
+            result.close();
+            showToast(message, 'error');
+            return;
+        }
+
+        const user = await response.json();
         linkedUserId = user.userId;
 
         const modal = document.getElementById('recordModal');
 
-        // 🔹 Autofill
         modal.querySelector('#fullName').value = user.fullName;
         modal.querySelector('#email').value = user.email;
-
-        // 🔹 Disable identity fields
         modal.querySelector('#fullName').disabled = true;
         modal.querySelector('#email').disabled = true;
         modal.querySelector('#nic').disabled = true;
 
-        // 🔹 Phones
         const phoneContainer = modal.querySelector('#newPhoneNumbers');
         phoneContainer.innerHTML = '';
 
@@ -529,37 +614,43 @@ async function hydrateExistingUser(userId) {
             div.innerHTML = `
                 <input class="phone-number" value="${p.phoneNumber}" disabled>
                 <select class="phone-category" disabled>
-                    <option selected>${p.numberType}</option>
+                    <option selected>${
+                        p.numberType.charAt(0) + p.numberType.slice(1).toLowerCase()
+                    }</option>
                 </select>
             `;
             phoneContainer.appendChild(div);
         });
 
-        showToast('Existing user detected. Customer details only.', 'info');
+        const addPhoneBtn = modal.querySelector('.add-phone-btn');
+        if (addPhoneBtn) {
+            addPhoneBtn.disabled = true;
+            addPhoneBtn.style.display = 'none';
+        }
+
+        showToast('User details loaded successfully.', 'success');
 
     } catch (err) {
         console.error(err);
+        result.close();
+        showToast('Unexpected error while loading details', 'error');
     }
 }
-
 
 window.saveNewCustomer = async function () {
     const modal = document.getElementById('recordModal');
 
-    // 🔹 Base required elements (scoped to modal)
     const fullNameEl = modal.querySelector('#fullName');
     const emailEl = modal.querySelector('#email');
     const nicEl = modal.querySelector('#nic');
     const customerTypeEl = modal.querySelector('#customerType');
     const areaCodeEl = modal.querySelector('#areaCode');
 
-    // 🔒 Safety check
     if (!fullNameEl || !emailEl || !nicEl || !customerTypeEl || !areaCodeEl) {
         showToast('Form is not ready. Please reopen the dialog.', 'error');
         return;
     }
 
-    // 🔹 Build base payload
     const payload = {
         fullName: fullNameEl.value.trim(),
         email: emailEl.value.trim(),
@@ -573,13 +664,11 @@ window.saveNewCustomer = async function () {
         phoneNumbers: []
     };
 
-    // 🔹 Basic validation
     if (!payload.fullName || !payload.email || !payload.nic || !payload.customerType) {
         showToast('Please fill all required fields', 'error');
         return;
     }
 
-    // 🔹 Phone numbers
     modal.querySelectorAll('#newPhoneNumbers .phone-item').forEach(item => {
         const number = item.querySelector('.phone-number')?.value?.trim();
         const type = item.querySelector('.phone-category')?.value;
@@ -597,7 +686,6 @@ window.saveNewCustomer = async function () {
         return;
     }
 
-    // 🔹 Customer-type–specific fields
     if (payload.customerType === 'HOUSEHOLD') {
         const sizeEl = modal.querySelector('#householdSize');
         if (!sizeEl || !sizeEl.value) {
@@ -635,7 +723,6 @@ window.saveNewCustomer = async function () {
         payload.department = department;
     }
 
-    // 🔹 Decide API based on linked user
     const isExistingUser = linkedUserId !== null;
 
     const endpoint = isExistingUser
@@ -644,15 +731,12 @@ window.saveNewCustomer = async function () {
 
     if (isExistingUser) {
         payload.customerId = linkedUserId;
-
-        // ❌ Remove user creation fields
         delete payload.fullName;
         delete payload.email;
         delete payload.nic;
         delete payload.phoneNumbers;
     }
 
-    // 🔹 Submit
     try {
         const response = await fetch(endpoint, {
             method: 'POST',
@@ -662,6 +746,26 @@ window.saveNewCustomer = async function () {
             },
             body: JSON.stringify(payload)
         });
+
+        if (response.status === 401) {
+            let data = {};
+            try {
+                data = await response.json();
+            } catch {}
+
+            if (data.message === 'Token expired') {
+                result.close();
+                const confirmed = await handleTokenExpired();
+                if (!confirmed) return;
+
+                const theme = localStorage.getItem('theme');
+                localStorage.clear();
+                if (theme !== null) localStorage.setItem('theme', theme);
+
+                window.location.replace('../../index.html');
+                return;
+            }
+        }
 
         if (!response.ok) {
             let message = 'Failed to create customer';
@@ -673,14 +777,16 @@ window.saveNewCustomer = async function () {
             return;
         }
 
-        // ✅ Success
+        const record = await response.json();
+
         closeModal();
         showToast('Customer added successfully', 'success');
         fetchCustomers();
+        viewRecord(record.userId);
 
     } catch (err) {
         console.error(err);
-        showToast('Unexpected error occurred', 'error');
+        showToast('Unexpected error while creating customer', 'error');
     }
 };
 
@@ -773,7 +879,6 @@ window.viewRecord = async function (id) {
         let resetPasswordButtonHtml = '';
         let advancedSectionHtml = '';
 
-
         if (hasPermission('DELETE_CUSTOMER')) {
             deleteButtonHtml = `<button class="btn-adv btn-delete" onclick="deleteRecord(${record.userId})">Delete Record</button>`;
         } else {
@@ -798,7 +903,6 @@ window.viewRecord = async function (id) {
             resetPasswordButtonHtml = '';
         }
 
-        
         if (hasPermission('UPDATE_CUSTOMER') || hasPermission('DELETE_CUSTOMER')) {
             advancedSectionHtml = `
                     <div class="expandable-section">
@@ -862,7 +966,7 @@ window.viewRecord = async function (id) {
 
                     <div class="detail-item">
                         <span class="detail-label">Phone Numbers</span>
-                        <div class="detail-value phone-numbers" id="phoneNumbers">
+                        <div class="detail-value-number phone-numbers" id="phoneNumbers">
                             ${record.phoneNumbers.map((p, i) => `
                                 <div class="phone-item" data-index="${i}">
                                     <input type="text" value="${p.phoneNumber}" class="phone-number" disabled>
@@ -1064,7 +1168,6 @@ window.removePhone = function(index) {
 
 window.saveRecord = async function (id) {
     try {
-        // 🔹 Collect edited fields
         const payload = {
             fullName: document.querySelector('#field-name input').value.trim(),
             email: document.querySelector('#field-email input').value.trim(),
@@ -1101,7 +1204,6 @@ window.saveRecord = async function (id) {
                 document.querySelector('#field-department input').value.trim();
         }
 
-        // 🔹 Phones
         document.querySelectorAll('.phone-item').forEach(item => {
             const number = item.querySelector('.phone-number')?.value.trim();
             const category = item.querySelector('.phone-category')?.value;
@@ -1114,7 +1216,6 @@ window.saveRecord = async function (id) {
             }
         });
 
-        // 🔹 Remove empty optional fields (clean PATCH)
         Object.keys(payload).forEach(key => {
             if (
                 payload[key] === '' ||
@@ -1124,9 +1225,8 @@ window.saveRecord = async function (id) {
             }
         });
 
-        console.log('PATCH PAYLOAD:', payload); // 🔍 debug
+        console.log('PATCH PAYLOAD:', payload);
 
-        // 🔹 API call
         const response = await fetch(`/customers/${id}`, {
             method: 'PATCH',
             headers: {
@@ -1167,11 +1267,9 @@ window.saveRecord = async function (id) {
             return;
         }
 
-        // ✅ Success
         closeModal();
         showToast('Record updated successfully', 'success');
 
-        // 🔄 Refresh table
         fetchCustomers();
 
     } catch (err) {
@@ -1190,7 +1288,6 @@ window.deleteRecord = async function (id) {
     });
 
     if (!result || !result.confirmed) {
-        viewRecord(id);
         return;
     }
 
@@ -1234,20 +1331,17 @@ window.deleteRecord = async function (id) {
             try {
                 const err = await response.json();
                 if (err.message) message = err.message;
-            } catch (_) {
-                // no body (204 or empty)
-            }
+            } catch (_) { }
 
             result.close();
             showToast(message, 'error');
             return;
         }
 
-        // ✅ Success
         result.close();
         showToast('Record deleted successfully', 'success');
+        closeModal();
 
-        // 🔄 Refresh table
         fetchCustomers();
 
     } catch (err) {
@@ -1256,7 +1350,6 @@ window.deleteRecord = async function (id) {
         showToast('Unexpected error while deleting record', 'error');
     }
 };
-
 
 window.toggleExpandable = function() {
     const content = document.getElementById('expandableContent');
@@ -1281,7 +1374,6 @@ window.activateAccount = async function(id) {
     });
 
     if (!result || !result.confirmed) {
-        viewRecord(id);
         return;
     }
 
@@ -1322,20 +1414,17 @@ window.activateAccount = async function(id) {
             try {
                 const err = await response.json();
                 if (err.message) message = err.message;
-            } catch (_) {
-                // no body (204 or empty)
-            }
+            } catch (_) { }
 
             result.close();
             showToast(message, 'error');
             return;
         }
 
-        // ✅ Success
         result.close();
+        closeModal();
         showToast('Account activated successfully', 'success');
 
-        // 🔄 Refresh table
         fetchCustomers();
 
     } catch (err) {
@@ -1355,7 +1444,6 @@ window.deactivateAccount = async function(id) {
     });
 
     if (!result || !result.confirmed) {
-        viewRecord(id);
         return;
     }
 
@@ -1396,20 +1484,17 @@ window.deactivateAccount = async function(id) {
             try {
                 const err = await response.json();
                 if (err.message) message = err.message;
-            } catch (_) {
-                // no body (204 or empty)
-            }
+            } catch (_) { }
 
             result.close();
             showToast(message, 'error');
             return;
         }
 
-        // ✅ Success
         result.close();
+        closeModal();
         showToast('Account deactivated successfully', 'success');
 
-        // 🔄 Refresh table
         fetchCustomers();
 
     } catch (err) {
@@ -1429,13 +1514,10 @@ window.resetPassword = async function (id) {
         danger: false
     });
 
-    // ❌ User cancelled
     if (!result || !result.confirmed) {
-        viewRecord(id);
         return;
     }
 
-    // 🔒 Lock modal + show loading state
     result.setLoading();
 
     try {
@@ -1446,7 +1528,6 @@ window.resetPassword = async function (id) {
             }
         });
 
-        // 🔐 Token expired handling
         if (response.status === 401) {
             let data = {};
             try {
@@ -1480,8 +1561,8 @@ window.resetPassword = async function (id) {
             return;
         }
 
-        // ✅ Success
         result.close();
+        closeModal();
         showToast('Password reset email sent', 'success');
 
     } catch (err) {
@@ -1491,19 +1572,8 @@ window.resetPassword = async function (id) {
     }
 };
 
-
-function hasPermission(permission) {
-    const permissions = JSON.parse(localStorage.getItem('permissions')) || [];
-    return permissions.includes(permission);
-}
-
 window.closeModal = function() {
     const modal = document.getElementById('recordModal');
-
-    // ❌ Do NOT close if this is a confirm modal
-    if (modal.classList.contains('modal-confirm')) {
-        return;
-    }
 
     modal.classList.remove('active');
     document.getElementById('recordModal').classList.remove('active');
@@ -1530,21 +1600,17 @@ function showConfirmModal({
     danger = false
 }) {
     return new Promise(resolve => {
-        const modal = document.getElementById('recordModal');
-        const overlay = document.getElementById('modalOverlay');
-
-        modal.classList.add('modal-confirm');
+        const modal = document.getElementById('confirmModal');
+        const overlay = document.getElementById('confirmOverlay');
 
         modal.innerHTML = `
             <div class="modal-header">
-                <img src="../../images/${danger ? 'warning-icon.svg' : 'save-icon.svg'}" alt="Confirm">
+                <img src="../../images/${danger ? 'warning-icon.svg' : 'save-icon.svg'}">
                 <h3>${title}</h3>
             </div>
 
             <div class="modal-body">
-                <p class="confirm-text">
-                    ${message}
-                </p>
+                <p class="confirm-text">${message}</p>
             </div>
 
             <div class="modal-footer">
@@ -1557,8 +1623,25 @@ function showConfirmModal({
             </div>
         `;
 
-        const okBtn = document.getElementById('confirmOkBtn');
-        const cancelBtn = document.getElementById('confirmCancelBtn');
+        modal.classList.add('active');
+        overlay.classList.add('active');
+
+        const okBtn = modal.querySelector('#confirmOkBtn');
+        const cancelBtn = modal.querySelector('#confirmCancelBtn');
+
+        function handleKey(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                okBtn.click();
+            }
+
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                cancelBtn.click();
+            }
+        }
+
+        document.addEventListener('keydown', handleKey);
 
         cancelBtn.onclick = () => {
             cleanup();
@@ -1576,31 +1659,28 @@ function showConfirmModal({
         function setLoading() {
             okBtn.disabled = true;
             cancelBtn.disabled = true;
-
             okBtn.innerHTML = `
                 <span class="dot-loader">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </span>
-            `;
-        }
-        
-        function cleanup(result) {
-            modal.classList.remove('active', 'modal-confirm');
-            overlay.classList.remove('active');
-            resolve(result);
+                    <span></span><span></span><span></span>
+                </span>`;
         }
 
-        modal.classList.add('active');
-        overlay.classList.add('active');
+        function cleanup() {
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+        }
     });
+}
+
+function hasPermission(permission) {
+    const permissions = JSON.parse(localStorage.getItem('permissions')) || [];
+    return permissions.includes(permission);
 }
 
 function handleTokenExpired() {
     return new Promise(resolve => {
-        const modal = document.getElementById('recordModal');
-        const overlay = document.getElementById('modalOverlay');
+        const modal = document.getElementById('confirmModal');
+        const overlay = document.getElementById('confirmOverlay');
 
         modal.classList.add('modal-confirm');
 
@@ -1647,7 +1727,7 @@ async function refreshCustomers() {
 
     const startTime = Date.now();
 
-    const success = await fetchCustomers(); // ✅ capture result
+    const success = await fetchCustomers();
 
     const elapsed = Date.now() - startTime;
     const remaining = Math.max(800 - elapsed, 0);

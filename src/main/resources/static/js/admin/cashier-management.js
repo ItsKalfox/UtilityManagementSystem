@@ -2,7 +2,6 @@ let currentPage = 0;
 const pageSize = 20;
 
 let searchTerm = '';
-let filterType = 'all';
 let filterStatus = 'all';
 let sortBy = 'userId';
 let sortDirection = 'asc';
@@ -11,49 +10,7 @@ let linkedUserId = null;
 let nicCheckInProgress = false;
 let lastCheckedNic = null;
 
-async function fetchAreas() {
-    if (cachedAreas) return cachedAreas;
-
-    const response = await fetch('/api/areas', {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-        }
-    });
-
-    if (response.status === 401) {
-        let data;
-        try {
-            data = await response.json();
-        } catch {
-            data = {};
-        }
-        if (data.message === 'Token expired') {
-            const confirmed = await handleTokenExpired();
-
-            if (!confirmed) return;
-
-            const theme = localStorage.getItem('theme');
-
-            localStorage.clear();
-
-            if (theme !== null) {
-                localStorage.setItem('theme', theme);
-            }
-
-            window.location.replace('../../index.html');
-        }
-    }
-
-    if (!response.ok) {
-        showToast('Failed to load record', 'error');
-    }
-
-    cachedAreas = await response.json();
-    return cachedAreas;
-}
-
-async function fetchCustomers() {
+async function fetchCashiers() {
     const params = new URLSearchParams({
         page: currentPage,
         size: pageSize,
@@ -62,13 +19,12 @@ async function fetchCustomers() {
     });
 
     if (searchTerm) params.append('search', searchTerm);
-    if (filterType !== 'all') params.append('type', filterType);
     if (filterStatus !== 'all') params.append('status', filterStatus);
 
     console.log('FETCH:', params.toString());
 
     try {
-        const response = await fetch(`/customers?${params.toString()}`, {
+        const response = await fetch(`/cashiers?${params.toString()}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
@@ -97,7 +53,7 @@ async function fetchCustomers() {
         }
 
         if (!response.ok) {
-            let message = 'Failed to fetch customer';
+            let message = 'Failed to fetch cashier';
             try {
                 const err = await response.json();
                 if (err.message) message = err.message;
@@ -115,7 +71,7 @@ async function fetchCustomers() {
 
     } catch (err) {
         console.error(err);
-        showToast('Unexpected error while fetching customer', 'error');
+        showToast('Unexpected error while fetching cashier records', 'error');
     }
 }
 
@@ -133,7 +89,7 @@ function renderRecords(records) {
                 <div class="record-id">#${record.userId}</div>
                 <div class="record-name">${record.fullName}</div>
                 <div class="record-nic">${record.nic}</div>
-                <div class="record-nic">${record.customerType}</div>
+                <div class="record-branch">${record.branchName}</div>
                 <div>
                     <span class="status-badge status-${record.status.toLowerCase()}">
                         ${record.status}
@@ -169,29 +125,19 @@ function renderPagination(totalPages) {
 
 window.goToPage = function (page) {
     currentPage = page;
-    fetchCustomers();
+    fetchCashiers();
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchCustomers();
-
-    applyPermissionVisibility('addCustomerBtn', 'CREATE_CUSTOMER');
+    fetchCashiers();
+    applyPermissionVisibility('addCashierBtn', 'CREATE_CASHIER');
 
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('input', e => {
             searchTerm = e.target.value.trim();
             currentPage = 0;
-            fetchCustomers();
-        });
-    }
-
-    const filterTypeSelect = document.getElementById('filterType');
-    if (filterTypeSelect) {
-        filterTypeSelect.addEventListener('change', e => {
-            filterType = e.target.value;
-            currentPage = 0;
-            fetchCustomers();
+            fetchCashiers();
         });
     }
 
@@ -200,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterStatusSelect.addEventListener('change', e => {
             filterStatus = e.target.value;
             currentPage = 0;
-            fetchCustomers();
+            fetchCashiers();
         });
     }
 
@@ -209,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sortBySelect.addEventListener('change', e => {
             sortBy = e.target.value;
             currentPage = 0;
-            fetchCustomers();
+            fetchCashiers();
         });
     }
 
@@ -218,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sortOrderSelect.addEventListener('change', e => {
             sortDirection = e.target.value;
             currentPage = 0;
-            fetchCustomers();
+            fetchCashiers();
         });
     }
 });
@@ -230,18 +176,10 @@ window.addRecord = async function () {
 
     linkedUserId = null;
 
-    let areas = [];
-    try {
-        areas = await fetchAreas();
-    } catch {
-        showToast('Failed to load areas', 'error');
-        return;
-    }
-
     modal.innerHTML = `
         <div class="modal-header">
             <div class="modal-header-left">
-                <h3>Add Customer</h3>
+                <h3>Add Cashier</h3>
             </div>
             <div class="modal-header-right">
                 <button class="close-btn" onclick="closeModal()">
@@ -259,7 +197,7 @@ window.addRecord = async function () {
                     <div class="info-box">
                         <div style="display: flex; gap: 10px;">
                             <img src="../../images/info-icon.svg" alt="Info" style="width: 18px; height: 18px; margin-top: 2px; filter: var(--icon-filter); transition: filter 0.3s ease;">
-                            <h4>How customer creation works</h4>
+                            <h4>How cashier creation works</h4>
                         </div>
                         <ul>
                             <li>
@@ -304,54 +242,15 @@ window.addRecord = async function () {
             <div class="detail-grid-middle">
                 <div>
                     <div class="detail-item">
-                        <span class="detail-label">Address Line 1</span>
-                        <input class="detail-value detail-input" id="addressLine1">
+                        <span class="detail-label">Branch Name</span>
+                        <input class="detail-value detail-input" id="branchName">
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Address Line 2</span>
-                        <input class="detail-value detail-input" id="addressLine2">
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">City</span>
-                        <input class="detail-value detail-input" id="addressCity">
-                    </div>
-                </div>
-
-                <div>
-                    <div class="detail-item">
-                        <span class="detail-label">Area Code</span>
-                        <select class="detail-value detail-input" id="areaCode">
-                            ${areas.map(a => `
-                                <option value="${a.areaCode}">
-                                    ${a.areaCode} - ${a.areaName}
-                                </option>
-                            `).join('')}
-                        </select>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Postal Code</span>
-                        <input class="detail-value detail-input" id="addressPostalCode">
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Customer Type</span>
-                        <select class="detail-value detail-input" id="customerType"
-                            onchange="renderCustomerTypeFields(this.value)">
-                            <option value="">Select</option>
-                            <option value="HOUSEHOLD">Household</option>
-                            <option value="BUSINESS">Business</option>
-                            <option value="GOVERNMENT ORGANIZATION">Government Organization</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <div id="typeSpecificContainer"></div>
                 </div>
             </div>
 
             <div class="detail-grid-bottom">
                 <div></div>
-                <button class="btn-adv btn-save" onclick="saveNewCustomer()">Save</button>
+                <button class="btn-adv btn-save" onclick="saveNewCashier()">Save</button>
             </div>
 
         </div>
@@ -375,51 +274,6 @@ window.addRecord = async function () {
     });
 
     nicInput.addEventListener('input', () => resetIdentityFields());
-};
-
-window.renderCustomerTypeFields = function (type) {
-    const c = document.getElementById('typeSpecificContainer');
-
-    if (!type) {
-        c.innerHTML = '';
-        return;
-    }
-
-    if (type === 'HOUSEHOLD') {
-        c.innerHTML = `
-            <div class="detail-item">
-                <span class="detail-label">Household Size</span>
-                <input class="detail-value detail-input" id="householdSize" type="number" min="1">
-            </div>`;
-    }
-
-    if (type === 'BUSINESS') {
-        c.innerHTML = `
-            <div class="detail-item">
-                <span class="detail-label">Business Type</span>
-                <input class="detail-value detail-input" id="businessType">
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Business Reg No</span>
-                <input class="detail-value detail-input" id="businessRegiNum">
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Tax ID</span>
-                <input class="detail-value detail-input" id="taxId">
-            </div>`;
-    }
-
-    if (type === 'GOVERNMENT ORGANIZATION') {
-        c.innerHTML = `
-            <div class="detail-item">
-                <span class="detail-label">Government ID</span>
-                <input class="detail-value detail-input" id="governmentId">
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Department</span>
-                <input class="detail-value detail-input" id="department">
-            </div>`;
-    }
 };
 
 window.addPhoneNew = function () {
@@ -507,7 +361,7 @@ async function handleNicCheck(nicInput) {
     nicCheckInProgress = true;
 
     try {
-        const response = await fetch(`/customers/check-nic/${nic}`, {
+        const response = await fetch(`/cashiers/check-nic/${nic}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
@@ -545,8 +399,8 @@ async function handleNicCheck(nicInput) {
 
         const data = await response.json();
 
-        if (data.exists && data.hasCustomerProfile) {
-            showToast('Customer already exists.', 'error');
+        if (data.exists && data.hasCashierProfile) {
+            showToast('Cashier already exists.', 'error');
 
             nicInput.value = '';
             nicInput.focus();
@@ -557,10 +411,10 @@ async function handleNicCheck(nicInput) {
             return;
         }
 
-        if (data.exists && !data.hasCustomerProfile && data.userId) {
+        if (data.exists && !data.hasCashierProfile && data.userId) {
             const result = await showConfirmModal({
                 title: 'Details Found',
-                message: 'An existing user was found with this NIC. Do you want to link to this user and create a customer profile?',
+                message: 'An existing user was found with this NIC. Do you want to link to this user and create a cashier profile?',
                 confirmText: 'Yes',
                 cancelText: 'No', 
                 danger: false
@@ -670,16 +524,15 @@ async function hydrateExistingUser(userId) {
     }
 }
 
-window.saveNewCustomer = async function () {
+window.saveNewCashier = async function () {
     const modal = document.getElementById('recordModal');
 
     const fullNameEl = modal.querySelector('#fullName');
     const emailEl = modal.querySelector('#email');
     const nicEl = modal.querySelector('#nic');
-    const customerTypeEl = modal.querySelector('#customerType');
-    const areaCodeEl = modal.querySelector('#areaCode');
+    const branchNameEl = modal.querySelector('#branchName');
 
-    if (!fullNameEl || !emailEl || !nicEl || !customerTypeEl || !areaCodeEl) {
+    if (!fullNameEl || !emailEl || !nicEl || !branchNameEl) {
         showToast('Form is not ready. Please reopen the dialog.', 'error');
         return;
     }
@@ -688,16 +541,11 @@ window.saveNewCustomer = async function () {
         fullName: fullNameEl.value.trim(),
         email: emailEl.value.trim(),
         nic: nicEl.value.trim(),
-        areaCode: areaCodeEl.value,
-        addressLine1: modal.querySelector('#addressLine1')?.value?.trim() || '',
-        addressLine2: modal.querySelector('#addressLine2')?.value?.trim() || '',
-        addressCity: modal.querySelector('#addressCity')?.value?.trim() || '',
-        addressPostalCode: modal.querySelector('#addressPostalCode')?.value?.trim() || '',
-        customerType: customerTypeEl.value,
+        branchName: branchNameEl.value.trim(),
         phoneNumbers: []
     };
 
-    if (!payload.fullName || !payload.email || !payload.nic || !payload.customerType) {
+    if (!payload.fullName || !payload.email || !payload.nic || !payload.branchName) {
         showToast('Please fill all required fields', 'error');
         return;
     }
@@ -719,51 +567,14 @@ window.saveNewCustomer = async function () {
         return;
     }
 
-    if (payload.customerType === 'HOUSEHOLD') {
-        const sizeEl = modal.querySelector('#householdSize');
-        if (!sizeEl || !sizeEl.value) {
-            showToast('Household size is required', 'error');
-            return;
-        }
-        payload.householdSize = parseInt(sizeEl.value, 10);
-    }
-
-    if (payload.customerType === 'BUSINESS') {
-        const businessType = modal.querySelector('#businessType')?.value?.trim();
-        const businessRegiNum = modal.querySelector('#businessRegiNum')?.value?.trim();
-        const taxId = modal.querySelector('#taxId')?.value?.trim();
-
-        if (!businessType || !businessRegiNum || !taxId) {
-            showToast('Please fill all business details', 'error');
-            return;
-        }
-
-        payload.businessType = businessType;
-        payload.businessRegiNum = businessRegiNum;
-        payload.taxId = taxId;
-    }
-
-    if (payload.customerType === 'GOVERNMENT ORGANIZATION') {
-        const governmentId = modal.querySelector('#governmentId')?.value?.trim();
-        const department = modal.querySelector('#department')?.value?.trim();
-
-        if (!governmentId || !department) {
-            showToast('Please fill all government details', 'error');
-            return;
-        }
-
-        payload.governmentId = governmentId;
-        payload.department = department;
-    }
-
     const isExistingUser = linkedUserId !== null;
 
     const endpoint = isExistingUser
-        ? '/customers'
-        : '/customers/full';
+        ? '/cashiers'
+        : '/cashiers/full';
 
     if (isExistingUser) {
-        payload.customerId = linkedUserId;
+        payload.cashierId = linkedUserId;
         delete payload.fullName;
         delete payload.email;
         delete payload.nic;
@@ -801,7 +612,7 @@ window.saveNewCustomer = async function () {
         }
 
         if (!response.ok) {
-            let message = 'Failed to create customer';
+            let message = 'Failed to create cashier';
             try {
                 const err = await response.json();
                 if (err.message) message = err.message;
@@ -813,19 +624,19 @@ window.saveNewCustomer = async function () {
         const record = await response.json();
 
         closeModal();
-        showToast('Customer added successfully', 'success');
-        fetchCustomers();
+        showToast('Cashier added successfully', 'success');
+        fetchCashiers();
         viewRecord(record.userId);
 
     } catch (err) {
         console.error(err);
-        showToast('Unexpected error while creating customer', 'error');
+        showToast('Unexpected error while creating cashier', 'error');
     }
 };
 
 window.viewRecord = async function (id) {
     try {
-        const response = await fetch(`/customers/${id}`, {
+        const response = await fetch(`/cashiers/${id}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json'
@@ -868,57 +679,19 @@ window.viewRecord = async function (id) {
         const modal = document.getElementById('recordModal');
         const overlay = document.getElementById('modalOverlay');
 
-        let typeSpecificHtml = '';
-
-        if (record.customerType === 'HOUSEHOLD') {
-            typeSpecificHtml = `
-                <div class="detail-item">
-                    <span class="detail-label">Household Size</span>
-                    <span class="detail-value" id="field-householdSize">${record.householdSize}</span>
-                </div>`;
-        }
-
-        if (record.customerType === 'BUSINESS') {
-            typeSpecificHtml = `
-                <div class="detail-item">
-                    <span class="detail-label">Business Type</span>
-                    <span class="detail-value" id="field-businessType">${record.businessType}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Business Reg No</span>
-                    <span class="detail-value" id="field-businessRegiNum">${record.businessRegiNum}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Tax ID</span>
-                    <span class="detail-value" id="field-taxId">${record.taxId}</span>
-                </div>`;
-        }
-
-        if (record.customerType === 'GOVERNMENT ORGANIZATION') {
-            typeSpecificHtml = `
-                <div class="detail-item">
-                    <span class="detail-label">Government ID</span>
-                    <span class="detail-value" id="field-governmentId">${record.governmentId}</span>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Department</span>
-                    <span class="detail-value" id="field-department">${record.department}</span>
-                </div>`;
-        }
-
         let editButtonHtml = '';
         let deleteButtonHtml = '';
         let statusButtonHtml = '';
         let resetPasswordButtonHtml = '';
         let advancedSectionHtml = '';
 
-        if (hasPermission('DELETE_CUSTOMER')) {
+        if (hasPermission('DELETE_CASHIER')) {
             deleteButtonHtml = `<button class="btn-adv btn-delete" onclick="deleteRecord(${record.userId})">Delete Record</button>`;
         } else {
             deleteButtonHtml = '';
         }
 
-        if (hasPermission('UPDATE_CUSTOMER')) {
+        if (hasPermission('UPDATE_CASHIER')) {
             editButtonHtml = `<button class="icon-btn-long" id="editBtn" onclick="enableEdit()">
                                 <img src="../images/edit-icon-text.svg" alt="EditBtn">
                             </button>`;
@@ -936,7 +709,7 @@ window.viewRecord = async function (id) {
             resetPasswordButtonHtml = '';
         }
 
-        if (hasPermission('UPDATE_CUSTOMER') || hasPermission('DELETE_CUSTOMER')) {
+        if (hasPermission('UPDATE_CASHIER') || hasPermission('DELETE_CASHIER')) {
             advancedSectionHtml = `
                     <div class="expandable-section">
                         <div class="expandable-header" onclick="toggleExpandable()">
@@ -1047,36 +820,9 @@ window.viewRecord = async function (id) {
                 <div class="detail-grid-middle"  id="detailGrid">
                     <div>
                         <div class="detail-item">
-                            <span class="detail-label">Address Line 1</span>
-                            <span class="detail-value" id="field-address1">${record.addressLine1}</span>
+                            <span class="detail-label">Branch Name</span>
+                            <span class="detail-value" id="field-branchName">${record.branchName}</span>
                         </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Address Line 2</span>
-                            <span class="detail-value" id="field-address2">${record.addressLine2 || ''}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">City</span>
-                            <span class="detail-value" id="field-city">${record.addressCity}</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="detail-item">
-                            <span class="detail-label">Area Code</span>
-                            <span class="detail-value" id="field-areaCode">${record.areaCode}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Postal Code</span>
-                            <span class="detail-value" id="field-postalCode">${record.addressPostalCode || ''}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Customer Type</span>
-                            <span class="detail-value" id="field-customerType">${record.customerType}</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        ${typeSpecificHtml}
                     </div>
                 </div>
                 ${advancedSectionHtml}
@@ -1106,46 +852,13 @@ window.enableEdit = async function() {
     document.getElementById('saveBtn').style.display = 'block';
     document.getElementById('editCancelBtn').style.display = 'block';
 
-    const editableFields = ['name', 'email', 'nic', 'areaCode', 'address1', 'address2', 'city', 'postalCode',
-        'householdSize', 'businessType', 'businessRegiNum', 'taxId', 'governmentId', 'department'];
-
-    let areas = [];
-    try {
-        areas = await fetchAreas();
-    } catch (e) {
-        console.error(e);
-        showToast('Failed to load area codes', 'error');
-    }
+    const editableFields = ['name', 'email', 'nic', 'branchName'];
 
     editableFields.forEach(field => {
         const element = document.getElementById(`field-${field}`);
         if (!element) return;
         const value = element.textContent;
-
-        if (field === 'areaCode') {
-            element.innerHTML = `
-                <select style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--gray-50); color: var(--text-primary);">
-                    ${areas.map(area => `
-                        <option value="${area.areaCode}"
-                            ${area.areaCode === value ? 'selected' : ''}>
-                            ${area.areaCode} - ${area.areaName}
-                        </option>
-                    `).join('')}
-                </select>
-            `;
-        } else if (field === 'householdSize') {
-            element.innerHTML = `
-                <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    value="${value}"
-                    style="width:100%; padding:8px;"
-                >
-            `;
-        } else {
-            element.innerHTML = `<input type="text" value="${value}" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--gray-50); color: var(--text-primary);">`;
-        }
+        element.innerHTML = `<input type="text" value="${value}" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--gray-50); color: var(--text-primary);">`;
     });
 
     document.querySelectorAll('.phone-number, .phone-category').forEach(el => {
@@ -1205,37 +918,9 @@ window.saveRecord = async function (id) {
             fullName: document.querySelector('#field-name input').value.trim(),
             email: document.querySelector('#field-email input').value.trim(),
             nic: document.querySelector('#field-nic input').value.trim(),
-            areaCode: document.querySelector('#field-areaCode select').value,
-            addressLine1: document.querySelector('#field-address1 input').value.trim(),
-            addressLine2: document.querySelector('#field-address2 input').value.trim(),
-            addressCity: document.querySelector('#field-city input').value.trim(),
-            addressPostalCode: document.querySelector('#field-postalCode input').value.trim(),
+            branchName: document.querySelector('#field-branchName input').value.trim(),
             phoneNumbers: []
         };
-
-        const customerType =
-            document.getElementById('field-customerType').textContent.trim();
-
-        if (customerType === 'HOUSEHOLD') {
-            payload.householdSize =
-                parseInt(document.querySelector('#field-householdSize input').value, 10);
-        }
-
-        if (customerType === 'BUSINESS') {
-            payload.businessType =
-                document.querySelector('#field-businessType input').value.trim();
-            payload.businessRegiNum =
-                document.querySelector('#field-businessRegiNum input').value.trim();
-            payload.taxId =
-                document.querySelector('#field-taxId input').value.trim();
-        }
-
-        if (customerType === 'GOVERNMENT ORGANIZATION') {
-            payload.governmentId =
-                document.querySelector('#field-governmentId input').value.trim();
-            payload.department =
-                document.querySelector('#field-department input').value.trim();
-        }
 
         document.querySelectorAll('.phone-item').forEach(item => {
             const number = item.querySelector('.phone-number')?.value.trim();
@@ -1260,7 +945,7 @@ window.saveRecord = async function (id) {
 
         console.log('PATCH PAYLOAD:', payload);
 
-        const response = await fetch(`/customers/${id}`, {
+        const response = await fetch(`/cashiers/${id}`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -1303,7 +988,7 @@ window.saveRecord = async function (id) {
         closeModal();
         showToast('Record updated successfully', 'success');
 
-        fetchCustomers();
+        fetchCashiers();
 
     } catch (err) {
         console.error(err);
@@ -1313,8 +998,8 @@ window.saveRecord = async function (id) {
 
 window.deleteRecord = async function (id) {
     const result = await showConfirmModal({
-        title: 'Delete Customer',
-        message: 'Are you sure you want to permanently delete this customer? This action cannot be undone.',
+        title: 'Delete Cashier',
+        message: 'Are you sure you want to permanently delete this cashier? This action cannot be undone.',
         confirmText: 'Delete',
         cancelText: 'Cancel',
         danger: true
@@ -1327,7 +1012,7 @@ window.deleteRecord = async function (id) {
     result.setLoading();
 
     try {
-        const response = await fetch(`/customers/${id}`, {
+        const response = await fetch(`/cashiers/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1375,7 +1060,7 @@ window.deleteRecord = async function (id) {
         showToast('Record deleted successfully', 'success');
         closeModal();
 
-        fetchCustomers();
+        fetchCashiers();
 
     } catch (err) {
         console.error(err);
@@ -1400,7 +1085,7 @@ window.activateAccount = async function(id) {
     result.setLoading();
 
     try {
-        const response = await fetch(`/customers/${id}/activate`, {
+        const response = await fetch(`/cashiers/${id}/activate`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1445,7 +1130,7 @@ window.activateAccount = async function(id) {
         closeModal();
         showToast('Account activated successfully', 'success');
 
-        fetchCustomers();
+        fetchCashiers();
 
     } catch (err) {
         console.error(err);
@@ -1470,7 +1155,7 @@ window.deactivateAccount = async function(id) {
     result.setLoading();
 
     try {
-        const response = await fetch(`/customers/${id}/deactivate`, {
+        const response = await fetch(`/cashiers/${id}/deactivate`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -1515,7 +1200,7 @@ window.deactivateAccount = async function(id) {
         closeModal();
         showToast('Account deactivated successfully', 'success');
 
-        fetchCustomers();
+        fetchCashiers();
 
     } catch (err) {
         console.error(err);
@@ -1527,8 +1212,7 @@ window.deactivateAccount = async function(id) {
 window.resetPassword = async function (id) {
     const result = await showConfirmModal({
         title: 'Reset Password',
-        message:
-            'The existing password will be invalidated, and a new password will be generated and sent to the user’s email address.',
+        message: 'The existing password will be invalidated, and a new password will be generated and sent to the user’s email address.',
         confirmText: 'Reset',
         cancelText: 'Cancel',
         danger: false
@@ -1541,7 +1225,7 @@ window.resetPassword = async function (id) {
     result.setLoading();
 
     try {
-        const response = await fetch(`/customers/${id}/reset-password`, {
+        const response = await fetch(`/cashiers/${id}/reset-password`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -1592,7 +1276,7 @@ window.resetPassword = async function (id) {
     }
 };
 
-async function refreshCustomers() {
+async function refreshCashiers() {
     const btn = document.getElementById('refreshBtn');
     const img = btn?.querySelector('img');
 
@@ -1603,7 +1287,7 @@ async function refreshCustomers() {
 
     const startTime = Date.now();
 
-    const success = await fetchCustomers();
+    const success = await fetchCashiers();
 
     const elapsed = Date.now() - startTime;
     const remaining = Math.max(800 - elapsed, 0);

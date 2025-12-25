@@ -44,6 +44,11 @@ public class CashierController {
         return cashierService.getCashierDetails(id);
     }
 
+    @GetMapping("check-nic/{nic}")
+    public CashierNICCheckDTO checkCashier(@PathVariable String nic) {
+        return cashierService.checkCashier(nic);
+    }
+
     @PreAuthorize("hasAuthority('UPDATE_CASHIER')")
     @PatchMapping("/{id}")
     public CashierDetailDTO updateCashier(

@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -79,6 +80,19 @@ public class CashierService {
                         c.getStatus()
                 )
         );
+    }
+
+    @Transactional(readOnly = true)
+    public CashierNICCheckDTO checkCashier(@PathVariable String nic) {
+        User user = userRepository.findByNic(nic).orElse(null);
+        if (user == null) {
+            return new CashierNICCheckDTO(false, false, null);
+        }
+        boolean hasCashierProfile = cashierRepository.existsByUserId(user.getUserId());
+        if (hasCashierProfile) {
+            return new CashierNICCheckDTO(true, true, null);
+        }
+        return new CashierNICCheckDTO(true, false, user.getUserId());
     }
 
     @Transactional(readOnly = true)

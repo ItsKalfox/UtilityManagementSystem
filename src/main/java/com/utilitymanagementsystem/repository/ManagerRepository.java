@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface ManagerRepository extends JpaRepository<Manager, Integer>, JpaSpecificationExecutor<Manager> {
     Optional<Manager> findByUser_UserId(Integer userId);
+    boolean existsByUserId(Integer userId);
 }

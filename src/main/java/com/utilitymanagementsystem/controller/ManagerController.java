@@ -1,5 +1,6 @@
 package com.utilitymanagementsystem.controller;
 
+import com.utilitymanagementsystem.dto.customer.CustomerNICCheckDTO;
 import com.utilitymanagementsystem.dto.manager.*;
 import com.utilitymanagementsystem.service.ManagerService;
 import jakarta.validation.Valid;
@@ -41,6 +42,11 @@ public class ManagerController {
     @GetMapping("/{id}")
     public ManagerDetailDTO getManager(@PathVariable Integer id) {
         return managerService.getManagerDetails(id);
+    }
+
+    @GetMapping("check-nic/{nic}")
+    public ManagerNICCheckDTO checkManager(@PathVariable String nic) {
+        return managerService.checkManager(nic);
     }
 
     @PreAuthorize("hasAuthority('UPDATE_MANAGER')")

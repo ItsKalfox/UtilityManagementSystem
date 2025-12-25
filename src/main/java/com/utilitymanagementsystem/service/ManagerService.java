@@ -1,5 +1,6 @@
 package com.utilitymanagementsystem.service;
 
+import com.utilitymanagementsystem.dto.customer.CustomerNICCheckDTO;
 import com.utilitymanagementsystem.dto.manager.*;
 import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 import com.utilitymanagementsystem.exception.ConflictException;
@@ -17,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -73,6 +75,19 @@ public class ManagerService {
                         m.getStatus()
                 )
         );
+    }
+
+    @Transactional(readOnly = true)
+    public ManagerNICCheckDTO checkManager(@PathVariable String nic) {
+        User user = userRepository.findByNic(nic).orElse(null);
+        if (user == null) {
+            return new ManagerNICCheckDTO(false, false, null);
+        }
+        boolean hasManagerProfile = managerRepository.existsByUserId(user.getUserId());
+        if (hasManagerProfile) {
+            return new ManagerNICCheckDTO(true, true, null);
+        }
+        return new ManagerNICCheckDTO(true, false, user.getUserId());
     }
 
     @Transactional(readOnly = true)

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Utility Management System</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
 </head>
 <body>
     <div class="theme-toggle-container">
@@ -37,14 +38,14 @@
 
                 <div class="nav-group">
                     <div class="nav-group-title">Management</div>
-                    <a href="customer-management.html" class="nav-item" data-tab="customers">
+                    <a href="customer-management.html" class="nav-item" data-tab="customers" id="customerManagementTab" style="display: none;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
                         </svg>
                         Customer Management
                     </a>
-                    <a href="manager-management.html" class="nav-item" data-tab="managers">
+                    <a href="manager-management.html" class="nav-item" data-tab="managers" id="managerManagementTab" style="display: none;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
@@ -53,21 +54,21 @@
                         </svg>
                         Manager Management
                     </a>
-                    <a href="cashier-management.html" class="nav-item" data-tab="cashiers">
+                    <a href="cashier-management.html" class="nav-item" data-tab="cashiers" id="cashierManagementTab" style="display: none;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
                             <line x1="1" y1="10" x2="23" y2="10"/>
                         </svg>
                         Cashier Management
                     </a>
-                    <a href="fieldofficer-management.html" class="nav-item" data-tab="officers">
+                    <a href="fieldofficer-management.html" class="nav-item" data-tab="officers" id="fieldOfficerManagementTab" style="display: none;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                             <circle cx="12" cy="10" r="3"/>
                         </svg>
                         Field Officer Management
                     </a>
-                    <a href="admin-management.html" class="nav-item active" data-tab="admins">
+                    <a href="admin-management.html" class="nav-item active" data-tab="admins" id="adminManagementTab" style="display: none;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                             <circle cx="9" cy="7" r="4"/>
@@ -78,13 +79,13 @@
 
                 <div class="nav-group">
                     <div class="nav-group-title">Advanced</div>
-                    <a href="#" class="nav-item" data-tab="roles">
+                    <a href="#" class="nav-item" data-tab="roles" id="roleCreationTab" style="display: none;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
                         </svg>
                         Role Creation
                     </a>
-                    <a href="#" class="nav-item" data-tab="areas">
+                    <a href="#" class="nav-item" data-tab="areas" id="areaCreationTab" style="display: none;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
                             <line x1="2" y1="12" x2="22" y2="12"/>
@@ -92,15 +93,23 @@
                         </svg>
                         Area Creation
                     </a>
+                    <a href="#" class="nav-item" id="adminActionLogTab" style="display: none;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        Admin Action Log
+                    </a>
                 </div>
             </nav>
             <div class="sidebar-footer-container">
                 <div class="sidebar-footer">
                     <button class="icon-btn" onclick="handleSettings()">
-                        <img src="../images/settings_icon.svg" alt="Profile">
+                        <img src="../images/settings-icon.svg" alt="settings">
                     </button>
                     <button class="icon-btn logout-btn" id="logoutBtn" onclick="handleLogout()">
-                        <img src="../images/logout_icon.svg" alt="Profile">
+                        <img src="../images/logout-icon.svg" alt="logout">
                     </button>
                 </div>
             </div>
@@ -119,6 +128,62 @@
             </header>
 
             <div class="content-area" id="contentArea">
+                <div class="management-container">
+                    <div class="management-header">
+                        <div class="management-title">
+                            <div>
+                                <h2>Admin Management</h2>
+                            </div>
+                            <div class="management-title-right">
+                                <button class="icon-btn" id="refreshBtn" onclick="refreshCustomers()">
+                                    <img src="../images/refresh-icon.svg" alt="refresh">
+                                </button>
+                                <button class="btn btn-view" onclick="addRecord()" id="addCustomerBtn" style="display: none;">
+                                    Add New Customer
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="management-controls">
+                            <div class="search-box">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.35-4.35"/>
+                                </svg>
+                                <input type="text" id="searchInput" placeholder="Search...">
+                            </div>
+
+                            <select id="filterStatus" class="filter-select">
+                                <option value="all">All Status</option>
+                                <option value="ACTIVE">Active</option>
+                                <option value="INACTIVE">Inactive</option>
+                            </select>
+
+                            <select id="filterType" class="filter-select">
+                                <option value="all">All Types</option>
+                                <option value="HOUSEHOLD">Household</option>
+                                <option value="BUSINESS">Business</option>
+                                <option value="GOVERNMENT ORGANIZATION">Government Organization</option>
+                            </select>
+
+                            <select id="sortBySelect" class="sort-select">
+                                <option value="userId">Sort by ID</option>
+                                <option value="createdAt">Sort by Created Date</option>
+                                <option value="updatedAt">Sort by Updated Date</option>
+                            </select>
+
+                            <select id="sortOrderSelect" class="sort-select">
+                                <option value="asc">Ascending</option>
+                                <option value="desc">Descending</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="records-container" id="recordsContainer">
+                    </div>
+
+                    <div class="pagination" id="pagination"></div>
+                </div>
             </div>
         </main>
     </div>
@@ -126,7 +191,11 @@
     <div class="modal-overlay" id="modalOverlay"></div>
     <div class="modal" id="recordModal"></div>
 
+    <div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
+    <div id="confirmModal" class="modal modal-confirm"></div>
+
     <script src="../js/common/theme.js"></script>
     <script src="../js/admin/utils.js"></script>
+    <script src="../js/admin/admin-management.js"></script>
 </body>
 </html>

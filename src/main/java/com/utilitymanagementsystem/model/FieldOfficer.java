@@ -1,7 +1,10 @@
 package com.utilitymanagementsystem.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -29,6 +32,14 @@ public class FieldOfficer {
 
     @Column(name = "status", nullable = false, length = 10)
     private String status;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
 
     @OneToMany(mappedBy = "fieldOfficer")
     private Set<Complaint> complaints = new LinkedHashSet<>();
@@ -75,6 +86,14 @@ public class FieldOfficer {
     public String getStatus() { return status; }
 
     public void setStatus(String status) { this.status = status; }
+
+    public Instant getCreatedAt() { return createdAt; }
+
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public Instant getUpdatedAt() { return updatedAt; }
+
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 
     public Set<Complaint> getComplaints() {
         return complaints;

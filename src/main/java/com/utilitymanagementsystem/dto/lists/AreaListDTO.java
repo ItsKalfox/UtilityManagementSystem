@@ -1,4 +1,4 @@
-package com.utilitymanagementsystem.dto.area;
+package com.utilitymanagementsystem.dto.lists;
 
 public class AreaListDTO {
     private String areaCode;

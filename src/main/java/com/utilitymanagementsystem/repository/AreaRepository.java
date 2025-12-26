@@ -1,6 +1,6 @@
 package com.utilitymanagementsystem.repository;
 
-import com.utilitymanagementsystem.dto.area.AreaListDTO;
+import com.utilitymanagementsystem.dto.lists.AreaListDTO;
 import com.utilitymanagementsystem.model.Area;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AreaRepository extends JpaRepository<Area, String> {
     @Query("""
-        SELECT new com.utilitymanagementsystem.dto.area.AreaListDTO(
+        SELECT new com.utilitymanagementsystem.dto.lists.AreaListDTO(
             a.areaCode,
             a.areaName
         )

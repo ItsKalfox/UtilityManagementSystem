@@ -360,7 +360,7 @@ public class CustomerService {
         adminActionLogService.logAction(
                 "CUSTOMER",
                 customerId.toString(),
-                "UPDATE"
+                "Update record"
         );
 
         return getCustomerDetails(customerId);
@@ -485,7 +485,7 @@ public class CustomerService {
         adminActionLogService.logAction(
                 "CUSTOMER",
                 dto.customerId().toString(),
-                "CREATE"
+                "Create profile"
         );
 
         return getCustomerDetails(dto.customerId());
@@ -647,7 +647,7 @@ public class CustomerService {
         adminActionLogService.logAction(
                 "CUSTOMER",
                 user.getUserId().toString(),
-                "CREATE"
+                "Create record"
         );
 
         return getCustomerDetails(user.getUserId());
@@ -661,7 +661,7 @@ public class CustomerService {
         adminActionLogService.logAction(
                 "CUSTOMER",
                 customerId.toString(),
-                "DELETE"
+                "Delete profile"
         );
 
         customerRepository.delete(customer);
@@ -694,7 +694,7 @@ public class CustomerService {
         adminActionLogService.logAction(
                 "CUSTOMER",
                 user.getUserId().toString(),
-                "Customer Password Reset"
+                "Reset profile password"
         );
     }
 
@@ -713,7 +713,7 @@ public class CustomerService {
         adminActionLogService.logAction(
                 "CUSTOMER",
                 customer.getUserId().toString(),
-                "Customer Account activated"
+                "Activate profile"
         );
     }
 
@@ -732,7 +732,7 @@ public class CustomerService {
         adminActionLogService.logAction(
                 "CUSTOMER",
                 customer.getUserId().toString(),
-                "Customer Account deactivated"
+                "Deactivate profile"
         );
     }
 }

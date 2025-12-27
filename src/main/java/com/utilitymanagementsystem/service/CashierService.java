@@ -203,7 +203,7 @@ public class CashierService {
         adminActionLogService.logAction(
                 "CASHIER",
                 cashierId.toString(),
-                "UPDATE"
+                "Update record"
         );
 
         return getCashierDetails(cashierId);
@@ -229,7 +229,7 @@ public class CashierService {
         adminActionLogService.logAction(
                 "CASHIER",
                 dto.cashierId().toString(),
-                "CREATE"
+                "Create profile"
         );
 
         return getCashierDetails(dto.cashierId());
@@ -296,7 +296,7 @@ public class CashierService {
         adminActionLogService.logAction(
                 "CASHIER",
                 user.getUserId().toString(),
-                "CREATE"
+                "Create record"
         );
 
         return getCashierDetails(user.getUserId());
@@ -310,7 +310,7 @@ public class CashierService {
         adminActionLogService.logAction(
                 "CASHIER",
                 cashierId.toString(),
-                "DELETE"
+                "Delete profile"
         );
 
         cashierRepository.delete(cashier);
@@ -343,7 +343,7 @@ public class CashierService {
         adminActionLogService.logAction(
                 "CASHIER",
                 user.getUserId().toString(),
-                "Cashier Password Reset"
+                "Reset profile password"
         );
     }
 
@@ -362,7 +362,7 @@ public class CashierService {
         adminActionLogService.logAction(
                 "CASHIER",
                 cashier.getUserId().toString(),
-                "Cashier Account activated"
+                "Activate profile"
         );
     }
 
@@ -381,7 +381,7 @@ public class CashierService {
         adminActionLogService.logAction(
                 "CASHIER",
                 cashier.getUserId().toString(),
-                "Cashier Account deactivated"
+                "Deactivate profile"
         );
     }
 }

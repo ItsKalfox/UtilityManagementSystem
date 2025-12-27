@@ -204,7 +204,7 @@ public class AdminService {
         adminActionLogService.logAction(
                 "ADMIN",
                 adminId.toString(),
-                "UPDATE"
+                "Update record"
         );  
 
         return getAdminDetails(adminId);
@@ -232,7 +232,7 @@ public class AdminService {
         adminActionLogService.logAction(
                 "ADMIN",
                 dto.adminId().toString(),
-                "CREATE"
+                "Create profile"
         );
 
         return getAdminDetails(dto.adminId());
@@ -301,7 +301,7 @@ public class AdminService {
         adminActionLogService.logAction(
                 "ADMIN",
                 user.getUserId().toString(),
-                "CREATE"
+                "Create record"
         );
 
         return getAdminDetails(user.getUserId());
@@ -315,7 +315,7 @@ public class AdminService {
         adminActionLogService.logAction(
                 "ADMIN",
                 adminId.toString(),
-                "DELETE"
+                "Delete profile"
         );
 
         adminRepository.delete(admin);
@@ -348,7 +348,7 @@ public class AdminService {
         adminActionLogService.logAction(
                 "ADMIN",
                 user.getUserId().toString(),
-                "Admin Password Reset"
+                "Reset profile password"
         );
     }
 
@@ -366,7 +366,7 @@ public class AdminService {
         adminActionLogService.logAction(
                 "ADMIN",
                 admin.getUserId().toString(),
-                "Admin Account activated"
+                "Activate profile"
         );
     }
 
@@ -384,7 +384,7 @@ public class AdminService {
         adminActionLogService.logAction(
                 "ADMIN",
                 admin.getUserId().toString(),
-                "Admin Account deactivated"
+                "Deactivate profile"
         );
     }
 }

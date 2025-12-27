@@ -199,7 +199,7 @@ public class ManagerService {
         adminActionLogService.logAction(
                 "MANAGER",
                 managerId.toString(),
-                "UPDATE"
+                "Update record"
         );
 
         return getManagerDetails(managerId);
@@ -225,7 +225,7 @@ public class ManagerService {
         adminActionLogService.logAction(
                 "MANAGER",
                 dto.managerId().toString(),
-                "CREATE"
+                "Create profile"
         );
 
         return getManagerDetails(dto.managerId());
@@ -292,7 +292,7 @@ public class ManagerService {
         adminActionLogService.logAction(
                 "MANAGER",
                 user.getUserId().toString(),
-                "CREATE"
+                "Create record"
         );
 
         return getManagerDetails(user.getUserId());
@@ -306,7 +306,7 @@ public class ManagerService {
         adminActionLogService.logAction(
                 "MANAGER",
                 managerId.toString(),
-                "DELETE"
+                "Delete profile"
         );
 
         managerRepository.delete(manager);
@@ -339,7 +339,7 @@ public class ManagerService {
         adminActionLogService.logAction(
                 "MANAGER",
                 user.getUserId().toString(),
-                "Manager Password Reset"
+                "Reset profile password"
         );
     }
 
@@ -358,7 +358,7 @@ public class ManagerService {
         adminActionLogService.logAction(
                 "MANAGER",
                 manager.getUserId().toString(),
-                "Manager Account activated"
+                "Activate profile"
         );
     }
 
@@ -377,7 +377,7 @@ public class ManagerService {
         adminActionLogService.logAction(
                 "MANAGER",
                 manager.getUserId().toString(),
-                "Manager Account deactivated"
+                "Deactivate profile"
         );
     }
 }

@@ -27,7 +27,6 @@ public class UserService {
     private final FieldOfficerRepository fieldOfficerRepository;
     private final CashierRepository cashierRepository;
     private final AdminActionLogService adminActionLogService;
-    private final PasswordEncoder passwordEncoder;
 
     public UserService(
             UserRepository userRepository,
@@ -36,8 +35,7 @@ public class UserService {
             ManagerRepository managerRepository,
             FieldOfficerRepository fieldOfficerRepository,
             CashierRepository cashierRepository,
-            AdminActionLogService adminActionLogService,
-            PasswordEncoder passwordEncoder) {
+            AdminActionLogService adminActionLogService) {
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
         this.adminRepository = adminRepository;
@@ -45,7 +43,6 @@ public class UserService {
         this.fieldOfficerRepository = fieldOfficerRepository;
         this.cashierRepository = cashierRepository;
         this.adminActionLogService = adminActionLogService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -195,7 +192,7 @@ public class UserService {
         adminActionLogService.logAction(
                 "USER",
                 userId.toString(),
-                "UPDATE"
+                "Update record"
         );
 
         return getUserDetails(userId);
@@ -251,6 +248,12 @@ public class UserService {
             user.getPhoneNumbers().add(phone);
         }
 
+        adminActionLogService.logAction(
+                "USER",
+                user.getUserId().toString(),
+                "Create record"
+        );
+
         return getUserDetails(user.getUserId());
     }
 
@@ -262,7 +265,7 @@ public class UserService {
         adminActionLogService.logAction(
                 "USER",
                 userId.toString(),
-                "DELETE"
+                "Delete record"
         );
 
         userRepository.delete(user);

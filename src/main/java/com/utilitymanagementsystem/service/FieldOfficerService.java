@@ -228,7 +228,7 @@ public class FieldOfficerService {
         adminActionLogService.logAction(
                 "FIELD OFFICER",
                 fieldOfficerId.toString(),
-                "UPDATE"
+                "Update record"
         );
 
         return getFieldOfficerDetails(fieldOfficerId);
@@ -267,7 +267,7 @@ public class FieldOfficerService {
         adminActionLogService.logAction(
                 "FIELD OFFICER",
                 dto.fieldOfficerId().toString(),
-                "CREATE"
+                "Create profile"
         );
 
         return getFieldOfficerDetails(dto.fieldOfficerId());
@@ -347,7 +347,7 @@ public class FieldOfficerService {
         adminActionLogService.logAction(
                 "FIELD OFFICER",
                 user.getUserId().toString(),
-                "CREATE"
+                "Create record"
         );
 
         return getFieldOfficerDetails(user.getUserId());
@@ -361,7 +361,7 @@ public class FieldOfficerService {
         adminActionLogService.logAction(
                 "FIELD OFFICER",
                 fieldOfficerId.toString(),
-                "DELETE"
+                "Delete profile"
         );
 
         fieldOfficerRepository.delete(fieldOfficer);
@@ -394,7 +394,7 @@ public class FieldOfficerService {
         adminActionLogService.logAction(
                 "FIELD OFFICER",
                 user.getUserId().toString(),
-                "Field Officer Password Reset"
+                "Reset profile password"
         );
     }
 
@@ -413,7 +413,7 @@ public class FieldOfficerService {
         adminActionLogService.logAction(
                 "FIELD OFFICER",
                 fieldOfficer.getUserId().toString(),
-                "Field Officer Account activated"
+                "Activate profile"
         );
     }
 
@@ -432,7 +432,7 @@ public class FieldOfficerService {
         adminActionLogService.logAction(
                 "FIELD OFFICER",
                 fieldOfficer.getUserId().toString(),
-                "Field Officer Account deactivated"
+                "Deactivate profile"
         );
     }
 }

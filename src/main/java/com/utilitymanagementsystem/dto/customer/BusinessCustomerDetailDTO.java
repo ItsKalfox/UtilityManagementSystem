@@ -1,5 +1,4 @@
 package com.utilitymanagementsystem.dto.customer;
-
 import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 
 import java.time.Instant;
@@ -11,7 +10,6 @@ public record BusinessCustomerDetailDTO(
         String email,
         String nic,
         String status,
-//        boolean systemAccess,
         Instant createdAt,
         Instant updatedAt,
         String areaCode,

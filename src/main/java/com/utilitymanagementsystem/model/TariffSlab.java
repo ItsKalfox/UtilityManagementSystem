@@ -75,5 +75,4 @@ public class TariffSlab {
     public void setUnitRate(BigDecimal unitRate) {
         this.unitRate = unitRate;
     }
-
 }

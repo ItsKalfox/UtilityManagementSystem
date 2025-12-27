@@ -26,7 +26,6 @@ public interface AdminRepository extends JpaRepository<Admin, Integer>, JpaSpeci
     List<AdminIdNameListDTO> findAllAdminIdAndNames();
     Optional<Admin> findByUser_UserId(Integer userId);
     boolean existsByUserId(Integer userId);
-
     long count();
     long countByStatus(String status);
 }

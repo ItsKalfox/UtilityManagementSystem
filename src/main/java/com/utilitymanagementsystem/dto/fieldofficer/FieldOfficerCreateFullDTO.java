@@ -13,7 +13,6 @@ public record FieldOfficerCreateFullDTO(
         @NotBlank String nic,
         @NotBlank String vehicleNo,
         @NotBlank String areaCode,
-
         @NotNull
         @Size(min = 1)
         List<PhoneNumberDTO> phoneNumbers

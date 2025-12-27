@@ -1,11 +1,9 @@
 package com.utilitymanagementsystem.spec;
 
 import com.utilitymanagementsystem.model.Cashier;
-import com.utilitymanagementsystem.model.Manager;
 import org.springframework.data.jpa.domain.Specification;
 
 public class CashierSpecification {
-
     public static Specification<Cashier> hasSearch(String search) {
         return (root, query, cb) -> {
             if (search == null || search.isBlank()) return null;

@@ -11,9 +11,7 @@ public record ManagerCreateFullDTO(
         @NotBlank String fullName,
         @NotBlank String email,
         @NotBlank String nic,
-//        @NotNull String password,
         @NotBlank String department,
-
         @NotNull
         @Size(min = 1)
         List<PhoneNumberDTO> phoneNumbers

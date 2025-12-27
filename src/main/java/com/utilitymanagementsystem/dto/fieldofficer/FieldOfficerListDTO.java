@@ -18,17 +18,13 @@ public class FieldOfficerListDTO {
     public Integer getUserId() {
         return userId;
     }
-
     public String getFullName() {
         return fullName;
     }
-
     public String getNic() {
         return nic;
     }
-
     public String getVehicleNo() { return vehicleNo; }
-
     public String getStatus() {
         return status;
     }

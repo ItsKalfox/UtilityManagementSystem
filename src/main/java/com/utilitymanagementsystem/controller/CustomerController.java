@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
-
     private final CustomerService customerService;
 
     public CustomerController(CustomerService customerService) {

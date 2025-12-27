@@ -1,15 +1,12 @@
 package com.utilitymanagementsystem.service;
 
 import com.utilitymanagementsystem.dto.auth.*;
-import com.utilitymanagementsystem.exception.ResourceNotFoundException;
 import com.utilitymanagementsystem.model.*;
 import com.utilitymanagementsystem.repository.*;
 import com.utilitymanagementsystem.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +14,6 @@ import java.util.Objects;
 
 @Service
 public class AuthService {
-
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final AdminRepository adminRepository;

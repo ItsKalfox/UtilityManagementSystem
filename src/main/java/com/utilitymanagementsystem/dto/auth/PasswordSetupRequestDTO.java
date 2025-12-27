@@ -15,10 +15,8 @@ public class PasswordSetupRequestDTO {
 
     public Integer getUserId() { return userId; }
     public void setUserId(Integer userId) { this.userId = userId; }
-
     public String getNewPassword() { return newPassword; }
     public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
-
     public String getUserType() { return userType; }
     public void setUserType(String userType) { this.userType = userType; }
 }

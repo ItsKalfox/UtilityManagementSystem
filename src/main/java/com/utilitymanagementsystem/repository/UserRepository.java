@@ -14,11 +14,8 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     Optional<User> findByEmail(String email);
     Optional<User> findByNic(String nic);
     Optional<User> findByUserId(Integer userId);
-
     boolean existsByEmailAndUserIdNot(String email, Integer userId);
-
     boolean existsByNicAndUserIdNot(String nic, Integer userId);
     boolean existsByEmail(String email);
     boolean existsByNic(String nic);
-
 }

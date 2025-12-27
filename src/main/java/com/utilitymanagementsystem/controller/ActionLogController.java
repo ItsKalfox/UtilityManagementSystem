@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/action-log")
 public class ActionLogController {
-
     private final AdminActionLogService adminActionLogServiceService;
 
     public ActionLogController(AdminActionLogService adminActionLogServiceService) {

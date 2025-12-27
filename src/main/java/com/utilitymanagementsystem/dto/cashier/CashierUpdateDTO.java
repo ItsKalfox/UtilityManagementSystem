@@ -8,8 +8,6 @@ public record CashierUpdateDTO(
         String fullName,
         String email,
         String nic,
-//        String status,
-//        String password,
         String branchName,
         List<PhoneNumberDTO> phoneNumbers
 ) {}

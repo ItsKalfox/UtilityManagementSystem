@@ -88,5 +88,4 @@ public class MeterReading {
     public void setBillingPeriodEnd(Instant billingPeriodEnd) {
         this.billingPeriodEnd = billingPeriodEnd;
     }
-
 }

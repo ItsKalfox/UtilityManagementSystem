@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityUtil {
-
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
 
@@ -48,7 +47,6 @@ public class SecurityUtil {
     }
 
     public Admin getCurrentAdmin() {
-
         String email = getCurrentEmail();
 
         User user = userRepository.findByEmail(email)
@@ -59,5 +57,4 @@ public class SecurityUtil {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User is not an admin"));
     }
-
 }

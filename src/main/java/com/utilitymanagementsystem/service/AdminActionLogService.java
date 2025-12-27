@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 
 @Service
 public class AdminActionLogService {
-
     private final AdminActionLogRepository logRepository;
     private final SecurityUtil securityUtil;
     private final AdminActionLogRepository adminActionLogRepository;

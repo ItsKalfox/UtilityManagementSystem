@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     // 400 — Invalid sort / invalid property reference
     @ExceptionHandler(PropertyReferenceException.class)
     public ResponseEntity<ApiError> handleInvalidProperty(PropertyReferenceException ex) {
@@ -98,13 +97,4 @@ public class GlobalExceptionHandler {
                 new ApiError(400, "Invalid or missing field: " + field)
         );
     }
-
-//    @ExceptionHandler(EmailSendException.class)
-//    public ResponseEntity<?> handleEmailError(EmailSendException ex) {
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                .body(Map.of(
-//                        "error", "EMAIL_SEND_FAILED",
-//                        "message", ex.getMessage()
-//                ));
-//    }
 }

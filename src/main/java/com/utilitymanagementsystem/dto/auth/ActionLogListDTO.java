@@ -26,19 +26,14 @@ public class ActionLogListDTO {
 
     public Integer getLogId() {return logId;}
     public void setLogId(Integer logId) {this.logId = logId;}
-
     public Integer getAdminId() {return adminId;}
     public void setAdminId(Integer adminId) {this.adminId = adminId;}
-
     public String getEntityType() {return entityType;}
     public void setEntityType(String entityType) {this.entityType = entityType;}
-
     public String getEntityId() {return entityId;}
     public void setEntityId(String entityId) {this.entityId = entityId;}
-
     public String getAction() {return action;}
     public void setAction(String action) {this.action = action;}
-
     public Instant getTimestamp() {return timestamp;}
     public void setTimestamp(Instant timestamp) {this.timestamp = timestamp;}
 }

@@ -74,29 +74,3 @@ document.addEventListener('DOMContentLoaded', () => {
         errorBox.innerText = '';
     }
 });
-
-
-// const urlParams = new URLSearchParams(window.location.search);
-// const role = urlParams.get('role') || 'admin';
-
-// const roleTitles = {
-//     'admin': 'Admin Login',
-//     'manager': 'Manager Login',
-//     'cashier': 'Cashier Login',
-//     'field-officer': 'Field Officer Login'
-// };
-
-// document.getElementById('roleTitle').textContent = roleTitles[role] || 'Admin Login';
-
-// function handleLogin(event) {
-//     event.preventDefault();
-//     const email = document.getElementById('email').value;
-//     const password = document.getElementById('password').value;
-
-//     localStorage.setItem('userRole', role);
-//     localStorage.setItem('userEmail', email);
-//     localStorage.setItem('userName', email.split('@')[0]);
-
-//     window.location.href = 'dashboard.html';
-// }
-

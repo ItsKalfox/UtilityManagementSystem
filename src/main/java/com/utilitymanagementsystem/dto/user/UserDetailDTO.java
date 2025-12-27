@@ -8,10 +8,6 @@ public record UserDetailDTO(
         String fullName,
         String email,
         String nic,
-//        String status,
-//        boolean systemAccess,
-//        Instant createdAt,
-//        Instant updatedAt,
         List<PhoneNumberDTO> phoneNumbers,
         List<String> profiles
 ) {}

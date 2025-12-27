@@ -18,19 +18,15 @@ public class ManagerListDTO {
     public Integer getUserId() {
         return userId;
     }
-
     public String getFullName() {
         return fullName;
     }
-
     public String getNic() {
         return nic;
     }
-
     public String getDepartment() {
         return department;
     }
-
     public String getStatus() {
         return status;
     }

@@ -1,7 +1,6 @@
 package com.utilitymanagementsystem.spec;
 
 import com.utilitymanagementsystem.model.Admin;
-import com.utilitymanagementsystem.model.FieldOfficer;
 import org.springframework.data.jpa.domain.Specification;
 
 public class AdminSpecification {

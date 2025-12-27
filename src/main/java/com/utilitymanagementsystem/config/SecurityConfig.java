@@ -27,12 +27,10 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ STATIC FRONTEND FILES
                         .requestMatchers(
                                 "/",
                                 "/index.html",
@@ -46,7 +44,6 @@ public class SecurityConfig {
                                 "/favicon.ico"
                         ).permitAll()
 
-                        // ✅ AUTH APIs
                         .requestMatchers(
                                 "/api/auth/setup-password",
                                 "/api/auth/admin/login",
@@ -56,17 +53,13 @@ public class SecurityConfig {
                                 "/api/auth/field-officer/login"
                         ).permitAll()
 
-                        // 🔒 EVERYTHING ELSE NEEDS JWT
                         .anyRequest().authenticated()
                 )
 
-                // ✅ JWT FILTER
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
 
-                // ❌ Disable defaults
                 .httpBasic(basic -> basic.disable())
                 .formLogin(login -> login.disable());
-
         return http.build();
     }
 }

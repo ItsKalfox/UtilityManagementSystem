@@ -135,5 +135,4 @@ public class Tariff {
     public void setUtilityConnections(Set<UtilityConnection> utilityConnections) {
         this.utilityConnections = utilityConnections;
     }
-
 }

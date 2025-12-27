@@ -111,5 +111,4 @@ public class UtilityConnection {
     public void setMeterReadings(Set<MeterReading> meterReadings) {
         this.meterReadings = meterReadings;
     }
-
 }

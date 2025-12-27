@@ -189,5 +189,4 @@ public class Customer {
     public void setUtilityConnections(Set<UtilityConnection> utilityConnections) {
         this.utilityConnections = utilityConnections;
     }
-
 }

@@ -18,19 +18,15 @@ public class CashierListDTO {
     public Integer getUserId() {
         return userId;
     }
-
     public String getFullName() {
         return fullName;
     }
-
     public String getNic() {
         return nic;
     }
-
     public String getBranchName() {
         return branchName;
     }
-
     public String getStatus() {
         return status;
     }

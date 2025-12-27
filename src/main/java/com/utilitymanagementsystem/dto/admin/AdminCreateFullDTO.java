@@ -12,7 +12,6 @@ public record AdminCreateFullDTO(
         @NotBlank String email,
         @NotBlank String nic,
         Integer roleId,
-
         @NotNull
         @Size(min = 1)
         List<PhoneNumberDTO> phoneNumbers

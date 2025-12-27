@@ -12,7 +12,6 @@ public record FieldOfficerDetailDTO(
         String email,
         String nic,
         String status,
-//        boolean systemAccess,
         Instant createdAt,
         Instant updatedAt,
         String vehicleNo,

@@ -37,28 +37,20 @@ public class StatsService {
         return new AdminDashboardStatDTO(
                 (int) customerRepository.count(),
                 (int) customerRepository.countByStatus("ACTIVE"),
-
                 (int) adminRepository.count(),
                 (int) adminRepository.countByStatus("ACTIVE"),
-
                 (int) managerRepository.count(),
                 (int) managerRepository.countByStatus("ACTIVE"),
-
                 (int) cashierRepository.count(),
                 (int) cashierRepository.countByStatus("ACTIVE"),
-
                 (int) fieldOfficerRepository.count(),
                 (int) fieldOfficerRepository.countByStatus("ACTIVE"),
-
                 (int) utilityConnectionRepository.countByUtilityType("WATER"),
                 (int) utilityConnectionRepository.countByUtilityTypeAndStatus("WATER", "ACTIVE"),
-
                 (int) utilityConnectionRepository.countByUtilityType("ELECTRICITY"),
                 (int) utilityConnectionRepository.countByUtilityTypeAndStatus("ELECTRICITY", "ACTIVE"),
-
                 (int) utilityConnectionRepository.countByUtilityType("GAS"),
                 (int) utilityConnectionRepository.countByUtilityTypeAndStatus("GAS", "ACTIVE"),
-
                 (int) complaintRepository.countByStatus("OPEN"),
                 (int) complaintRepository.countByStatus("IN PROGRESS"),
                 (int) complaintRepository.countByStatus("RESOLVED"),

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/field-officers")
 public class FieldOfficerController {
-
     private final FieldOfficerService fieldOfficerService;
 
     public FieldOfficerController(FieldOfficerService fieldOfficerService) {

@@ -1,17 +1,11 @@
 package com.utilitymanagementsystem.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-//@EntityListeners(AuditingEntityListener.class)
 @Table(name = "users")
 public class User {
     @Id
@@ -27,20 +21,6 @@ public class User {
 
     @Column(name = "nic", nullable = false, length = 20)
     private String nic;
-
-//    @Column(name = "password_hash")
-//    private String passwordHash;
-//
-//    @Column(name = "status", nullable = false, length = 10)
-//    private String status;
-
-//    @CreatedDate
-//    @Column(name = "created_at", nullable = false, updatable = false)
-//    private Instant createdAt;
-//
-//    @LastModifiedDate
-//    @Column(name = "updated_at", nullable = false)
-//    private Instant updatedAt;
 
     @ManyToMany(mappedBy = "user")
     private Set<Role> roles = new LinkedHashSet<>();
@@ -95,38 +75,6 @@ public class User {
         this.nic = nic;
     }
 
-//    public String getPasswordHash() {
-//        return passwordHash;
-//    }
-//
-//    public void setPasswordHash(String passwordHash) {
-//        this.passwordHash = passwordHash;
-//    }
-//
-//    public String getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(String status) {
-//        this.status = status;
-//    }
-
-//    public Instant getCreatedAt() {
-//        return createdAt;
-//    }
-//
-//    public void setCreatedAt(Instant createdAt) {
-//        this.createdAt = createdAt;
-//    }
-//
-//    public Instant getUpdatedAt() {
-//        return updatedAt;
-//    }
-//
-//    public void setUpdatedAt(Instant updatedAt) {
-//        this.updatedAt = updatedAt;
-//    }
-
     public Set<Role> getRoles() {
         return roles;
     }
@@ -178,5 +126,4 @@ public class User {
     public void setPhoneNumbers(Set<PhoneNumber> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
-
 }

@@ -41,5 +41,4 @@ public class RolePermission {
     public void setPermission(Permission permission) {
         this.permission = permission;
     }
-
 }

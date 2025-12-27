@@ -10,7 +10,6 @@ import com.utilitymanagementsystem.model.*;
 import com.utilitymanagementsystem.repository.*;
 import com.utilitymanagementsystem.security.PasswordGenerator;
 import com.utilitymanagementsystem.spec.AdminSpecification;
-import com.utilitymanagementsystem.spec.FieldOfficerSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +24,6 @@ import java.util.List;
 
 @Service
 public class AdminService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AdminActionLogService adminActionLogService;
@@ -107,8 +105,6 @@ public class AdminService {
                 .map(p -> new PhoneNumberDTO(p.getPhoneNumber(), p.getNumberType()))
                 .toList();
 
-//        boolean systemAccess = user.getPasswordHash() != null;
-
         return new AdminDetailDTO(
                 user.getUserId(),
                 user.getFullName(),
@@ -165,29 +161,6 @@ public class AdminService {
             }
             user.setNic(dto.nic());
         }
-
-//        if (dto.status() != null) {
-//            if (!dto.status().equals("ACTIVE") && !dto.status().equals("INACTIVE")) {
-//                throw new IllegalArgumentException("Invalid status");
-//            }
-//            user.setStatus(dto.status());
-//        }
-//
-//        if (dto.password() != null) {
-//            if (dto.password().isEmpty()) {
-//                user.setPasswordHash(null);
-//            }
-//            else if (dto.password().isBlank()) {
-//                throw new IllegalArgumentException("password field cannot be blank");
-//            }
-//            else {
-//                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
-//                    throw new IllegalArgumentException("Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character");
-//                }
-//
-//                user.setPasswordHash(passwordEncoder.encode(dto.password()));
-//            }
-//        }
 
         if (dto.roleId() != null) {
             Role role = roleRepository.findById(dto.roleId())
@@ -287,29 +260,9 @@ public class AdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("Role id does not exist"));
 
         User user = new User();
-
-//        if (dto.password() != null) {
-//            if (dto.password().isEmpty()) {
-//                user.setPasswordHash(null);
-//            }
-//            else if (dto.password().isBlank()) {
-//                throw new IllegalArgumentException("password field cannot be blank");
-//            }
-//            else {
-//                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
-//                    throw new IllegalArgumentException(
-//                            "Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character"
-//                    );
-//                }
-//
-//                user.setPasswordHash(passwordEncoder.encode(dto.password()));
-//            }
-//        }
-
         user.setFullName(dto.fullName());
         user.setEmail(dto.email());
         user.setNic(dto.nic());
-//        user.setStatus("ACTIVE");
 
         userRepository.save(user);
 

@@ -1,11 +1,9 @@
 package com.utilitymanagementsystem.spec;
 
 import com.utilitymanagementsystem.model.FieldOfficer;
-import com.utilitymanagementsystem.model.Manager;
 import org.springframework.data.jpa.domain.Specification;
 
 public class FieldOfficerSpecification {
-
     public static Specification<FieldOfficer> hasSearch(String search) {
         return (root, query, cb) -> {
             if (search == null || search.isBlank()) return null;

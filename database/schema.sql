@@ -262,9 +262,6 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -------------------------------------------------------------------
-    -- 1. Extract new reading info
-    -------------------------------------------------------------------
     DECLARE 
         @reading_id INT,
         @connection_id INT,
@@ -276,10 +273,6 @@ BEGIN
         @reading_value = reading_value
     FROM inserted;
 
-
-    -------------------------------------------------------------------
-    -- 2. Locate previous reading for this connection
-    -------------------------------------------------------------------
     DECLARE 
         @prev_reading_value DECIMAL(10,2),
         @prev_period_end DATETIME;
@@ -292,10 +285,6 @@ BEGIN
       AND reading_id < @reading_id
     ORDER BY billing_period_end DESC;
 
-
-    -------------------------------------------------------------------
-    -- 3. If first reading → no bill
-    -------------------------------------------------------------------
     IF @prev_reading_value IS NULL
     BEGIN
         UPDATE meter_reading
@@ -307,10 +296,6 @@ BEGIN
         RETURN;
     END;
 
-
-    -------------------------------------------------------------------
-    -- 4. Calculate consumption & dates
-    -------------------------------------------------------------------
     DECLARE 
         @consumption DECIMAL(10,2),
         @period_start DATETIME,
@@ -318,8 +303,7 @@ BEGIN
 
     SET @consumption = @reading_value - @prev_reading_value;
     SET @period_start = @prev_period_end;
-    SET @period_end = GETDATE();  -- current reading timestamp
-
+    SET @period_end = GETDATE();
 
     UPDATE meter_reading
     SET consumption = @consumption,
@@ -327,10 +311,6 @@ BEGIN
         billing_period_end = @period_end
     WHERE reading_id = @reading_id;
 
-
-    -------------------------------------------------------------------
-    -- 5. Load tariff details
-    -------------------------------------------------------------------
     DECLARE
         @tariff_id INT,
         @is_prorated BIT,
@@ -348,10 +328,6 @@ BEGIN
     FROM tariff
     WHERE tariff_id = @tariff_id;
 
-
-    -------------------------------------------------------------------
-    -- 6. Billing days
-    -------------------------------------------------------------------
     DECLARE @billing_days INT;
 
     SET @billing_days =
@@ -360,10 +336,6 @@ BEGIN
             ELSE 30
         END;
 
-
-    -------------------------------------------------------------------
-    -- 7. Slab calculation
-    -------------------------------------------------------------------
     DECLARE 
         @remaining_units DECIMAL(10,2),
         @slab_start INT,
@@ -388,7 +360,7 @@ BEGIN
         DECLARE @slab_units INT;
 
         IF @slab_end IS NULL
-            SET @slab_units = @remaining_units;         -- infinite slab
+            SET @slab_units = @remaining_units;
         ELSE
             SET @slab_units = 
                 CASE 
@@ -406,10 +378,6 @@ BEGIN
     CLOSE slab_cursor;
     DEALLOCATE slab_cursor;
 
-
-    -------------------------------------------------------------------
-    -- 8. Prorate fixed charge
-    -------------------------------------------------------------------
     DECLARE @final_fixed_charge DECIMAL(18,2);
 
     SET @final_fixed_charge =
@@ -418,19 +386,11 @@ BEGIN
             ELSE @fixed_charge
         END;
 
-
-    -------------------------------------------------------------------
-    -- 9. Total bill with tax
-    -------------------------------------------------------------------
     DECLARE @total_bill DECIMAL(18,2);
 
     SET @total_bill = @slab_total + @final_fixed_charge;
     SET @total_bill = @total_bill + (@total_bill * @tax / 100.0);
 
-
-    -------------------------------------------------------------------
-    -- 10. Insert Bill
-    -------------------------------------------------------------------
     INSERT INTO bill (
         connection_id,
         period_start,
@@ -457,13 +417,11 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Update the bill's outstanding amount
     UPDATE b
     SET b.outstanding_amount = b.outstanding_amount - i.amount
     FROM bill b
     INNER JOIN inserted i ON b.bill_id = i.bill_id;
 
-    -- Update status based on new outstanding amount
     UPDATE b
     SET b.status =
         CASE 
@@ -472,6 +430,5 @@ BEGIN
         END
     FROM bill b
     INNER JOIN inserted i ON b.bill_id = i.bill_id;
-
 END;
 GO

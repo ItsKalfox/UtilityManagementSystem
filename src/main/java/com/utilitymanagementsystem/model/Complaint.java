@@ -123,5 +123,4 @@ public class Complaint {
     public void setResolutionNotes(String resolutionNotes) {
         this.resolutionNotes = resolutionNotes;
     }
-
 }

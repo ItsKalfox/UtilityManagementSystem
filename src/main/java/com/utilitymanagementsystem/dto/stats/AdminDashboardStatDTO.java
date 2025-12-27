@@ -11,14 +11,12 @@ public record AdminDashboardStatDTO(
     Integer activeCashiers,
     Integer totalFieldOfficers,
     Integer activeFieldOfficers,
-
     Integer totalWaterConn,
     Integer activeWaterConn,
     Integer totalElectricityConn,
     Integer activeElectricityConn,
     Integer totalGasConn,
     Integer activeGasConn,
-
     Integer totalOpenCom,
     Integer totalInProgressCom,
     Integer totalResolvedCom,

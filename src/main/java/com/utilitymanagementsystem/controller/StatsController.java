@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/stats")
 public class StatsController {
-
     private final StatsService statsService;
 
     public StatsController(StatsService statsService) {
@@ -20,5 +19,4 @@ public class StatsController {
     public ResponseEntity<AdminDashboardStatDTO> getAdminStats() {
         return ResponseEntity.ok(statsService.getAdminStats());
     }
-
 }

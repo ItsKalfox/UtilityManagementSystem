@@ -18,19 +18,15 @@ public class CustomerListDTO {
     public Integer getUserId() {
         return userId;
     }
-
     public String getFullName() {
         return fullName;
     }
-
     public String getNic() {
         return nic;
     }
-
     public String getCustomerType() {
         return customerType;
     }
-
     public String getStatus() {
         return status;
     }

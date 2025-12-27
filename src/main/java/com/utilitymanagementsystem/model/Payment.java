@@ -112,5 +112,4 @@ public class Payment {
     public void setCash(Cash cash) {
         this.cash = cash;
     }
-
 }

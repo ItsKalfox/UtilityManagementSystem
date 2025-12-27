@@ -51,5 +51,4 @@ public class PhoneNumber {
     public void setNumberType(String numberType) {
         this.numberType = numberType;
     }
-
 }

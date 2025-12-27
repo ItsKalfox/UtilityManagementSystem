@@ -4,7 +4,6 @@ import com.utilitymanagementsystem.model.Customer;
 import org.springframework.data.jpa.domain.Specification;
 
 public class CustomerSpecification {
-
     public static Specification<Customer> hasSearch(String search) {
         return (root, query, cb) -> {
             if (search == null || search.isBlank()) return null;

@@ -51,40 +51,25 @@ async function loadDashboardStats() {
 }
 
 function populateDashboard(d) {
-
-    /* =======================
-       SYSTEM USERS
-    ======================= */
-
-    // Customers
     setText('active-customers', d.activeCustomers);
     setText('inactive-customers', d.totalCustomers - d.activeCustomers);
     setText('total-customers', d.totalCustomers);
 
-    // Admins
     setText('active-admins', d.activeAdmins);
     setText('inactive-admins', d.totalAdmins - d.activeAdmins);
     setText('total-admins', d.totalAdmins);
 
-    // Managers
     setText('active-managers', d.activeManagers);
     setText('inactive-managers', d.totalManagers - d.activeManagers);
     setText('total-managers', d.totalManagers);
 
-    // Field Officers
     setText('active-officers', d.activeFieldOfficers);
     setText('inactive-officers', d.totalFieldOfficers - d.activeFieldOfficers);
     setText('total-officers', d.totalFieldOfficers);
 
-    // Cashiers
     setText('active-cashiers', d.activeCashiers);
     setText('inactive-cashiers', d.totalCashiers - d.activeCashiers);
     setText('total-cashiers', d.totalCashiers);
-
-
-    /* =======================
-       CONNECTIONS
-    ======================= */
 
     const totalConnections =
         d.totalWaterConn +
@@ -100,25 +85,17 @@ function populateDashboard(d) {
     setText('inactive-connections-all', totalConnections - activeConnections);
     setText('total-connections-all', totalConnections);
 
-    // Water
     setText('active-water', d.activeWaterConn);
     setText('inactive-water', d.totalWaterConn - d.activeWaterConn);
     setText('total-water', d.totalWaterConn);
 
-    // Electricity
     setText('active-electricity', d.activeElectricityConn);
     setText('inactive-electricity', d.totalElectricityConn - d.activeElectricityConn);
     setText('total-electricity', d.totalElectricityConn);
 
-    // Gas
     setText('active-gas', d.activeGasConn);
     setText('inactive-gas', d.totalGasConn - d.activeGasConn);
     setText('total-gas', d.totalGasConn);
-
-
-    /* =======================
-       COMPLAINTS
-    ======================= */
 
     setText('open-complaints', d.totalOpenCom);
     setText('progress-complaints', d.totalInProgressCom);
@@ -126,7 +103,4 @@ function populateDashboard(d) {
     setText('urgent-complaints', d.urgentCom);
 }
 
-/**
- * Init on page load
- */
 document.addEventListener('DOMContentLoaded', loadDashboardStats);

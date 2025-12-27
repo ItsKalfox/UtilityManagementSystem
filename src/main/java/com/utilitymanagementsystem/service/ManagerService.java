@@ -1,6 +1,5 @@
 package com.utilitymanagementsystem.service;
 
-import com.utilitymanagementsystem.dto.customer.CustomerNICCheckDTO;
 import com.utilitymanagementsystem.dto.manager.*;
 import com.utilitymanagementsystem.dto.user.PhoneNumberDTO;
 import com.utilitymanagementsystem.exception.ConflictException;
@@ -24,7 +23,6 @@ import java.util.List;
 
 @Service
 public class ManagerService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AdminActionLogService adminActionLogService;
@@ -101,15 +99,12 @@ public class ManagerService {
                 .map(p -> new PhoneNumberDTO(p.getPhoneNumber(), p.getNumberType()))
                 .toList();
 
-//        boolean systemAccess = user.getPasswordHash() != null;
-
         return new ManagerDetailDTO(
                 user.getUserId(),
                 user.getFullName(),
                 user.getEmail(),
                 user.getNic(),
                 manager.getStatus(),
-//                systemAccess,
                 manager.getCreatedAt(),
                 manager.getUpdatedAt(),
                 manager.getDepartment(),
@@ -160,29 +155,6 @@ public class ManagerService {
             }
             user.setNic(dto.nic());
         }
-
-//        if (dto.status() != null) {
-//            if (!dto.status().equals("ACTIVE") && !dto.status().equals("INACTIVE")) {
-//                throw new IllegalArgumentException("Invalid status");
-//            }
-//            user.setStatus(dto.status());
-//        }
-//
-//        if (dto.password() != null) {
-//            if (dto.password().isEmpty()) {
-//                user.setPasswordHash(null);
-//            }
-//            else if (dto.password().isBlank()) {
-//                throw new IllegalArgumentException("password field cannot be blank");
-//            }
-//            else {
-//                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
-//                    throw new IllegalArgumentException("Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character");
-//                }
-//
-//                user.setPasswordHash(passwordEncoder.encode(dto.password()));
-//            }
-//        }
 
         if (dto.department() != null) {
             if (dto.department().isBlank()) {
@@ -278,29 +250,9 @@ public class ManagerService {
         }
 
         User user = new User();
-
-//        if (dto.password() != null) {
-//            if (dto.password().isEmpty()) {
-//                user.setPasswordHash(null);
-//            }
-//            else if (dto.password().isBlank()) {
-//                throw new IllegalArgumentException("password field cannot be blank");
-//            }
-//            else {
-//                if (!dto.password().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$")) {
-//                    throw new IllegalArgumentException(
-//                            "Password must be 8–16 characters long and contain uppercase, lowercase, number, and special character"
-//                    );
-//                }
-//
-//                user.setPasswordHash(passwordEncoder.encode(dto.password()));
-//            }
-//        }
-
         user.setFullName(dto.fullName());
         user.setEmail(dto.email());
         user.setNic(dto.nic());
-//        user.setStatus("ACTIVE");
 
         userRepository.save(user);
 

@@ -12,7 +12,6 @@ import java.util.List;
 
 @Component
 public class JwtUtil {
-
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
@@ -23,7 +22,6 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Generate JWT with email, roles, permissions
     public String generateToken(String email, List<String> roles, List<String> permissions) {
         return Jwts.builder()
                 .setSubject(email)
@@ -35,20 +33,18 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Extract the email (subject)
     public String extractEmail(String token) {
         return extractAllClaims(token).getSubject();
     }
 
-    // Validate JWT: expired? invalid? tampered?
     public void validateToken(String token) {
         try {
-            extractAllClaims(token); // this will throw if token invalid
+            extractAllClaims(token);
 
         } catch (ExpiredJwtException e) {
             throw new RuntimeException("Token expired");
 
-        } catch (JwtException e) {   // covers SignatureException, MalformedJwtException, etc.
+        } catch (JwtException e) {
             throw new RuntimeException("Invalid token");
 
         } catch (Exception e) {
@@ -56,7 +52,6 @@ public class JwtUtil {
         }
     }
 
-    // Extract all claims from JWT (roles, permissions, exp, sub, etc.)
     public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())

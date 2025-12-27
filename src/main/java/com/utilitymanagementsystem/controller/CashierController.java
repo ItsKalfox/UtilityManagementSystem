@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/cashiers")
 public class CashierController {
-
     private final CashierService cashierService;
 
     public CashierController(CashierService cashierService) {

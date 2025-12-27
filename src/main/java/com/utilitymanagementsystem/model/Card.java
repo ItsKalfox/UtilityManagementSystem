@@ -62,5 +62,4 @@ public class Card {
     public void setApprovalCode(String approvalCode) {
         this.approvalCode = approvalCode;
     }
-
 }

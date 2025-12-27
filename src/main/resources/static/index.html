@@ -47,7 +47,7 @@
     <script src="js/common/theme.js"></script>
     <script>
         function navigateToLogin(role) {
-            const sharedLoginRoles = ['field-officer', 'cashier', 'manager'];
+            const sharedLoginRoles = ['field-officer', 'cashier', 'manager'];  // <-- once created the page, remove fom here and add a link below.
 
             if (sharedLoginRoles.includes(role)) {
                 window.location.href = 'temp.html';
@@ -56,6 +56,7 @@
 
             window.location.href = `login/${role}-login.html`;
         }
+       
     </script>
 </body>
 </html>

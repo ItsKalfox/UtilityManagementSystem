@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/list")
 public class ListsController {
-
     private final ListsService listsService;
 
     public ListsController(ListsService listsService) {

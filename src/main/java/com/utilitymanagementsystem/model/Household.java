@@ -40,5 +40,4 @@ public class Household {
     public void setHouseholdSize(Integer householdSize) {
         this.householdSize = householdSize;
     }
-
 }

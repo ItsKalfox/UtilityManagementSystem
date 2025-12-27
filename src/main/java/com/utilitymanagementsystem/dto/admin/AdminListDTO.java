@@ -18,17 +18,13 @@ public class AdminListDTO {
     public Integer getUserId() {
         return userId;
     }
-
     public String getFullName() {
         return fullName;
     }
-
     public String getNic() {
         return nic;
     }
-
     public String getRoleName() { return roleName; }
-
     public String getStatus() {
         return status;
     }

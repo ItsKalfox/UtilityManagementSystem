@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface CashierRepository extends JpaRepository<Cashier, Integer>, JpaSpecificationExecutor<Cashier> {
     Optional<Cashier> findByUser_UserId(Integer userId);
     boolean existsByUserId(Integer userId);
-
     long count();
     long countByStatus(String status);
 }

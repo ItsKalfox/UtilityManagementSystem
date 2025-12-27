@@ -1,6 +1,5 @@
 package com.utilitymanagementsystem.security;
 
-
 import java.security.SecureRandom;
 
 public class PasswordGenerator {

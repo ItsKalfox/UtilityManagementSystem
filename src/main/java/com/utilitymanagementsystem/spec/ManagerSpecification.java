@@ -1,6 +1,5 @@
 package com.utilitymanagementsystem.spec;
 
-import com.utilitymanagementsystem.model.Customer;
 import com.utilitymanagementsystem.model.Manager;
 import org.springframework.data.jpa.domain.Specification;
 

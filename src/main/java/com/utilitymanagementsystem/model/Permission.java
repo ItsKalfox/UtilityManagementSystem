@@ -42,5 +42,4 @@ public class Permission {
     public void setRolePermissions(Set<RolePermission> rolePermissions) {
         this.rolePermissions = rolePermissions;
     }
-
 }

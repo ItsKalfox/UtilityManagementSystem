@@ -18,7 +18,6 @@ import java.util.List;
 
 @Component
 public class JwtFilter implements Filter {
-
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -38,19 +37,15 @@ public class JwtFilter implements Filter {
 
                 String token = authHeader.substring(7);
 
-                // VALIDATE TOKEN (may throw runtime exception)
                 jwtUtil.validateToken(token);
 
-                // Extract all claims
                 Claims claims = jwtUtil.extractAllClaims(token);
 
-                String email = claims.getSubject(); // user email
+                String email = claims.getSubject();
 
-                // extract roles and permissions
                 List<String> roles = claims.get("roles", List.class);
                 List<String> permissions = claims.get("permissions", List.class);
 
-                // Convert permissions into GrantedAuthority objects
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
                 if (permissions != null) {
@@ -59,14 +54,12 @@ public class JwtFilter implements Filter {
                     }
                 }
 
-                // You may also add roles as authorities, optional:
                 if (roles != null) {
                     for (String r : roles) {
                         authorities.add(new SimpleGrantedAuthority("ROLE_" + r));
                     }
                 }
 
-                // Set authentication context
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(email, null, authorities);
 
@@ -74,10 +67,7 @@ public class JwtFilter implements Filter {
             }
 
             chain.doFilter(req, res);
-
         } catch (RuntimeException ex) {
-
-            // Build JSON error message
             ApiError error = new ApiError(401, ex.getMessage());
 
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

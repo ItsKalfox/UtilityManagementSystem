@@ -8,8 +8,6 @@ public record FieldOfficerUpdateDTO(
         String fullName,
         String email,
         String nic,
-//        String status,
-//        String password,
         String vehicleNo,
         String areaCode,
         List<PhoneNumberDTO> phoneNumbers

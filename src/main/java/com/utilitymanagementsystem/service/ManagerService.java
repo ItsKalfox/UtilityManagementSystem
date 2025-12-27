@@ -375,18 +375,10 @@ public class ManagerService {
         User user = manager.getUser();
 
         try {
-            emailService.sendEmail(
+            emailService.sendPasswordResetEmail(
                     user.getEmail(),
-                    "Your Password Has Been Reset",
-                    """
-                            Hello %s,
-                            
-                            Your password is:
-                            
-                            %s
-                            
-                            Utility Management System
-                            """.formatted(user.getFullName(), rawPassword)
+                    user.getFullName(),
+                    rawPassword
             );
         } catch (Exception e) {
             throw new EmailSendException("Failed to send password reset email");

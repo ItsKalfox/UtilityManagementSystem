@@ -53,6 +53,7 @@ public class AdminService {
     public Page<AdminListDTO> getAdmin(
             String search,
             String status,
+            Integer roleId,
             int page,
             int size,
             String sortBy,
@@ -66,7 +67,8 @@ public class AdminService {
 
         Specification<Admin> spec =
                 AdminSpecification.hasSearch(search)
-                        .and(AdminSpecification.hasStatus(status));
+                        .and(AdminSpecification.hasStatus(status)
+                        .and(AdminSpecification.hasRoleId(roleId)));
 
         Page<Admin> admins = adminRepository.findAll(spec, pageable);
 
@@ -115,7 +117,7 @@ public class AdminService {
                 admin.getStatus(),
                 admin.getCreatedAt(),
                 admin.getUpdatedAt(),
-                admin.getRole().getRoleName(),
+                admin.getRole().getRoleId(),
                 phones
         );
     }
@@ -381,18 +383,10 @@ public class AdminService {
         User user = admin.getUser();
 
         try {
-            emailService.sendEmail(
+            emailService.sendPasswordResetEmail(
                     user.getEmail(),
-                    "Your Password Has Been Reset",
-                    """
-                            Hello %s,
-                            
-                            Your password is:
-                            
-                            %s
-                            
-                            Utility Management System
-                            """.formatted(user.getFullName(), rawPassword)
+                    user.getFullName(),
+                    rawPassword
             );
         } catch (Exception e) {
             throw new EmailSendException("Failed to send password reset email");

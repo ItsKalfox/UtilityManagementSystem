@@ -10,6 +10,7 @@ public record FieldOfficerUpdateDTO(
         String nic,
 //        String status,
 //        String password,
+        String vehicleNo,
         String areaCode,
         List<PhoneNumberDTO> phoneNumbers
 ) {}

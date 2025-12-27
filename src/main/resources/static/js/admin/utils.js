@@ -226,5 +226,10 @@ function applyPermissionVisibility(id, permission) {
     const el = document.getElementById(id);
     if (!el) return;
 
-    el.style.display = hasPermission(permission) ? 'block' : 'none';
+    if (id == "addCustomerBtn" || id == "addManagerBtn" || id == "addCashierBtn" || id == "addFieldOfficerBtn" || id == "addAdminBtn"){
+        el.style.display = hasPermission(permission) ? 'block' : 'none';
+        return
+    }
+
+    el.style.display = hasPermission(permission) ? 'flex' : 'none';
 }

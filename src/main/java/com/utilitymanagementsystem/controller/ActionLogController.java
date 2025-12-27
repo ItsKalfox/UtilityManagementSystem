@@ -24,7 +24,6 @@ public class ActionLogController {
     public Page<ActionLogListDTO> listActionLogs(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String entity,
-            @RequestParam(required = false) String action,
             @RequestParam(required = false) Integer adminId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
@@ -34,7 +33,7 @@ public class ActionLogController {
             @RequestParam(defaultValue = "desc") String direction
     ) {
         return adminActionLogServiceService.getActionLogs(
-                search, entity, action, adminId,
+                search, entity, adminId,
                 from, to,
                 page, size,
                 sortBy, direction

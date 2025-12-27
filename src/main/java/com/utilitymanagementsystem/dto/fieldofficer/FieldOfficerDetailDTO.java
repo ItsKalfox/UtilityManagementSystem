@@ -15,6 +15,7 @@ public record FieldOfficerDetailDTO(
 //        boolean systemAccess,
         Instant createdAt,
         Instant updatedAt,
+        String vehicleNo,
         String areaCode,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}

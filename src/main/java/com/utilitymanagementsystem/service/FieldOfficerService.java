@@ -78,7 +78,7 @@ public class FieldOfficerService {
                         f.getUser().getUserId(),
                         f.getUser().getFullName(),
                         f.getUser().getNic(),
-                        f.getAreaCode().getAreaCode(),
+                        f.getVehicleNo(),
                         f.getStatus()
                 )
         );
@@ -118,6 +118,7 @@ public class FieldOfficerService {
                 fieldOfficer.getStatus(),
                 fieldOfficer.getCreatedAt(),
                 fieldOfficer.getUpdatedAt(),
+                fieldOfficer.getVehicleNo(),
                 fieldOfficer.getAreaCode().getAreaCode(),
                 phones
         );
@@ -190,6 +191,25 @@ public class FieldOfficerService {
 //            }
 //        }
 
+        if (dto.vehicleNo() != null) {
+
+            String vehicleNo = dto.vehicleNo().trim().toUpperCase();
+
+            if (vehicleNo.isBlank()) {
+                throw new IllegalArgumentException("Vehicle number cannot be blank");
+            }
+
+            String vehicleRegex = "^(WP|SP|CP|EP|NP|NW|NC|SG|UP)\\s([A-Z]{2,3}|\\d{3})-\\d{4}$";
+
+            if (!vehicleNo.matches(vehicleRegex)) {
+                throw new IllegalArgumentException(
+                        "Vehicle number must follow format: WP XX-1234 or WP 123-1234"
+                );
+            }
+
+            fieldOfficer.setVehicleNo(vehicleNo);
+        }
+
         if (dto.areaCode() != null) {
             if (dto.areaCode().isBlank()) {
                 throw new IllegalArgumentException("areaCode field cannot be blank");
@@ -254,9 +274,19 @@ public class FieldOfficerService {
         Area area = areaRepository.findById(dto.areaCode())
                 .orElseThrow(() -> new ResourceNotFoundException("Area code does not exist"));
 
+        String vehicleNo = dto.vehicleNo().trim().toUpperCase();
+        String vehicleRegex = "^(WP|SP|CP|EP|NP|NW|NC|SG|UP)\\s([A-Z]{2,3}|\\d{3})-\\d{4}$";
+
+        if (!vehicleNo.matches(vehicleRegex)) {
+            throw new IllegalArgumentException(
+                    "Vehicle number must follow format: WP XX-1234 or WP 123-1234"
+            );
+        }
+
         FieldOfficer fieldOfficer= new FieldOfficer();
         fieldOfficer.setUser(user);
         fieldOfficer.setAreaCode(area);
+        fieldOfficer.setVehicleNo(vehicleNo);
         fieldOfficer.setPasswordHash("password");
         fieldOfficer.setStatus("INACTIVE");
 
@@ -287,6 +317,15 @@ public class FieldOfficerService {
 
         if (userRepository.existsByNic(dto.nic())) {
             throw new ConflictException("NIC already exists");
+        }
+
+        String vehicleNo = dto.vehicleNo().trim().toUpperCase();
+        String vehicleRegex = "^(WP|SP|CP|EP|NP|NW|NC|SG|UP)\\s([A-Z]{2,3}|\\d{3})-\\d{4}$";
+
+        if (!vehicleNo.matches(vehicleRegex)) {
+            throw new IllegalArgumentException(
+                    "Vehicle number must follow format: WP XX-1234 or WP 123-1234"
+            );
         }
 
         Area area = areaRepository.findById(dto.areaCode())
@@ -347,6 +386,7 @@ public class FieldOfficerService {
         FieldOfficer fieldOfficer = new FieldOfficer();
         fieldOfficer.setUser(user);
         fieldOfficer.setAreaCode(area);
+        fieldOfficer.setVehicleNo(vehicleNo);
         fieldOfficer.setPasswordHash("password");
         fieldOfficer.setStatus("INACTIVE");
 
@@ -390,18 +430,10 @@ public class FieldOfficerService {
         User user = fieldOfficer.getUser();
 
         try {
-            emailService.sendEmail(
+            emailService.sendPasswordResetEmail(
                     user.getEmail(),
-                    "Your Password Has Been Reset",
-                    """
-                            Hello %s,
-                            
-                            Your password is:
-                            
-                            %s
-                            
-                            Utility Management System
-                            """.formatted(user.getFullName(), rawPassword)
+                    user.getFullName(),
+                    rawPassword
             );
         } catch (Exception e) {
             throw new EmailSendException("Failed to send password reset email");

@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface FieldOfficerRepository extends JpaRepository<FieldOfficer, Integer>, JpaSpecificationExecutor<FieldOfficer> {
     Optional<FieldOfficer> findByUser_UserId(Integer userId);
     boolean existsByUserId(Integer userId);
+
+    long count();
+    long countByStatus(String status);
 }

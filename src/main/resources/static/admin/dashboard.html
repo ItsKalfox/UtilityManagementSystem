@@ -6,6 +6,7 @@
     <title>Admin Dashboard - Utility Management System</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="theme-toggle-container">
@@ -39,67 +40,40 @@
                 <div class="nav-group">
                     <div class="nav-group-title">Management</div>
                     <a href="customer-management.html" class="nav-item" data-tab="customers" id="customerManagementTab" style="display: none;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                        </svg>
+                        <img src="../images/customer-icon.svg" class="nav-icon" alt="customer-icon">
                         Customer Management
                     </a>
                     <a href="manager-management.html" class="nav-item" data-tab="managers" id="managerManagementTab" style="display: none;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                        </svg>
+                        <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon">
                         Manager Management
                     </a>
                     <a href="cashier-management.html" class="nav-item" data-tab="cashiers" id="cashierManagementTab" style="display: none;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                            <line x1="1" y1="10" x2="23" y2="10"/>
-                        </svg>
+                        <img src="../images/cashier-icon.svg" class="nav-icon" alt="cashier-icon">
                         Cashier Management
                     </a>
                     <a href="fieldofficer-management.html" class="nav-item" data-tab="officers" id="fieldOfficerManagementTab" style="display: none;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                            <circle cx="12" cy="10" r="3"/>
-                        </svg>
+                        <img src="../images/field-officer-icon.svg" class="nav-icon" alt="field-officer-icon">
                         Field Officer Management
                     </a>
                     <a href="admin-management.html" class="nav-item" data-tab="admins" id="adminManagementTab" style="display: none;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                        </svg>
+                        <img src="../images/admin-icon.svg" class="nav-icon" alt="admin-icon">
                         Admin Management
                     </a>
                 </div>
 
                 <div class="nav-group">
                     <div class="nav-group-title">Advanced</div>
+                    <a href="admin-action-log.html" class="nav-item" id="adminActionLogTab" style="display: none;">
+                        <img src="../images/log-icon.svg" class="nav-icon" alt="log-icon">
+                        Admin Action Log
+                    </a>
                     <a href="#" class="nav-item" data-tab="roles" id="roleCreationTab" style="display: none;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
-                        </svg>
+                        <img src="../images/role-icon.svg" class="nav-icon" alt="role-icon">
                         Role Creation
                     </a>
                     <a href="#" class="nav-item" data-tab="areas" id="areaCreationTab" style="display: none;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="2" y1="12" x2="22" y2="12"/>
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                        </svg>
+                        <img src="../images/area-icon.svg" class="nav-icon" alt="area-icon">
                         Area Creation
-                    </a>
-                    <a href="#" class="nav-item" id="adminActionLogTab" style="display: none;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="2" y1="12" x2="22" y2="12"/>
-                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                        </svg>
-                        Admin Action Log
                     </a>
                 </div>
             </nav>
@@ -119,84 +93,131 @@
             <header class="header">
                 <div class="user-info">
                     <div class="user-avatar" id="userAvatar">A</div>
-                    <div class="user-details">
-                        <div class="user-name" id="fullName">Admin User</div>
-                        <div class="user-email" id="email">admin@ums.com</div>
-                    </div>
+                        <div class="user-details">
+                            <div class="user-name" id="fullName">Admin User</div>
+                            <div class="user-email" id="email">admin@ums.com</div>
+                        </div>
                     <div class="user-role" id="adminRole">Admin</div>
                 </div>
             </header>
 
-            <div class="content-area" id="contentArea">
-                <h2 style="color: var(--text-primary); margin-bottom: 24px; font-size: 1.8rem;">Dashboard Overview</h2>
-                <div class="dashboard-stats">
-                    <div class="stat-card">
-                        <span class="stat-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                            </svg>
-                        </span>
-                        <div class="stat-label">Total Customers</div>
-                        <div class="stat-value">5563</div>
-                    </div>
+            <div class="dashboard-content">
+                <section class="stats-section">
+                    <h2 class="section-title">System Users</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Active Customers<img src="../images/customer-icon.svg" class="stat-icon" alt="customer-icon"></div>
+                            <div class="stat-value" id="active-customers">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-customers">0</strong></span>
+                                <span>Total: <strong id="total-customers">0</strong></span>
+                            </div>
+                        </div>
 
-                    <div class="stat-card">
-                        <span class="stat-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                            </svg>
-                        </span>
-                        <div class="stat-label">Electricity Connections</div>
-                        <div class="stat-value">324</div>
-                    </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Active Managers<img src="../images/manager-icon.svg" class="stat-icon" alt="manager-icon"></div>
+                            <div class="stat-value" id="active-managers">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-managers">0</strong></span>
+                                <span>Total: <strong id="total-managers">0</strong></span>
+                            </div>
+                        </div>
 
-                    <div class="stat-card">
-                        <span class="stat-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-                            </svg>
-                        </span>
-                        <div class="stat-label">Water Connections</div>
-                        <div class="stat-value">287</div>
-                    </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Active Cashiers<img src="../images/cashier-icon.svg" class="stat-icon" alt="cashier-icon"></div>
+                            <div class="stat-value" id="active-cashiers">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-cashiers">0</strong></span>
+                                <span>Total: <strong id="total-cashiers">0</strong></span>
+                            </div>
+                        </div>
 
-                    <div class="stat-card">
-                        <span class="stat-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <circle cx="12" cy="12" r="6"/>
-                                <circle cx="12" cy="12" r="2"/>
-                            </svg>
-                        </span>
-                        <div class="stat-label">Gas Connections</div>
-                        <div class="stat-value">198</div>
-                    </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Active Field Officers<img src="../images/field-officer-icon.svg" class="stat-icon" alt="field-officer-icon"></div>
+                            <div class="stat-value" id="active-officers">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-officers">0</strong></span>
+                                <span>Total: <strong id="total-officers">0</strong></span>
+                            </div>
+                        </div>
 
-                    <div class="stat-card">
-                        <span class="stat-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                <circle cx="12" cy="10" r="3"/>
-                            </svg>
-                        </span>
-                        <div class="stat-label">Field Officers</div>
-                        <div class="stat-value">57</div>
+                        <div class="stat-card">
+                            <div class="stat-label">Acive Admins<img src="../images/admin-icon.svg" class="stat-icon" alt="admin-icon"></div>
+                            <div class="stat-value" id="active-admins">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-admins">0</strong></span>
+                                <span>Total: <strong id="total-admins">0</strong></span>
+                            </div>
+                        </div>
                     </div>
+                </section>
 
-                    <div class="stat-card">
-                        <span class="stat-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                        </span>
-                        <div class="stat-label">Active Staff</div>
-                        <div class="stat-value">124</div>
+                <section class="stats-section">
+                    <h2 class="section-title">Total Connections</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card highlight">
+                            <div class="stat-label">All Connections</div>
+                            <div class="stat-value" id="active-connections-all">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-connections-all">0</strong></span>
+                                <span>Total: <strong id="total-connections-all">0</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Water Connections<img src="../images/water-icon.svg" class="stat-icon" alt="water-icon"></div>
+                            <div class="stat-value" id="active-water">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-water">0</strong></span>
+                                <span>Total: <strong id="total-water">0</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Electricity Connections<img src="../images/electricity-icon.svg" class="stat-icon" alt="electricity-icon"></div>
+                            <div class="stat-value" id="active-electricity">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-electricity">0</strong></span>
+                                <span>Total: <strong id="total-electricity">0</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Gas Connections<img src="../images/gas-icon.svg" class="stat-icon" alt="gas-icon"></div>
+                            <div class="stat-value" id="active-gas">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-gas">0</strong></span>
+                                <span>Total: <strong id="total-gas">0</strong></span>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </section>
+
+                <section class="stats-section">
+                    <h2 class="section-title">Complaints Overview</h2>
+                        <div class="stats-grid">
+                        <div class="stat-card alert">
+                            <div class="stat-label">Open Complaints</div>
+                            <div class="stat-value" id="open-complaints">0</div>
+                        </div>
+
+                        <div class="stat-card warning">
+                            <div class="stat-label">In Progress</div>
+                            <div class="stat-value" id="progress-complaints">0</div>
+                        </div>
+
+                        <div class="stat-card success">
+                            <div class="stat-label">Resolved</div>
+                            <div class="stat-value" id="resolved-complaints">0</div>
+                        </div>
+
+                        <div class="stat-card attention">
+                            <div class="stat-label">Open > 7 Days</div>
+                            <div class="stat-value" id="urgent-complaints">0</div>
+                            <div class="stat-sublabel">Needs Attention</div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>

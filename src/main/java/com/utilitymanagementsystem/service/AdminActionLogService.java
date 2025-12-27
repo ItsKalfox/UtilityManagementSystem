@@ -54,7 +54,6 @@ public class AdminActionLogService {
     public Page<ActionLogListDTO> getActionLogs(
             String search,
             String entity,
-            String action,
             Integer adminId,
             LocalDateTime from,
             LocalDateTime to,
@@ -72,7 +71,6 @@ public class AdminActionLogService {
         Specification<AdminActionLog> spec =
                 ActionLogSpecification.hasSearch(search)
                         .and(ActionLogSpecification.hasEntity(entity))
-                        .and(ActionLogSpecification.hasAction(action))
                         .and(ActionLogSpecification.hasAdminId(adminId))
                         .and(ActionLogSpecification.hasDateRange(from, to));
 

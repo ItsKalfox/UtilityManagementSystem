@@ -4,5 +4,5 @@ import jakarta.validation.constraints.NotBlank;
 
 public record AdminCreateDTO(
         Integer adminId,
-        @NotBlank Integer roleId
+        Integer roleId
 ) {}

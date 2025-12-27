@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Coming Soon</title>
+    <style>
+        :root {
+        --primary-blue: #1e3a8a;
+        --primary-text: #1e3a8a;
+        --secondary-blue: #3b82f6;
+        --light-blue: #60a5fa;
+        --white: #ffffff;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --success: #10b981;
+        --danger: #ef4444;
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --btn-view-hover: #1e3a8a;
+        --border-color: #e5e7eb;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --icon-filter: invert(1) contrast(0.3);
+
+        --success-50: #f0fdf4;
+        --success-500: #22c55e;
+        --success-600: #16a34a;
+
+        --warning-50: #fffbeb;
+        --warning-500: #f59e0b;
+        --warning-600: #d97706;
+
+        --error-50: #fef2f2;
+        --error-500: #ef4444;
+        --error-600: #dc2626;
+
+        --spacing-base: 8px;
+    }
+
+    body.dark-theme {
+        --primary-blue: #1e293b;
+        --primary-text: #e0e0e0;
+        --secondary-blue: #3b82f6;
+        --light-blue: #475569;
+        --white: #0f172a;
+        --gray-50: #1e293b;
+        --gray-100: #334155;
+        --gray-200: #475569;
+        --gray-300: #64748b;
+        --gray-600: #cbd5e1;
+        --gray-700: #e2e8f0;
+        --gray-800: #f1f5f9;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --btn-view-hover: #43495a;
+        --border-color: #293442;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.4);
+        --icon-filter: invert(0) contrast(0.8);
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+            Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--gray-50);
+        color: var(--text-primary);
+    }
+
+    .container {
+        text-align: center;
+        padding: 2rem;
+        max-width: 600px;
+        animation: fadeIn 1s ease-in;
+        color: var(--text-primary);
+    }
+
+    .message {
+        background: var(--white);
+        backdrop-filter: blur(10px);
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        color: var(--text-secondary);
+    }
+
+    .illustration {
+        width: 200px;
+        margin-bottom: 2rem;
+        filter: var(--icon-filter);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .progress {
+        width: 100%;
+        height: 4px;
+        background: var(--gray-100);
+        border-radius: 4px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .progress::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 30%;
+        background: var(--gray-800);
+        animation: progress 2s ease-in-out infinite;
+    }
+
+    @keyframes progress {
+        0% {
+            left: -30%;
+        }
+
+        100% {
+            left: 100%;
+        }
+    }
+    </style>
+    <link rel="icon" href="images/tool.svg" type="image/x-icon">
+</head>
+
+<body>
+    <div class="container">
+        <div class="message">
+            <img src="images/tool.svg" class="illustration"
+                alt="Under Construction" />
+            <h1>Page Under Construction</h1>
+            <p>
+                Oops!<br>
+                Check back soon!
+            </p>
+            <div class="progress"></div>
+        </div>
+    </div>
+    <script src="js/common/theme.js"></script>
+</body>
+
+</html>

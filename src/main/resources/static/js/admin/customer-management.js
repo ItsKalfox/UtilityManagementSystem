@@ -14,7 +14,7 @@ let lastCheckedNic = null;
 async function fetchAreas() {
     if (cachedAreas) return cachedAreas;
 
-    const response = await fetch('/api/areas', {
+    const response = await fetch('/api/list/areas', {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json'

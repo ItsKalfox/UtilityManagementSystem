@@ -16,6 +16,7 @@ public class FieldOfficerSpecification {
                     cb.like(cb.lower(root.get("user").get("fullName")), like),
                     cb.like(cb.lower(root.get("user").get("email")), like),
                     cb.like(cb.lower(root.get("user").get("nic")), like),
+                    cb.like(cb.lower(root.get("vehicleNo")), like),
                     cb.like(
                             cb.lower(root.get("user").get("userId").as(String.class)),
                             like

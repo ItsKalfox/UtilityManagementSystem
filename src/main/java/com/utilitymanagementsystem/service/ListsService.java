@@ -1,7 +1,10 @@
 package com.utilitymanagementsystem.service;
 
+import com.utilitymanagementsystem.dto.customer.CustomerListDTO;
+import com.utilitymanagementsystem.dto.lists.AdminIdNameListDTO;
 import com.utilitymanagementsystem.dto.lists.AreaListDTO;
 import com.utilitymanagementsystem.dto.lists.RoleListDTO;
+import com.utilitymanagementsystem.repository.AdminRepository;
 import com.utilitymanagementsystem.repository.AreaRepository;
 import com.utilitymanagementsystem.repository.CustomerRepository;
 import com.utilitymanagementsystem.repository.RoleRepository;
@@ -14,12 +17,15 @@ public class ListsService {
 
     private final AreaRepository areaRepository;
     private final RoleRepository roleRepository;
+    private final AdminRepository adminRepository;
 
     public ListsService(AreaRepository areaRepository,
-                        RoleRepository roleRepository
+                        RoleRepository roleRepository,
+                        AdminRepository adminRepository
     ) {
         this.areaRepository = areaRepository;
         this.roleRepository = roleRepository;
+        this.adminRepository = adminRepository;
     }
 
     public List<AreaListDTO> getAllAreas() {
@@ -29,4 +35,6 @@ public class ListsService {
     public List<RoleListDTO> getAllRoles() {
         return roleRepository.findAllRoles();
     }
+
+    public List<AdminIdNameListDTO> getAllAdmins() { return adminRepository.findAllAdminIdAndNames(); }
 }

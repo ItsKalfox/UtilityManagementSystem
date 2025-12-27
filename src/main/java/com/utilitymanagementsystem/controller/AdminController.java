@@ -26,13 +26,14 @@ public class AdminController {
     public Page<AdminListDTO> listAdmin(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String status,
+            @RequestParam(required = false) Integer roleId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "userId") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
         return adminService.getAdmin(
-                search, status,
+                search, status, roleId,
                 page, size,
                 sortBy, direction
         );

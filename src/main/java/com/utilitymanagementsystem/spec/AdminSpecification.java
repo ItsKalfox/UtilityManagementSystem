@@ -30,5 +30,12 @@ public class AdminSpecification {
             return cb.equal(root.get("status"), status);
         };
     }
+
+    public static Specification<Admin> hasRoleId(Integer roleId) {
+        return (root, query, cb) -> {
+            if (roleId == null) return null;
+            return cb.equal(root.get("role").get("roleId"), roleId);
+        };
+    }
 }
 

@@ -19,8 +19,7 @@ public class ActionLogSpecification {
 
             return cb.or(
                     cb.like(cb.lower(root.get("entityId")), like),
-                    cb.like(root.get("logId").as(String.class), like),
-                    cb.like(root.get("admin").get("user").get("userId").as(String.class), like)
+                    cb.like(root.get("action").as(String.class), like)
             );
         };
     }
@@ -29,13 +28,6 @@ public class ActionLogSpecification {
         return (root, query, cb) -> {
             if (entity == null || entity.isBlank()) return null;
             return cb.equal(root.get("entityType"), entity);
-        };
-    }
-
-    public static Specification<AdminActionLog> hasAction(String action) {
-        return (root, query, cb) -> {
-            if (action == null || action.isBlank()) return null;
-            return cb.equal(root.get("action"), action);
         };
     }
 

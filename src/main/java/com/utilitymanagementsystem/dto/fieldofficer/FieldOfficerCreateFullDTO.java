@@ -11,6 +11,7 @@ public record FieldOfficerCreateFullDTO(
         @NotBlank String fullName,
         @NotBlank String email,
         @NotBlank String nic,
+        @NotBlank String vehicleNo,
         @NotBlank String areaCode,
 
         @NotNull

@@ -11,7 +11,7 @@ public record AdminCreateFullDTO(
         @NotBlank String fullName,
         @NotBlank String email,
         @NotBlank String nic,
-        @NotBlank Integer roleId,
+        Integer roleId,
 
         @NotNull
         @Size(min = 1)

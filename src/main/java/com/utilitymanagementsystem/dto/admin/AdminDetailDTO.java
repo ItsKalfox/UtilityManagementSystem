@@ -15,7 +15,7 @@ public record AdminDetailDTO(
 //        boolean systemAccess,
         Instant createdAt,
         Instant updatedAt,
-        String roleName,
+        Integer roleId,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}
 

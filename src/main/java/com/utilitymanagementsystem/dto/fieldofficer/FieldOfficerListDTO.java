@@ -4,14 +4,14 @@ public class FieldOfficerListDTO {
     private Integer userId;
     private String fullName;
     private String nic;
-    private String areaCode;
+    private String vehicleNo;
     private String status;
 
-    public FieldOfficerListDTO(Integer userId, String fullName, String nic, String areaCode, String status) {
+    public FieldOfficerListDTO(Integer userId, String fullName, String nic, String vehicleNo, String status) {
         this.userId = userId;
         this.fullName = fullName;
         this.nic = nic;
-        this.areaCode = areaCode;
+        this.vehicleNo = vehicleNo;
         this.status = status;
     }
 
@@ -27,7 +27,7 @@ public class FieldOfficerListDTO {
         return nic;
     }
 
-    public String getAreaCode() { return areaCode; }
+    public String getVehicleNo() { return vehicleNo; }
 
     public String getStatus() {
         return status;

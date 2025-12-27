@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface ManagerRepository extends JpaRepository<Manager, Integer>, JpaSpecificationExecutor<Manager> {
     Optional<Manager> findByUser_UserId(Integer userId);
     boolean existsByUserId(Integer userId);
+
+    long count();
+    long countByStatus(String status);
 }

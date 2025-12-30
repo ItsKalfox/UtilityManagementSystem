@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashier Dashboard</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
+</head>
+
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle-container">
+        <label class="theme-toggle">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <!-- Toast (optional) -->
+    <div class="toast" id="toast"></div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header-container">
+                <div class="sidebar-header">
+                    <h2>Cashier Terminal</h2>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav" id="sidebarNav">
+                <!-- Dummy / Cashier Options -->
+                <a href="#" class="nav-item active" data-page="home">
+                    <span>🏠</span>
+                    Dashboard   
+                </a>
+
+                <a href="#" class="nav-item" data-page="search-bill">
+                    <span>🔎</span>
+                    Search Bill
+                </a>
+
+                <a href="#" class="nav-item" data-page="payments">
+                    <span>💳</span>
+                    Payments
+                </a>
+
+                <a href="#" class="nav-item" data-page="payment-history">
+                    <span>🧾</span>
+                    Payment History
+                </a>
+
+                <a href="#" class="nav-item" data-page="reports">
+                    <span>📊</span>
+                    Reports (Dummy)
+                </a>
+            </nav>
+
+            <div class="sidebar-footer-container">
+                <div class="sidebar-footer">
+                    <button class="icon-btn" id="settingsBtn" title="Settings">
+                        <img src="../images/settings-icon.svg" alt="settings">
+                    </button>
+
+                    <button class="icon-btn logout-btn" id="logoutBtn" title="Logout">
+                        <img src="../images/logout-icon.svg" alt="logout">
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">C</div>
+                    <div class="user-details">
+                        <div class="user-name" id="fullName">Cashier</div>
+                        <div class="user-email" id="email">cashier@ums.com</div>
+                    </div>
+                    <div class="user-role" id="userRole">Cashier</div>
+                </div>
+            </header>
+
+            <!-- Main Page Content -->
+            <div class="dashboard-content" id="pageContent">
+                <h2>Welcome to Cashier Dashboard</h2>
+                <p>Select an option from the sidebar to continue.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Common Scripts -->
+    <script src="../js/common/theme.js"></script>
+
+    <!-- Cashier Sidebar Logic -->
+    <script src="../js/cashier/cashier-dashboard.js"></script>
+</body>
+</html>

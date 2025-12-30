@@ -245,3 +245,10 @@ LEFT JOIN cash c ON p.payment_id = c.payment_id
 LEFT JOIN card ca ON p.payment_id = ca.payment_id
 LEFT JOIN bank_transfer bt ON p.payment_id = bt.payment_id
 ORDER BY p.payment_id;
+
+ALTER TABLE cashier
+DROP COLUMN role_id;
+
+SELECT * FROM bill;
+
+drop database ums_dev;

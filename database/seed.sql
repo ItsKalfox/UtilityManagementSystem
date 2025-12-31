@@ -252,3 +252,5 @@ DROP COLUMN role_id;
 SELECT * FROM bill;
 
 drop database ums_dev;
+
+select * from utility_connection;

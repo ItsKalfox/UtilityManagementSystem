@@ -14,6 +14,11 @@ import com.utilitymanagementsystem.model.Bill;
 import com.utilitymanagementsystem.model.UtilityConnection;
 import com.utilitymanagementsystem.repository.BillRepository;
 import com.utilitymanagementsystem.repository.UtilityConnectionRepository;
+import com.utilitymanagementsystem.dto.cashier.CashierBillHistoryDTO;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import com.utilitymanagementsystem.dto.cashier.CashierBillListItemDTO;
+
 
 
 
@@ -95,5 +100,96 @@ public class CashierPortalService {
                 bill.getStatus()
         );
     }
+    @Transactional(readOnly = true)
+    public List<CashierBillHistoryDTO> getBillHistoryByConnection(
+            Integer connectionId,
+            boolean includePaid,
+            String status,
+            String utilityType,
+            int limit
+    ) {
+
+        int safeLimit = Math.max(1, Math.min(limit, 50));
+        Pageable pageable = PageRequest.of(0, safeLimit);
+
+        List<Bill> bills;
+
+        // 1) Utility type filter (ELECTRICITY/WATER/GAS)
+        if (utilityType != null && !utilityType.isBlank()) {
+            bills = billRepository
+                    .findByConnection_ConnectionIdAndConnection_UtilityTypeOrderByPeriodEndDesc(
+                            connectionId, utilityType, pageable
+                    );
+        }
+        // 2) Status filter (FULLY PAID / PARTIALLY PAID / PENDING)
+        else if (status != null && !status.isBlank()) {
+            bills = billRepository
+                    .findByConnection_ConnectionIdAndStatusOrderByPeriodEndDesc(
+                            connectionId, status, pageable
+                    );
+        }
+        // 3) Include all bills
+        else if (includePaid) {
+            bills = billRepository
+                    .findByConnection_ConnectionIdOrderByPeriodEndDesc(
+                            connectionId, pageable
+                    );
+        }
+        // 4) Exclude FULLY PAID
+        else {
+            bills = billRepository
+                    .findByConnection_ConnectionIdAndStatusNotOrderByPeriodEndDesc(
+                            connectionId, "FULLY PAID", pageable
+                    );
+        }
+
+        return bills.stream()
+                .map(b -> new CashierBillHistoryDTO(
+                        b.getBillId(),
+                        b.getConnection().getConnectionId(),
+                        b.getPeriodStart(),
+                        b.getPeriodEnd(),
+                        b.getTotalBillAmount(),
+                        b.getOutstandingAmount(),
+                        b.getStatus()
+                ))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CashierBillListItemDTO> getAllBills(String status, String utilityType, String customerType, int limit) {
+
+        int safeLimit = Math.max(1, Math.min(limit, 100));
+        Pageable pageable = PageRequest.of(0, safeLimit);
+
+        // If you want "includePaid=false" behavior here too, you can pass status filter OR handle it in controller.
+        List<Bill> bills = billRepository.cashierGetAllBills(
+                blankToNull(status),
+                blankToNull(utilityType),
+                blankToNull(customerType),
+                pageable
+        );
+
+        return bills.stream()
+                .map(b -> new CashierBillListItemDTO(
+                        b.getBillId(),
+                        b.getConnection().getConnectionId(),
+                        b.getConnection().getUtilityType(),
+                        b.getConnection().getCustomer().getUserId(),
+                        b.getConnection().getCustomer().getUser().getFullName(),
+                        b.getConnection().getCustomer().getCustomerType(),
+                        b.getPeriodStart(),
+                        b.getPeriodEnd(),
+                        b.getTotalBillAmount(),
+                        b.getOutstandingAmount(),
+                        b.getStatus()
+                ))
+                .toList();
+    }
+
+    private String blankToNull(String s) {
+        return (s == null || s.isBlank()) ? null : s;
+    }
+
 
 }

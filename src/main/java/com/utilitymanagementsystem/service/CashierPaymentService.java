@@ -15,6 +15,9 @@ import com.utilitymanagementsystem.model.Cashier;
 import com.utilitymanagementsystem.repository.CashierRepository;
 import com.utilitymanagementsystem.model.User;
 import com.utilitymanagementsystem.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 
 
 import java.math.BigDecimal;
@@ -42,6 +45,8 @@ public class CashierPaymentService {
         this.userRepository = userRepository;
     }
 
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
     public CashierPayBillResponseDTO payBill(CashierPayBillRequestDTO req) {
@@ -75,6 +80,9 @@ public class CashierPaymentService {
         payment.setAmount(amount);
 
         Payment saved = paymentRepository.save(payment);
+        paymentRepository.flush();          // ✅ forces INSERT to DB (trigger runs now)
+        entityManager.refresh(bill);
+        entityManager.clear();              // ✅ clears 1st-level cache so next fetch is fresh
 
         // 4) Insert into method-specific table (cash/card/bank_transfer)
         String method = normalizeMethod(req.method());

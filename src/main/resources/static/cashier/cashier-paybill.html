@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pay Bill - Cashier</title>
+
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/cashier.css" />
+  <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon" />
+</head>
+
+<body>
+  <!-- Theme Toggle (same as other pages) -->
+  <div class="theme-toggle-container">
+    <label class="theme-toggle">
+      <input type="checkbox" id="themeToggle" />
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <div class="paybill-wrapper">
+    <div class="paybill-card">
+      <div class="paybill-header">
+        <div>
+          <h2>Pay Bill</h2>
+          <p class="muted" id="pageHint">Load bill details and complete payment.</p>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-secondary" id="backBtn" type="button">← Back</button>
+          <button class="btn btn-secondary" id="reloadBtn" type="button">🔄 Reload</button>
+        </div>
+      </div>
+
+      <!-- Bill Summary -->
+      <div class="bill-summary" id="billSummary">
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="label">Connection ID</div>
+            <div class="value" id="connectionIdText">-</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="label">Bill ID</div>
+            <div class="value" id="billIdText">-</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="label">Period</div>
+            <div class="value" id="periodText">-</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="label">Status</div>
+            <div class="value" id="statusText">-</div>
+          </div>
+
+          <div class="summary-item highlight">
+            <div class="label">Total</div>
+            <div class="value" id="totalText">-</div>
+          </div>
+
+          <div class="summary-item highlight">
+            <div class="label">Outstanding</div>
+            <div class="value" id="outstandingText">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Form -->
+      <div class="pay-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="amountInput">Pay Amount (LKR)</label>
+            <input id="amountInput" type="number" step="0.01" min="0" placeholder="e.g. 200.00" />
+            <div class="help muted">Tip: You can pay partially or fully.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="methodSelect">Payment Method</label>
+            <select id="methodSelect">
+              <option value="">Select method</option>
+              <option value="CASH">CASH</option>
+              <option value="CARD">CARD</option>
+              <option value="BANK TRANSFER">BANK TRANSFER</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- CASH -->
+        <div class="method-box" id="cashBox" style="display:none;">
+          <h3>Cash Payment</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="amountGivenInput">Amount Given (LKR)</label>
+              <input id="amountGivenInput" type="number" step="0.01" min="0" placeholder="e.g. 1000.00" />
+            </div>
+
+            <div class="form-group">
+              <label>Calculated Balance (Change)</label>
+              <input id="balanceOutput" type="text" readonly placeholder="0.00" />
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD -->
+        <div class="method-box" id="cardBox" style="display:none;">
+          <div class="row-between">
+            <h3>Card Payment</h3>
+            <button type="button" class="btn btn-secondary" id="simulateSwipeBtn">💳 Simulate Card Swipe</button>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cardPlatformName">Platform Name</label>
+              <input id="cardPlatformName" type="text" placeholder="VISA / MASTERCARD / AMEX" />
+            </div>
+
+            <div class="form-group">
+              <label for="cardType">Card Type</label>
+              <select id="cardType">
+                <option value="">Select</option>
+                <option value="CREDIT">CREDIT</option>
+                <option value="DEBIT">DEBIT</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="approvalCode">Approval Code</label>
+              <input id="approvalCode" type="text" placeholder="AP-123456" />
+            </div>
+
+            <div class="form-group">
+              <label for="maskedCardNo">Masked Card Number (demo)</label>
+              <input id="maskedCardNo" type="text" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- BANK TRANSFER -->
+        <div class="method-box" id="bankBox" style="display:none;">
+          <div class="row-between">
+            <h3>Bank Transfer</h3>
+            <button type="button" class="btn btn-secondary" id="simulateBankBtn">🏦 Simulate Bank Transfer</button>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bankName">Bank Name</label>
+              <input id="bankName" type="text" placeholder="e.g. BOC / HNB / Peoples Bank" />
+            </div>
+
+            <div class="form-group">
+              <label for="bankAccountNo">Account Number</label>
+              <input id="bankAccountNo" type="text" placeholder="e.g. 1234567890" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="txnNumber">Transaction Number</label>
+              <input id="txnNumber" type="text" placeholder="e.g. TRX-998877" />
+            </div>
+
+            <div class="form-group">
+              <label class="muted">Note</label>
+              <div class="help muted">Use the receipt / transcript details from the customer.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions-row">
+          <button class="btn btn-secondary" id="fillOutstandingBtn" type="button">Pay Full Outstanding</button>
+          <button class="btn btn-primary" id="payBtn" type="button">✅ Pay Now</button>
+        </div>
+
+        <div class="muted small" id="debugInfo"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Common theme -->
+  <script src="../js/common/theme.js"></script>
+
+  <!-- Pay bill page logic -->
+  <script src="../js/cashier/cashier-paybill.js"></script>
+</body>
+
+</html>
+  

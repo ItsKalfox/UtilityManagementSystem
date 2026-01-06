@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bill Detail - Cashier</title>
+
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="../css/cashier.css" />
+  <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon" />
+</head>
+
+<body>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle-container">
+    <label class="theme-toggle">
+      <input type="checkbox" id="themeToggle" />
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <div class="billdetail-wrapper">
+    <div class="billdetail-card">
+      <div class="billdetail-header">
+        <div>
+          <h2>Bill Detail</h2>
+          <p class="muted" id="pageHint">View bill + customer info and take action.</p>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-secondary" id="backBtn" type="button">← Back</button>
+          <button class="btn btn-secondary" id="reloadBtn" type="button">🔄 Reload</button>
+          <button class="btn btn-primary" id="payNowBtn" type="button">💳 Pay Now</button>
+        </div>
+      </div>
+
+      <!-- Main content -->
+<div class="billdetail-body">
+
+  <!-- TOP: Quick chips -->
+  <div class="top-chips">
+    <span class="chip" id="chipBillId">Bill # -</span>
+    <span class="chip" id="chipConnection">Connection # -</span>
+    <span class="chip" id="chipUtility">Utility: -</span>
+    <span class="chip status-pill pending" id="chipStatus">-</span>
+  </div>
+
+  <!-- LEFT: Bill -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Bill Summary</div>
+      <div class="panel-actions">
+        <button class="btn btn-secondary btn-sm" id="copyBillBtn" type="button">Copy IDs</button>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="label">Bill ID</div>
+        <div class="value" id="billIdText">-</div>
+      </div>
+
+      <div class="info-item">
+        <div class="label">Connection ID</div>
+        <div class="value" id="connectionIdText">-</div>
+      </div>
+
+      <div class="info-item">
+        <div class="label">Utility Type</div>
+        <div class="value" id="utilityTypeText">-</div>
+      </div>
+
+      <div class="info-item">
+        <div class="label">Status</div>
+        <div class="value">
+          <span class="status-pill pending" id="statusPill">-</span>
+        </div>
+      </div>
+
+      <div class="info-item wide">
+        <div class="label">Period</div>
+        <div class="value" id="periodText">-</div>
+      </div>
+
+      <div class="info-item highlight money-box">
+        <div class="label">Total</div>
+        <div class="value money" id="totalText">-</div>
+      </div>
+
+      <div class="info-item highlight money-box" id="outstandingBox">
+        <div class="label">Outstanding</div>
+        <div class="value money" id="outstandingText">-</div>
+        <div class="muted tiny" id="outstandingHint"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Customer -->
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Customer</div>
+      <div class="panel-actions">
+        <button class="btn btn-secondary btn-sm" id="copyCustomerBtn" type="button">Copy Customer</button>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="label">Customer Name</div>
+        <div class="value" id="customerNameText">-</div>
+      </div>
+
+      <div class="info-item">
+        <div class="label">Customer Type</div>
+        <div class="value">
+          <span class="chip" id="customerTypeChip">-</span>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <div class="label">Account / Customer ID</div>
+        <div class="value" id="accountText">-</div>
+      </div>
+
+      <div class="info-item wide">
+        <div class="label">Notes</div>
+        <div class="value muted" id="notesText">
+          -
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTIONAL DEBUG (keep but hidden by default) -->
+  <div class="panel full debug-only">
+    <div class="panel-title">Debug</div>
+    <pre class="json-box" id="debugJson">{}</pre>
+  </div>
+
+</div>
+
+    </div>
+  </div>
+
+  <script src="../js/common/theme.js"></script>
+  <script src="../js/cashier/cashier-billdetail.js"></script>
+</body>
+
+</html>

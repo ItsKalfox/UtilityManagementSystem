@@ -178,6 +178,10 @@ VALUES
 (12, 1, 'ELX-1001', 'ELECTRICITY', '2025-01-01', 'ACTIVE'),
 (13, 2, 'ELX-2001', 'ELECTRICITY', '2025-01-01', 'ACTIVE');
 
+INSERT INTO utility_connection (customer_id, tariff_id, meter_serial_number, utility_type, install_date, status)
+VALUES
+(12, 1, 'ELX-3001', 'WATER', '2025-01-01', 'ACTIVE'),
+(13, 2, 'ELX-4001', 'GAS', '2025-01-01', 'ACTIVE');
 
 INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
 VALUES (8, 1, 300);
@@ -189,7 +193,12 @@ VALUES (8, 1, 450);
 INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
 VALUES (9, 2, 500);
 INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
-VALUES (9, 2, 580);
+VALUES (9, 2, 650);
+
+INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
+VALUES (9, 4, 220);
+INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
+VALUES (9, 5, 200);
 
 SELECT * FROM meter_reading;
 SELECT * FROM bill;
@@ -249,8 +258,9 @@ ORDER BY p.payment_id;
 ALTER TABLE cashier
 DROP COLUMN role_id;
 
-SELECT * FROM bill;
+SELECT * FROM meter_reading;
 
 drop database ums_dev;
 
-select * from utility_connection;
+select * from bill;
+

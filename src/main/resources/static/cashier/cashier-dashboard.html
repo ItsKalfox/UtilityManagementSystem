@@ -2,105 +2,289 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cashier Dashboard</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cashier Dashboard</title>
+
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/cashier.css">
+  <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
 </head>
 
 <body>
-    <!-- Theme Toggle -->
-    <div class="theme-toggle-container">
-        <label class="theme-toggle">
-            <input type="checkbox" id="themeToggle">
-            <span class="slider"></span>
-        </label>
-    </div>
+  <!-- Theme Toggle -->
+  <div class="theme-toggle-container">
+    <label class="theme-toggle">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
 
-    <!-- Toast (optional) -->
-    <div class="toast" id="toast"></div>
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
 
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header-container">
-                <div class="sidebar-header">
-                    <h2>Cashier Terminal</h2>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header-container">
+        <div class="sidebar-header">
+          <h2>Cashier Terminal</h2>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebarNav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <span>🏠</span> Dashboard
+        </a>
+
+        <a href="#" class="nav-item" data-page="customer-info">
+          <span>👤</span> Customer Info
+        </a>
+
+        <a href="#" class="nav-item" data-page="bill-history">
+          <span>🧾</span> Bill History
+        </a>
+      </nav>
+
+      <div class="sidebar-footer-container">
+        <div class="sidebar-footer">
+          <button class="icon-btn" id="settingsBtn" title="Settings" type="button">
+            <img src="../images/settings-icon.svg" alt="settings">
+          </button>
+
+          <button class="icon-btn logout-btn" id="logoutBtn" title="Logout" type="button">
+            <img src="../images/logout-icon.svg" alt="logout">
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+      <header class="header">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">C</div>
+          <div class="user-details">
+            <div class="user-name" id="fullName">Cashier</div>
+            <div class="user-email" id="email">cashier@ums.com</div>
+          </div>
+          <div class="user-role" id="userRole">Cashier</div>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <div class="management-container">
+
+          <!-- DASHBOARD (PAYMENT TERMINAL) -->
+          <section class="page-section" id="page-dashboard" data-page="dashboard">
+            <div class="dashboard-content">
+
+              <div class="page-title-bar">
+                <h2>Bill Payment Terminal</h2>
+
+                <div class="page-actions">
+                  <button class="icon-btn" id="refreshBillsBtn" title="Refresh" type="button">🔄</button>
                 </div>
+              </div>
+
+              <div class="filters-row">
+                <div class="search-input">
+                  <span class="search-icon">🔎</span>
+                  <input type="text" id="billSearchInput"
+                    placeholder="Search by Bill ID / Name / Customer ID / Connection ID..." />
+                </div>
+
+                <select id="billStatusFilter" class="filter-select">
+                  <option value="">All Status</option>
+                  <option value="PENDING">PENDING</option>
+                  <option value="PARTIALLY PAID">PARTIALLY PAID</option>
+                  <option value="FULLY PAID">FULLY PAID</option>
+                </select>
+
+                <select id="utilityTypeFilter" class="filter-select">
+                  <option value="">All Utilities</option>
+                  <option value="ELECTRICITY">ELECTRICITY</option>
+                  <option value="WATER">WATER</option>
+                  <option value="GAS">GAS</option>
+                </select>
+
+                <!-- IMPORTANT: keep this id because your JS expects it -->
+                <select id="customerTypeFilter" class="filter-select">
+                  <option value="">All Customers</option>
+                  <option value="HOUSEHOLD">HOUSEHOLD</option>
+                  <option value="BUSINESS">BUSINESS</option>
+                  <option value="GOVERNMENT ORGANIZATION">GOVERNMENT ORGANIZATION</option>
+                </select>
+
+                <select id="billLimit" class="filter-select">
+                  <option value="10">10</option>
+                  <option value="20" selected>20</option>
+                  <option value="50">50</option>
+                </select>
+
+                <label class="toggle-paid">
+                  <input type="checkbox" id="hideFullyPaid" checked />
+                  Hide Fully Paid
+                </label>
+              </div>
+
+              <div class="list-container">
+                <div class="list-header">
+                  <div class="lh-col id">Bill</div>
+                  <div class="lh-col name">Name</div>
+                  <div class="lh-col account">Account</div>
+                  <div class="lh-col utility">Utility</div>
+                  <div class="lh-col amount">Bill Amount</div>
+                  <div class="lh-col status">Status</div>
+                  <div class="lh-col action">Action</div>
+                </div>
+
+                <div class="list-body" id="billList"></div>
+
+                <div class="list-footer">
+                  <span id="billListHint">Ready.</span>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- CUSTOMER INFO -->
+          <section class="page-section hidden" data-page="customer-info">
+            <div class="page-title-bar">
+              <h2>Customer Information</h2>
+              <div class="page-actions">
+                <button class="icon-btn" id="refreshCustomersBtn" title="Refresh" type="button">🔄</button>
+              </div>
             </div>
 
-            <nav class="sidebar-nav" id="sidebarNav">
-                <!-- Dummy / Cashier Options -->
-                <a href="#" class="nav-item active" data-page="home">
-                    <span>🏠</span>
-                    Dashboard
-                </a>
+            <div class="filters-row">
+              <div class="search-input">
+                <span class="search-icon">🔎</span>
+                <input id="customerSearchInput" placeholder="Search by Name / NIC / Customer ID" />
+              </div>
 
-                <a href="#" class="nav-item" data-page="search-bill">
-                    <span>🔎</span>
-                    Search Bill
-                </a>
+              <!-- IMPORTANT: keep this id because your customerinfo.js expects it -->
+              <select id="customerTypeFilter" class="filter-select">
+                <option value="">All Types</option>
+                <option value="HOUSEHOLD">HOUSEHOLD</option>
+                <option value="BUSINESS">BUSINESS</option>
+                <option value="GOVERNMENT ORGANIZATION">GOVERNMENT ORGANIZATION</option>
+              </select>
 
-                <a href="#" class="nav-item" data-page="payments">
-                    <span>💳</span>
-                    Payments
-                </a>
-
-                <a href="#" class="nav-item" data-page="payment-history">
-                    <span>🧾</span>
-                    Payment History
-                </a>
-
-                <a href="#" class="nav-item" data-page="reports">
-                    <span>📊</span>
-                    Reports (Dummy)
-                </a>
-            </nav>
-
-            <div class="sidebar-footer-container">
-                <div class="sidebar-footer">
-                    <button class="icon-btn" id="settingsBtn" title="Settings">
-                        <img src="../images/settings-icon.svg" alt="settings">
-                    </button>
-
-                    <button class="icon-btn logout-btn" id="logoutBtn" title="Logout">
-                        <img src="../images/logout-icon.svg" alt="logout">
-                    </button>
-                </div>
+              <select id="customerLimit" class="filter-select">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+              </select>
             </div>
-        </aside>
 
-        <!-- Main -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="header">
-                <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">C</div>
-                    <div class="user-details">
-                        <div class="user-name" id="fullName">Cashier</div>
-                        <div class="user-email" id="email">cashier@ums.com</div>
-                    </div>
-                    <div class="user-role" id="userRole">Cashier</div>
-                </div>
-            </header>
-            <div class="content-area" id="contentArea">
-                <div class="management-container">
-                    <!-- Main Page Content -->
-                    <div class="dashboard-content" id="pageContent">
-                        <h2>Welcome to Cashier Dashboard</h2>
-                        <p>Select an option from the sidebar to continue.</p>
-                    </div>
-                </div>
+            <div class="list-container">
+              <div class="list-body" id="customerList"></div>
+              <div class="list-footer">
+                <span id="customerListHint">Ready.</span>
+              </div>
             </div>
-        </main>
-    </div>
 
-    <!-- Common Scripts -->
-    <script src="../js/common/theme.js"></script>
+            <div class="cu-overlay hidden" id="customerOverlay">
+              <div class="cu-overlay-card" id="overlayCard">
+                <div class="cu-overlay-header">
+                  <div>
+                    <h3 id="overlayTitle">Customer</h3>
+                    <p class="muted" id="overlaySub">Details</p>
+                  </div>
+                  <button class="btn btn-secondary" id="closeOverlayBtn" type="button">✖ Close</button>
+                </div>
 
-    <!-- Cashier Sidebar Logic -->
-    <script src="../js/cashier/cashier-dashboard.js"></script>
+                <div class="cu-overlay-body" id="overlayContent"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- BILL HISTORY -->
+          <section class="page-section hidden" data-page="bill-history" id="billHistoryPage">
+            <div class="page-title-bar">
+              <h2>Bill History</h2>
+
+              <div class="page-actions">
+                <button class="icon-btn" id="refreshBillHistoryBtn" title="Refresh" type="button">🔄</button>
+              </div>
+            </div>
+
+            <div class="filters-row">
+              <div class="search-input">
+                <span class="search-icon">🔎</span>
+                <input type="text" id="billHistorySearchInput"
+                  placeholder="Search by Bill ID / Customer Name / Customer ID / Connection ID..." />
+              </div>
+
+              <select id="billHistoryStatusFilter" class="filter-select">
+                <option value="">All Status</option>
+                <option value="PARTIALLY PAID">PARTIALLY PAID</option>
+                <option value="FULLY PAID">FULLY PAID</option>
+              </select>
+
+              <select id="billHistoryUtilityFilter" class="filter-select">
+                <option value="">All Utilities</option>
+                <option value="ELECTRICITY">ELECTRICITY</option>
+                <option value="WATER">WATER</option>
+                <option value="GAS">GAS</option>
+              </select>
+
+              <select id="billHistoryCustomerTypeFilter" class="filter-select">
+                <option value="">All Customer Types</option>
+                <option value="HOUSEHOLD">HOUSEHOLD</option>
+                <option value="BUSINESS">BUSINESS</option>
+                <option value="GOVERNMENT ORGANIZATION">GOVERNMENT ORGANIZATION</option>
+              </select>
+
+              <select id="billHistoryLimit" class="filter-select">
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200" selected>200</option>
+                <option value="500">500</option>
+              </select>
+            </div>
+
+            <div class="list-container">
+              <div class="list-header billhistory-grid">
+                <div class="lh-col id">Bill</div>
+                <div class="lh-col name">Name</div>
+                <div class="lh-col account">Customer</div>
+                <div class="lh-col utility">Utility</div>
+                <div class="lh-col period">Period</div>
+                <div class="lh-col amount">Total</div>
+                <div class="lh-col amount">Outstanding</div>
+                <div class="lh-col status">Status</div>
+                <div class="lh-col action">Action</div>
+              </div>
+
+              <div class="list-body" id="billHistoryList"></div>
+
+              <div class="list-footer">
+                <span id="billHistoryHint">Ready.</span>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Confirm Modal Overlay (admin-style: leave empty, JS will fill it) -->
+  <div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
+  <div id="confirmModal" class="modal modal-confirm"></div>
+
+  <script src="../js/common/theme.js"></script>
+
+  <!-- IMPORTANT: include cashier utils here -->
+  <script src="../js/cashier/utils.js"></script>
+
+  <script src="../js/cashier/cashier-dashboard.js"></script>
+  <script src="../js/cashier/cashier-bills-dashboard.js"></script>
+  <script src="../js/cashier/cashier-customerinfo.js"></script>
+  <script src="../js/cashier/cashier-billhistory.js"></script>
 </body>
 
 </html>

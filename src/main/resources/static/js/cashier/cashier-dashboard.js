@@ -1,110 +1,211 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const sidebarNav = document.getElementById("sidebarNav");
-    const navItems = sidebarNav.querySelectorAll(".nav-item");
-    const pageContent = document.getElementById("pageContent");
+  const sidebarNav = document.getElementById("sidebarNav");
+  const navItems = sidebarNav ? sidebarNav.querySelectorAll(".nav-item") : [];
 
-    const fullNameEl = document.getElementById("fullName");
-    const emailEl = document.getElementById("email");
-    const avatarEl = document.getElementById("userAvatar");
-    const roleEl = document.getElementById("userRole");
+  const fullNameEl = document.getElementById("fullName");
+  const emailEl = document.getElementById("email");
+  const avatarEl = document.getElementById("userAvatar");
+  const roleEl = document.getElementById("userRole");
 
-    const logoutBtn = document.getElementById("logoutBtn");
-    const settingsBtn = document.getElementById("settingsBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const settingsBtn = document.getElementById("settingsBtn");
 
-    // ✅ Load user info from localStorage
-    const fullName = localStorage.getItem("fullName") || "Cashier";
-    const email = localStorage.getItem("email") || "cashier@ums.com";
+  const confirmOverlay = document.getElementById("confirmOverlay");
+  const confirmModal = document.getElementById("confirmModal");
 
-    fullNameEl.textContent = fullName;
-    emailEl.textContent = email;
-    avatarEl.textContent = fullName.charAt(0).toUpperCase();
-    roleEl.textContent = "Cashier";
+  const fullName = localStorage.getItem("fullName") || "Cashier";
+  const email = localStorage.getItem("email") || "cashier@ums.com";
 
-    // ✅ Sidebar click logic (active highlight + load content)
-    navItems.forEach(item => {
-        item.addEventListener("click", (e) => {
-            e.preventDefault();
+  if (fullNameEl) fullNameEl.textContent = fullName;
+  if (emailEl) emailEl.textContent = email;
+  if (avatarEl) avatarEl.textContent = String(fullName).charAt(0).toUpperCase();
+  if (roleEl) roleEl.textContent = "Cashier";
 
-            navItems.forEach(i => i.classList.remove("active"));
-            item.classList.add("active");
+  // Sidebar navigation
+  navItems.forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
 
-            const page = item.dataset.page;
-            loadPage(page);
-        });
+      navItems.forEach((i) => i.classList.remove("active"));
+      item.classList.add("active");
+
+      showPage(item.dataset.page);
+    });
+  });
+
+  function showPage(page) {
+    document.querySelectorAll(".page-section").forEach((sec) => {
+      sec.classList.toggle("hidden", sec.dataset.page !== page);
     });
 
-    function loadPage(page) {
-        // 🔥 Dummy pages for now (replace later)
-        switch (page) {
-            case "home":
-                pageContent.innerHTML = `
-                    <h2>Cashier Dashboard</h2>
-                    <p>Welcome, <strong>${fullName}</strong>.</p>
-                    <p>Select a sidebar option to begin.</p>
-                `;
-                break;
+    if (page === "dashboard" && window.CashierBillsDashboard?.loadBills) {
+      window.CashierBillsDashboard.loadBills();
+    }
 
-            case "search-bill":
-                pageContent.innerHTML = `
-                    <h2>Search Bill</h2>
-                    <p>(Dummy UI) Search by Connection ID / Bill ID</p>
-                    <input type="text" placeholder="Enter Bill ID" style="padding:10px; width:280px;">
-                    <button class="login-btn" style="margin-top:10px;">Search</button>
-                `;
-                break;
+    if (page === "customer-info") {
+      document.getElementById("customerSearchInput")?.focus();
+    }
 
-            case "payments":
-                pageContent.innerHTML = `
-                    <h2>Payments</h2>
-                    <p>(Dummy UI) Payment form will be built here.</p>
-                    <button class="login-btn">Create Payment</button>
-                `;
-                break;
+    if (page === "bill-history" && window.CashierBillHistory?.loadBills) {
+      window.CashierBillHistory.loadBills();
+    }
+  }
 
-            case "payment-history":
-                pageContent.innerHTML = `
-                    <h2>Payment History</h2>
-                    <p>(Dummy UI) Payment history table will be shown here.</p>
-                `;
-                break;
+  // Toast helper
+  function safeToast(message, type = "success") {
+    if (typeof window.toast === "function") {
+      window.toast(message, type);
+      return;
+    }
+    if (typeof window.showToast === "function") {
+      window.showToast(message, type);
+      return;
+    }
 
-            case "reports":
-                pageContent.innerHTML = `
-                    <h2>Reports</h2>
-                    <p>(Dummy UI) Reports section (future feature)</p>
-                `;
-                break;
+    const el = document.getElementById("toast");
+    if (!el) return;
+    el.className = "toast active " + (type === "error" ? "error" : "success");
+    el.textContent = message;
+    setTimeout(() => (el.className = "toast"), 2500);
+  }
 
-            default:
-                pageContent.innerHTML = `
-                    <h2>Page Not Found</h2>
-                    <p>Invalid page selected.</p>
-                `;
+  // Blur helper
+  function blurOn() {
+    document.body.classList.add("modal-blur-on");
+  }
+  function blurOff() {
+    document.body.classList.remove("modal-blur-on");
+  }
+
+  // Admin-style confirm modal (renders HTML into #confirmModal)
+  function showConfirmModal({
+    title = "Confirm",
+    message = "Are you sure?",
+    confirmText = "OK",
+    cancelText = "Cancel",
+    danger = false
+  } = {}) {
+    return new Promise((resolve) => {
+      if (!confirmOverlay || !confirmModal) {
+        resolve({ confirmed: false });
+        return;
+      }
+
+      confirmModal.innerHTML = `
+        <div class="modal-header">
+          <img src="../images/${danger ? "warning-icon.svg" : "save-icon.svg"}" alt="icon">
+          <h3>${escapeHtml(title)}</h3>
+        </div>
+
+        <div class="modal-body">
+          <p class="confirm-text">${escapeHtml(message)}</p>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-conf ${danger ? "btn-delete" : "btn-save"}" id="confirmOkBtn">
+            ${escapeHtml(confirmText)}
+          </button>
+          <button class="btn-conf btn-secondary" id="confirmCancelBtn">
+            ${escapeHtml(cancelText)}
+          </button>
+        </div>
+      `;
+
+      // show modal
+      confirmOverlay.classList.add("active");
+      confirmModal.classList.add("active");
+
+      // force show (fix for "blur only" issue)
+      confirmOverlay.style.display = "block";
+      confirmModal.style.display = "block";
+
+      blurOn();
+
+      const okBtn = confirmModal.querySelector("#confirmOkBtn");
+      const cancelBtn = confirmModal.querySelector("#confirmCancelBtn");
+
+      const cleanup = (result) => {
+        confirmModal.classList.remove("active");
+        confirmOverlay.classList.remove("active");
+
+        // force hide
+        confirmModal.style.display = "none";
+        confirmOverlay.style.display = "none";
+
+        blurOff();
+        resolve(result);
+      };
+
+      cancelBtn && (cancelBtn.onclick = () => cleanup({ confirmed: false }));
+      okBtn && (okBtn.onclick = () => cleanup({ confirmed: true }));
+
+      // click outside closes
+      confirmOverlay.onclick = () => cleanup({ confirmed: false });
+
+      // ESC closes
+      const onKey = (e) => {
+        if (e.key === "Escape") {
+          document.removeEventListener("keydown", onKey);
+          cleanup({ confirmed: false });
         }
-    }
+      };
+      document.addEventListener("keydown", onKey);
+    });
+  }
 
-    // ✅ Logout
-    logoutBtn.addEventListener("click", () => {
-        localStorage.clear();
-        window.location.href = "../index.html";
+  // If any HTML calls hideConfirmModal()
+  window.hideConfirmModal = function () {
+    if (!confirmOverlay || !confirmModal) return;
+
+    confirmOverlay.classList.remove("active");
+    confirmModal.classList.remove("active");
+
+    confirmOverlay.style.display = "none";
+    confirmModal.style.display = "none";
+
+    blurOff();
+  };
+
+  // Settings
+  settingsBtn?.addEventListener("click", () => {
+    safeToast("Settings feature coming soon", "success");
+  });
+
+  // Logout
+  logoutBtn?.addEventListener("click", async () => {
+    const result = await showConfirmModal({
+      title: "Logout",
+      message: "Are you sure you want to logout?",
+      confirmText: "Yes",
+      cancelText: "No",
+      danger: true
     });
 
-    // ✅ Settings (dummy)
-    settingsBtn.addEventListener("click", () => {
-        showToast("Settings feature coming soon 😄");
-    });
+    if (!result?.confirmed) return;
 
-    // ✅ Toast helper (optional)
-    function showToast(msg) {
-        const toast = document.getElementById("toast");
-        if (!toast) return;
+    safeToast("Logging out...", "success");
 
-        toast.textContent = msg;
-        toast.classList.add("show");
+    setTimeout(() => {
+      const theme = localStorage.getItem("theme");
+      localStorage.clear();
+      if (theme !== null) localStorage.setItem("theme", theme);
 
-        setTimeout(() => toast.classList.remove("show"), 2500);
-    }
+      window.location.replace("../index.html");
+    }, 250);
+  });
 
-    // Load default page
-    loadPage("home");
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  // Default page + init modules once
+  showPage("dashboard");
+  window.CashierBillsDashboard?.init?.();
+  window.CashierCustomerInfo?.init?.();
+  window.CashierBillHistory?.init?.();
 });

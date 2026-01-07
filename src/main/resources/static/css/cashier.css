@@ -1015,3 +1015,73 @@ body.modal-blur-on .dashboard-container {
 #confirmModal.modal-confirm {
   text-align: center;
 }
+
+.nav-item {
+  gap: 12px;
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  filter: var(--icon-filter);
+}
+
+.nav-item.active .nav-icon {
+  filter: var(--icon-filter-active);
+}
+
+.action-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.search-icon img {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+}
+
+.inline-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+}
+
+
+.action-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+  pointer-events: none;
+  filter: brightness(0.9);
+}
+
+.icon-btn:hover .action-icon {
+  filter: brightness(1.2);
+}
+
+.icon-btn.loading .action-icon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.inline-icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 8px;
+  filter: var(--icon-filter);
+}
+
+.inline-icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 8px;
+  filter: var(--icon-filter);
+}

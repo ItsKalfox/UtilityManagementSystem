@@ -248,3 +248,9 @@ window.CashierBillsDashboard = (() => {
 document.addEventListener("DOMContentLoaded", () => {
   window.CashierBillsDashboard?.init();
 });
+
+els.refreshBtn?.addEventListener("click", async () => {
+  els.refreshBtn.classList.add("loading");
+  await loadBills();
+  els.refreshBtn.classList.remove("loading");
+});

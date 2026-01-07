@@ -34,17 +34,21 @@
 
       <nav class="sidebar-nav" id="sidebarNav">
         <a href="#" class="nav-item active" data-page="dashboard">
-          <span>🏠</span> Dashboard
+          <img src="../images/cashier-dashboard-icon.svg" class="nav-icon" alt="Dashboard">
+          <span class="nav-text">Dashboard</span>
         </a>
 
         <a href="#" class="nav-item" data-page="customer-info">
-          <span>👤</span> Customer Info
+          <img src="../images/customer-icon.svg" class="nav-icon" alt="Customer Info">
+          <span class="nav-text">Customer Info</span>
         </a>
 
         <a href="#" class="nav-item" data-page="bill-history">
-          <span>🧾</span> Bill History
+          <img src="../images/bill-icon.svg" class="nav-icon" alt="Bill History">
+          <span class="nav-text">Bill History</span>
         </a>
       </nav>
+
 
       <div class="sidebar-footer-container">
         <div class="sidebar-footer">
@@ -83,13 +87,19 @@
                 <h2>Bill Payment Terminal</h2>
 
                 <div class="page-actions">
-                  <button class="icon-btn" id="refreshBillsBtn" title="Refresh" type="button">🔄</button>
+                  <button class="icon-btn" id="refreshBillsBtn" title="Refresh" type="button">
+                    <img src="../images/refresh-icon.svg" alt="Refresh" class="action-icon">
+                  </button>
+
                 </div>
               </div>
 
               <div class="filters-row">
                 <div class="search-input">
-                  <span class="search-icon">🔎</span>
+                  <span class="search-icon">
+  <img src="../images/search-icon.svg" alt="Search">
+</span>
+
                   <input type="text" id="billSearchInput"
                     placeholder="Search by Bill ID / Name / Customer ID / Connection ID..." />
                 </div>
@@ -154,13 +164,19 @@
             <div class="page-title-bar">
               <h2>Customer Information</h2>
               <div class="page-actions">
-                <button class="icon-btn" id="refreshCustomersBtn" title="Refresh" type="button">🔄</button>
+                <button class="icon-btn" id="refreshCustomersBtn" title="Refresh" type="button">
+                  <img src="../images/refresh-icon.svg" alt="Refresh" class="action-icon">
+                </button>
+
+
               </div>
             </div>
 
             <div class="filters-row">
               <div class="search-input">
-                <span class="search-icon">🔎</span>
+               <span class="search-icon">
+  <img src="../images/search-icon.svg" alt="Search">
+</span>
                 <input id="customerSearchInput" placeholder="Search by Name / NIC / Customer ID" />
               </div>
 
@@ -193,7 +209,11 @@
                     <h3 id="overlayTitle">Customer</h3>
                     <p class="muted" id="overlaySub">Details</p>
                   </div>
-                  <button class="btn btn-secondary" id="closeOverlayBtn" type="button">✖ Close</button>
+                  <button class="btn btn-secondary" id="closeOverlayBtn" type="button">
+  <img src="../images/close-icon.svg" class="inline-icon" alt="Close">
+  Close
+</button>
+
                 </div>
 
                 <div class="cu-overlay-body" id="overlayContent"></div>
@@ -207,13 +227,19 @@
               <h2>Bill History</h2>
 
               <div class="page-actions">
-                <button class="icon-btn" id="refreshBillHistoryBtn" title="Refresh" type="button">🔄</button>
+                <button class="icon-btn" id="refreshBillHistoryBtn" title="Refresh" type="button">
+                  <img src="../images/refresh-icon.svg" alt="Refresh" class="action-icon">
+                </button>
+
               </div>
             </div>
 
             <div class="filters-row">
               <div class="search-input">
-                <span class="search-icon">🔎</span>
+                <span class="search-icon">
+  <img src="../images/search-icon.svg" alt="Search">
+</span>
+
                 <input type="text" id="billHistorySearchInput"
                   placeholder="Search by Bill ID / Customer Name / Customer ID / Connection ID..." />
               </div>

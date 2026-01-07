@@ -32,117 +32,125 @@
         </div>
 
         <div class="header-actions">
-          <button class="btn btn-secondary" id="backBtn" type="button">← Back</button>
-          <button class="btn btn-secondary" id="reloadBtn" type="button">🔄 Reload</button>
-          <button class="btn btn-primary" id="payNowBtn" type="button">💳 Pay Now</button>
+          <button class="btn btn-secondary" id="backBtn" type="button">
+            <img src="../images/back-icon.svg" class="inline-icon" alt="back">
+            Back
+          </button>
+
+          <button class="btn btn-secondary" id="reloadBtn" type="button">
+            <img src="../images/refresh-icon.svg" class="inline-icon" alt="reload">
+            Reload
+          </button>
+
+          <button class="btn btn-primary" id="payNowBtn" type="button">
+            <img src="../images/payment-icon.svg" class="inline-icon" alt="pay">
+            Pay Now
+          </button>
         </div>
       </div>
 
       <!-- Main content -->
-<div class="billdetail-body">
+      <div class="billdetail-body">
 
-  <!-- TOP: Quick chips -->
-  <div class="top-chips">
-    <span class="chip" id="chipBillId">Bill # -</span>
-    <span class="chip" id="chipConnection">Connection # -</span>
-    <span class="chip" id="chipUtility">Utility: -</span>
-    <span class="chip status-pill pending" id="chipStatus">-</span>
-  </div>
-
-  <!-- LEFT: Bill -->
-  <div class="panel">
-    <div class="panel-head">
-      <div class="panel-title">Bill Summary</div>
-      <div class="panel-actions">
-        <button class="btn btn-secondary btn-sm" id="copyBillBtn" type="button">Copy IDs</button>
-      </div>
-    </div>
-
-    <div class="info-grid">
-      <div class="info-item">
-        <div class="label">Bill ID</div>
-        <div class="value" id="billIdText">-</div>
-      </div>
-
-      <div class="info-item">
-        <div class="label">Connection ID</div>
-        <div class="value" id="connectionIdText">-</div>
-      </div>
-
-      <div class="info-item">
-        <div class="label">Utility Type</div>
-        <div class="value" id="utilityTypeText">-</div>
-      </div>
-
-      <div class="info-item">
-        <div class="label">Status</div>
-        <div class="value">
-          <span class="status-pill pending" id="statusPill">-</span>
+        <!-- TOP: Quick chips -->
+        <div class="top-chips">
+          <span class="chip" id="chipBillId">Bill # -</span>
+          <span class="chip" id="chipConnection">Connection # -</span>
+          <span class="chip" id="chipUtility">Utility: -</span>
+          <span class="chip status-pill pending" id="chipStatus">-</span>
         </div>
-      </div>
 
-      <div class="info-item wide">
-        <div class="label">Period</div>
-        <div class="value" id="periodText">-</div>
-      </div>
+        <!-- LEFT: Bill -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Bill Summary</div>
+            <div class="panel-actions">
+              <button class="btn btn-secondary btn-sm" id="copyBillBtn" type="button">Copy IDs</button>
+            </div>
+          </div>
 
-      <div class="info-item highlight money-box">
-        <div class="label">Total</div>
-        <div class="value money" id="totalText">-</div>
-      </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="label">Bill ID</div>
+              <div class="value" id="billIdText">-</div>
+            </div>
 
-      <div class="info-item highlight money-box" id="outstandingBox">
-        <div class="label">Outstanding</div>
-        <div class="value money" id="outstandingText">-</div>
-        <div class="muted tiny" id="outstandingHint"></div>
-      </div>
-    </div>
-  </div>
+            <div class="info-item">
+              <div class="label">Connection ID</div>
+              <div class="value" id="connectionIdText">-</div>
+            </div>
 
-  <!-- RIGHT: Customer -->
-  <div class="panel">
-    <div class="panel-head">
-      <div class="panel-title">Customer</div>
-      <div class="panel-actions">
-        <button class="btn btn-secondary btn-sm" id="copyCustomerBtn" type="button">Copy Customer</button>
-      </div>
-    </div>
+            <div class="info-item">
+              <div class="label">Utility Type</div>
+              <div class="value" id="utilityTypeText">-</div>
+            </div>
 
-    <div class="info-grid">
-      <div class="info-item">
-        <div class="label">Customer Name</div>
-        <div class="value" id="customerNameText">-</div>
-      </div>
+            <div class="info-item">
+              <div class="label">Status</div>
+              <div class="value">
+                <span class="status-pill pending" id="statusPill">-</span>
+              </div>
+            </div>
 
-      <div class="info-item">
-        <div class="label">Customer Type</div>
-        <div class="value">
-          <span class="chip" id="customerTypeChip">-</span>
+            <div class="info-item wide">
+              <div class="label">Period</div>
+              <div class="value" id="periodText">-</div>
+            </div>
+
+            <div class="info-item highlight money-box">
+              <div class="label">Total</div>
+              <div class="value money" id="totalText">-</div>
+            </div>
+
+            <div class="info-item highlight money-box" id="outstandingBox">
+              <div class="label">Outstanding</div>
+              <div class="value money" id="outstandingText">-</div>
+              <div class="muted tiny" id="outstandingHint"></div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="info-item">
-        <div class="label">Account / Customer ID</div>
-        <div class="value" id="accountText">-</div>
-      </div>
+        <!-- RIGHT: Customer -->
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Customer</div>
+            <div class="panel-actions">
+              <button class="btn btn-secondary btn-sm" id="copyCustomerBtn" type="button">Copy Customer</button>
+            </div>
+          </div>
 
-      <div class="info-item wide">
-        <div class="label">Notes</div>
-        <div class="value muted" id="notesText">
-          -
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="label">Customer Name</div>
+              <div class="value" id="customerNameText">-</div>
+            </div>
+
+            <div class="info-item">
+              <div class="label">Customer Type</div>
+              <div class="value">
+                <span class="chip" id="customerTypeChip">-</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="label">Account / Customer ID</div>
+              <div class="value" id="accountText">-</div>
+            </div>
+
+            <div class="info-item wide">
+              <div class="label">Notes</div>
+              <div class="value muted" id="notesText">-</div>
+            </div>
+          </div>
         </div>
+
+        <!-- OPTIONAL DEBUG (keep but hidden by default) -->
+        <div class="panel full debug-only">
+          <div class="panel-title">Debug</div>
+          <pre class="json-box" id="debugJson">{}</pre>
+        </div>
+
       </div>
-    </div>
-  </div>
-
-  <!-- OPTIONAL DEBUG (keep but hidden by default) -->
-  <div class="panel full debug-only">
-    <div class="panel-title">Debug</div>
-    <pre class="json-box" id="debugJson">{}</pre>
-  </div>
-
-</div>
-
     </div>
   </div>
 

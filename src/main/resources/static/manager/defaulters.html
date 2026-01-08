@@ -72,7 +72,81 @@
                     </div>
                 </div>
             </header>
-            <!-- CONTENT -->
+            <div class="content-area">
+                <div class="management-container">
+                    <div class="management-header">
+                        <div class="management-title">
+                            <h2>Defaulters & Outstanding Payments</h2>
+                        </div>
+
+                        <div class="info-box" style="border-left: 4px solid var(--danger);">
+                            <h4>Attention: High Overdue Balance</h4>
+                            <p>Total of 45 accounts have exceeded the 30-day credit period. Immediate action recommended for accounts over Rs. 50,000.</p>
+                        </div>
+                    </div>
+
+                    <div class="management-controls">
+                        <div class="search-box">
+                            <input type="text" placeholder="Search by Account No or Name...">
+                        </div>
+                        <select class="filter-select">
+                            <option>All Service Types</option>
+                            <option>Electricity</option>
+                            <option>Water</option>
+                        </select>
+                        <select class="sort-select">
+                            <option>Sort by Highest Due</option>
+                            <option>Sort by Date</option>
+                        </select>
+                    </div>
+
+                    <div class="records-container">
+                        <div class="record-item" style="background: var(--gray-100); font-weight: 600;">
+                            <div class="record-info">
+                                <span style="color: var(--text-primary)">Acc ID</span>
+                                <span style="color: var(--text-primary)">Customer</span>
+                                <span style="color: var(--text-primary)">Utility</span>
+                                <span style="color: var(--text-primary)">Amount (Rs.)</span>
+                                <span style="color: var(--text-primary)">Status</span>
+                            </div>
+                            <div class="record-actions">Action</div>
+                        </div>
+
+                        <div class="record-item">
+                            <div class="record-info">
+                                <span class="record-id">#E-9921</span>
+                                <span class="record-name">Saman Kumara</span>
+                                <span class="record-department">Electricity</span>
+                                <span class="record-name">24,500.00</span>
+                                <span class="status-badge status-inactive">Overdue</span>
+                            </div>
+                            <div class="record-actions">
+                                <button class="btn btn-view">View Detail</button>
+                            </div>
+                        </div>
+
+                        <div class="record-item">
+                            <div class="record-info">
+                                <span class="record-id">#W-4412</span>
+                                <span class="record-name">Anula Devi</span>
+                                <span class="record-department">Water</span>
+                                <span class="record-name">8,200.00</span>
+                                <span class="status-badge status-inactive">Overdue</span>
+                            </div>
+                            <div class="record-actions">
+                                <button class="btn btn-view">View Detail</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="pagination">
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">Next</button>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 

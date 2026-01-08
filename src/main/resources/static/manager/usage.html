@@ -72,7 +72,98 @@
                     </div>
                 </div>
             </header>
-            <!-- CONTENT -->
+            <div class="dashboard-content">
+                <section class="stats-section">
+                    <h3 class="section-title">Consumption Overview</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card highlight">
+                            <div class="stat-label">Peak Consumption</div>
+                            <div class="stat-value">45,200 <small>kWh</small></div>
+                            <div class="stat-meta">This Month</div>
+                        </div>
+                        <div class="stat-card success">
+                            <div class="stat-label">Efficiency Rate</div>
+                            <div class="stat-value">92%</div>
+                            <div class="stat-meta">Stable Grid</div>
+                        </div>
+                        <div class="stat-card attention">
+                            <div class="stat-label">High Usage Alerts</div>
+                            <div class="stat-value">12</div>
+                            <div class="stat-sublabel">Action Required</div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="management-container">
+                    <div class="management-header">
+                        <div class="management-title">
+                            <h2>Meter Readings & Trends</h2>
+                            <div class="datetime-filters">
+                                <div class="filter-group">
+                                    <label>Utility Type</label>
+                                    <select class="filter-select">
+                                        <option>Electricity</option>
+                                        <option>Water</option>
+                                        <option>Gas</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label>Analysis Period</label>
+                                    <input type="datetime-local">
+                                </div>
+                                <button class="btn btn-view">Filter</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="records-container">
+                        <div class="record-item" style="background: var(--gray-100); font-weight: 600;">
+                            <div class="record-info">
+                                <span>Customer ID</span>
+                                <span>Utility</span>
+                                <span>Prev Reading</span>
+                                <span>Curr Reading</span>
+                                <span>Status</span>
+                            </div>
+                            <div class="record-actions" style="visibility: hidden;">
+                                <button class="btn">View</button>
+                            </div>
+                        </div>
+
+                        <div class="record-item">
+                            <div class="record-info">
+                                <div class="record-id">#C-8842</div>
+                                <div class="record-name">Electricity</div>
+                                <div class="record-nic">5240 units</div>
+                                <div class="record-department">5890 units</div>
+                                <div><span class="status-badge status-inactive">High Usage</span></div>
+                            </div>
+                            <div class="record-actions">
+                                <button class="btn btn-view">View History</button>
+                            </div>
+                        </div>
+
+                        <div class="record-item">
+                            <div class="record-info">
+                                <div class="record-id">#C-7721</div>
+                                <div class="record-name">Water</div>
+                                <div class="record-nic">120 m³</div>
+                                <div class="record-department">135 m³</div>
+                                <div><span class="status-badge status-active">Normal</span></div>
+                            </div>
+                            <div class="record-actions">
+                                <button class="btn btn-view">View History</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pagination">
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 

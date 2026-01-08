@@ -40,6 +40,7 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/login/**",
                                 "/admin/**",
+                                "/manager/**",
                                 "/images/**",
                                 "/favicon.ico"
                         ).permitAll()

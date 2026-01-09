@@ -196,6 +196,37 @@ window.saveNewConnection = async function () {
     }
 };
 
+async function refreshAudits() {
+    const btn = document.getElementById('refreshBtn');
+    const img = btn?.querySelector('img');
+
+    if (!btn || !img) return;
+
+    btn.disabled = true;
+    btn.classList.add('spinning');
+
+    const startTime = Date.now();
+
+    const success = await fetchAudits();
+
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(800 - elapsed, 0);
+
+    cachedAdmins = null;
+    populateAdminFilter();
+
+    setTimeout(() => {
+        btn.classList.remove('spinning');
+        btn.disabled = false;
+
+        if (success) {
+            showToast('Records refreshed', 'success');
+        } else {
+            showToast('Failed to refresh records', 'error');
+        }
+    }, remaining);
+}
+
 
 function closeModal() {
     document.getElementById('recordModal').classList.remove('active');

@@ -1283,7 +1283,7 @@ window.resetPassword = async function (id) {
     }
 };
 
-async function refreshManagers() {
+async function refreshAudits() {
     const btn = document.getElementById('refreshBtn');
     const img = btn?.querySelector('img');
 
@@ -1294,10 +1294,13 @@ async function refreshManagers() {
 
     const startTime = Date.now();
 
-    const success = await fetchManagers();
+    const success = await fetchAudits();
 
     const elapsed = Date.now() - startTime;
     const remaining = Math.max(800 - elapsed, 0);
+
+    cachedAdmins = null;
+    populateAdminFilter();
 
     setTimeout(() => {
         btn.classList.remove('spinning');

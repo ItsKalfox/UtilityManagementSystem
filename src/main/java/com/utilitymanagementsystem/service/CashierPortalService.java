@@ -88,13 +88,16 @@ public class CashierPortalService {
         Bill bill = billRepository.findFirstByConnection_ConnectionIdOrderByPeriodEndDesc(connectionId)
                 .orElseThrow(() -> new RuntimeException("No bill found for connectionId: " + connectionId));
 
-        // customer name safe fallback
+        Integer customerId = null;
         String customerName = "-";
-        if (bill.getConnection() != null
-                && bill.getConnection().getCustomer() != null
-                && bill.getConnection().getCustomer().getUser() != null
-                && bill.getConnection().getCustomer().getUser().getFullName() != null) {
-            customerName = bill.getConnection().getCustomer().getUser().getFullName();
+
+        if (bill.getConnection() != null && bill.getConnection().getCustomer() != null) {
+            customerId = bill.getConnection().getCustomer().getUserId(); // ✅ customer id
+
+            if (bill.getConnection().getCustomer().getUser() != null
+                    && bill.getConnection().getCustomer().getUser().getFullName() != null) {
+                customerName = bill.getConnection().getCustomer().getUser().getFullName();
+            }
         }
 
         String utilityType = bill.getConnection() != null ? bill.getConnection().getUtilityType() : null;
@@ -102,6 +105,7 @@ public class CashierPortalService {
         return new CashierBillDTO(
                 bill.getBillId(),
                 bill.getConnection().getConnectionId(),
+                customerId,               // ✅ include it
                 utilityType,
                 customerName,
                 bill.getPeriodStart(),
@@ -111,6 +115,7 @@ public class CashierPortalService {
                 bill.getStatus()
         );
     }
+
 
     @Transactional(readOnly = true)
     public List<CashierBillHistoryDTO> getBillHistoryByConnection(

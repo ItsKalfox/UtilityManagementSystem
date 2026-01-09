@@ -202,7 +202,7 @@ VALUES (9, 5, 200);
 
 SELECT * FROM meter_reading;
 SELECT * FROM bill;
-
+    
 -- Cash payment
 INSERT INTO payment (bill_id, cashier_id, payment_method, amount)
 VALUES (1, 10, 'CASH', 200.00);

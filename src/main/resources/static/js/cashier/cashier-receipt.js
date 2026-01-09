@@ -48,6 +48,7 @@ window.CashierReceiptModal = (() => {
           <div class="kv"><span>Outstanding (Before)</span><b id="outBeforeText">-</b></div>
           <div class="kv"><span>Amount Paid</span><b id="paidText">-</b></div>
           <div class="kv"><span>Outstanding (After)</span><b id="outAfterText">-</b></div>
+          <div class="kv"><span>Status</span><b id="statusText" class="status-pill">-</b></div>
         </div>
 
         <div class="receipt-box" id="methodBox" style="display:none;">
@@ -86,6 +87,7 @@ window.CashierReceiptModal = (() => {
     const outBeforeText = $("#outBeforeText");
     const paidText = $("#paidText");
     const outAfterText = $("#outAfterText");
+    const statusText = $("#statusText");
 
     const methodBox = $("#methodBox");
     const methodDetails = $("#methodDetails");
@@ -107,56 +109,93 @@ window.CashierReceiptModal = (() => {
       }
     }
 
-    // ✅ This makes it robust even if backend uses different property names
-    function getReceiptNumber(r) {
+    function esc(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function getReceiptNumber(r, p) {
       return (
-        r.receiptNo ??
-        r.receiptNumber ??
-        r.receiptId ??
-        r.paymentReceiptNo ??
-        r.referenceNo ??
-        r.referenceNumber ??
-        r.transactionNo ??
-        r.transactionId ??
+        p?.paymentId ??
+        r?.paymentId ??
+        r?.receiptNo ??
+        r?.receiptNumber ??
+        r?.receiptId ??
+        r?.transactionNo ??
+        r?.transactionId ??
         "-"
       );
     }
 
+    function normalizeReceipt(input) {
+      const r = input || {};
+      const bill = r.bill || r.currentBill || r.billInfo || r;
+      const payment = r.payment || r.paymentInfo || r;
+      return { bill, payment, raw: r };
+    }
+
+    function setStatusPill(el, status) {
+      if (!el) return;
+      const s = String(status || "-").toUpperCase();
+      el.textContent = status ?? "-";
+      el.classList.remove("paid", "partial", "pending");
+
+      if (s.includes("FULLY")) el.classList.add("paid");
+      else if (s.includes("PART")) el.classList.add("partial");
+      else el.classList.add("pending");
+    }
+
     function render() {
-      const r = receipt || {};
+      const { bill, payment, raw } = normalizeReceipt(receipt);
 
-      if (receiptNoChip) receiptNoChip.textContent = `Receipt # ${getReceiptNumber(r)}`;
-      if (receiptDateChip) receiptDateChip.textContent = `Date: ${fmtDate(r.dateTime || r.createdAt || r.paidAt)}`;
-      if (receiptMethodChip) receiptMethodChip.textContent = `Method: ${r.method || r.paymentMethod || "-"}`;
+      const receiptNo = getReceiptNumber(raw, payment);
+      if (receiptNoChip) receiptNoChip.textContent = `Receipt # ${receiptNo}`;
 
-      if (billIdText) billIdText.textContent = r.billId ?? "-";
-      if (connIdText) connIdText.textContent = r.connectionId ?? "-";
-      if (utilText) utilText.textContent = r.utilityType ?? "-";
+      const dt = payment?.dateTime || payment?.createdAt || payment?.paidAt || raw?.dateTime || raw?.createdAt || raw?.paidAt || new Date().toISOString();
+      if (receiptDateChip) receiptDateChip.textContent = `Date: ${fmtDate(dt)}`;
 
-      const ps = fmtDate(r.periodStart);
-      const pe = fmtDate(r.periodEnd);
+      const method = payment?.method || payment?.paymentMethod || raw?.method || raw?.paymentMethod || "-";
+      if (receiptMethodChip) receiptMethodChip.textContent = `Method: ${method}`;
+
+      if (billIdText) billIdText.textContent = bill?.billId ?? raw?.billId ?? "-";
+      if (connIdText) connIdText.textContent = bill?.connectionId ?? raw?.connectionId ?? "-";
+      if (utilText) utilText.textContent = bill?.utilityType ?? raw?.utilityType ?? "-";
+
+      const ps = fmtDate(bill?.periodStart ?? raw?.periodStart);
+      const pe = fmtDate(bill?.periodEnd ?? raw?.periodEnd);
       if (periodText) periodText.textContent = (ps !== "-" && pe !== "-") ? `${ps} → ${pe}` : "-";
 
-      if (custIdText) custIdText.textContent = r.customerId ?? "-";
-      if (custNameText) custNameText.textContent = r.customerName ?? "-";
+      if (custIdText) custIdText.textContent = bill?.customerId ?? raw?.customerId ?? "-";
+      if (custNameText) custNameText.textContent = bill?.customerName ?? raw?.customerName ?? "-";
 
-      if (outBeforeText) outBeforeText.textContent = money(r.outstandingBefore ?? r.outstandingAmountBefore);
-      if (paidText) paidText.textContent = money(r.amountPaid ?? r.paidAmount);
-      if (outAfterText) outAfterText.textContent = money(r.outstandingAfter ?? r.outstandingAmountAfter);
+      const before = bill?.outstandingAmount ?? raw?.outstandingAmount ?? raw?.outstandingBefore ?? raw?.outstandingAmountBefore;
+      const paid = payment?.paidAmount ?? payment?.amountPaid ?? raw?.paidAmount ?? raw?.amountPaid;
+      const after = payment?.outstandingAmountAfter ?? raw?.outstandingAmountAfter ?? raw?.outstandingAfter;
 
-      const method = r.method || r.paymentMethod;
-      const d = r.methodDetails || r.details || {};
+      if (outBeforeText) outBeforeText.textContent = money(before);
+      if (paidText) paidText.textContent = money(paid);
+      if (outAfterText) outAfterText.textContent = money(after);
+
+      const st = payment?.billStatusAfter ?? raw?.billStatusAfter ?? bill?.status ?? raw?.status;
+      setStatusPill(statusText, st);
+
+      const d = payment?.methodDetails || payment?.details || raw?.methodDetails || raw?.details || {};
       const lines = [];
+      const methodUpper = String(method).toUpperCase();
 
-      if (String(method).toUpperCase() === "CASH") {
+      if (methodUpper === "CASH") {
         if (d.amountGiven != null) lines.push(`<div class="kv"><span>Amount Given</span><b>${money(d.amountGiven)}</b></div>`);
         if (d.change != null) lines.push(`<div class="kv"><span>Change</span><b>${money(d.change)}</b></div>`);
-      } else if (String(method).toUpperCase() === "CARD") {
+      } else if (methodUpper === "CARD") {
         if (d.platformName) lines.push(`<div class="kv"><span>Platform</span><b>${esc(d.platformName)}</b></div>`);
         if (d.cardType) lines.push(`<div class="kv"><span>Type</span><b>${esc(d.cardType)}</b></div>`);
         if (d.approvalCode) lines.push(`<div class="kv"><span>Approval</span><b>${esc(d.approvalCode)}</b></div>`);
         if (d.maskedCardNo) lines.push(`<div class="kv"><span>Card</span><b>${esc(d.maskedCardNo)}</b></div>`);
-      } else if (String(method).toUpperCase() === "BANK TRANSFER") {
+      } else if (methodUpper === "BANK TRANSFER" || methodUpper === "BANK_TRANSFER") {
         if (d.bankName) lines.push(`<div class="kv"><span>Bank</span><b>${esc(d.bankName)}</b></div>`);
         if (d.accountNumber) lines.push(`<div class="kv"><span>Account</span><b>${esc(d.accountNumber)}</b></div>`);
         if (d.transactionNum) lines.push(`<div class="kv"><span>Txn No</span><b>${esc(d.transactionNum)}</b></div>`);
@@ -170,16 +209,6 @@ window.CashierReceiptModal = (() => {
       }
     }
 
-    function esc(str) {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    // ✅ Themed print design
     function openPrintWindow() {
       const receiptHtml = mountEl.querySelector(".receipt-card")?.outerHTML || "<div>Receipt</div>";
       const w = window.open("", "_blank", "width=900,height=700");
@@ -226,9 +255,12 @@ window.CashierReceiptModal = (() => {
     .receipt-footer{ margin-top:14px; padding-top:12px; border-top:1px solid var(--border); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
     .small{ font-size:12px; }
     .muted{ color:var(--muted); }
+    .btn, button, .header-actions { display:none !important; }
 
-    /* Ensure buttons don't print */
-    .btn, button { display:none !important; }
+    .status-pill{ padding:4px 10px; border-radius:999px; font-weight:800; border:1px solid #e5e7eb; }
+    .status-pill.paid{ background:#d1fae5; color:#065f46; border-color:#a7f3d0; }
+    .status-pill.partial{ background:#fffbeb; color:#92400e; border-color:#fde68a; }
+    .status-pill.pending{ background:#fee2e2; color:#991b1b; border-color:#fecaca; }
 
     @media print {
       body{ padding:0; }

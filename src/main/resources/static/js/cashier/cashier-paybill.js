@@ -308,10 +308,12 @@ window.CashierPayBillModal = (() => {
       if (balanceOutput) balanceOutput.value = money(change);
     }
 
+    // ✅ FIX: include customerId (now backend gives it)
     function normalizeBill(b) {
       return {
         billId: b.billId ?? b.bill_id ?? null,
         connectionId: b.connectionId ?? b.connection_id ?? connectionId,
+        customerId: b.customerId ?? b.customer_id ?? null, // ✅ NEW
         utilityType: b.utilityType ?? b.utility_type ?? null,
         customerName: b.customerName ?? b.customer_name ?? "-",
         periodStart: b.periodStart ?? b.period_start ?? null,
@@ -425,10 +427,16 @@ window.CashierPayBillModal = (() => {
       toast("Simulated bank transfer ✅", "success");
     }
 
-    function buildReceipt({ billBefore, payAmount, method, methodDetails }) {
+    // ✅ FIX: includes customerId + status (after payment)
+    function buildReceipt({ billBefore, billAfter, payAmount, method, methodDetails }) {
       const now = new Date();
+
       const beforeOut = Number(billBefore?.outstandingAmount ?? 0);
-      const afterOut = Math.max(0, beforeOut - Number(payAmount || 0));
+
+      const afterOut =
+        billAfter?.outstandingAmount != null
+          ? Number(billAfter.outstandingAmount)              // ✅ from backend after refresh
+          : Math.max(0, beforeOut - Number(payAmount || 0));  // fallback
 
       return {
         receiptNo: `RCPT-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${now.getTime()}`,
@@ -436,12 +444,14 @@ window.CashierPayBillModal = (() => {
 
         billId: billBefore?.billId ?? "-",
         connectionId: billBefore?.connectionId ?? connectionId ?? "-",
+        customerId: billBefore?.customerId ?? billAfter?.customerId ?? "-", // ✅ NEW
         utilityType: billBefore?.utilityType ?? "-",
         customerName: billBefore?.customerName ?? "-",
         periodStart: billBefore?.periodStart ?? null,
         periodEnd: billBefore?.periodEnd ?? null,
 
-        statusBefore: billBefore?.status ?? "-",
+        status: billAfter?.status ?? billBefore?.status ?? "-", // ✅ NEW (so receipt status works)
+
         outstandingBefore: beforeOut,
         amountPaid: Number(payAmount || 0),
         method,
@@ -540,19 +550,25 @@ window.CashierPayBillModal = (() => {
 
         toast("Payment successful ✅", "success");
 
-        // refresh bill data
+        // refresh bill data (after payment)
         await loadCurrentBill();
 
         // refresh dashboard list behind modal
         window.CashierBillsDashboard?.loadBills?.();
 
-        // ✅ Show receipt modal (Option A)
+        const billAfter = { ...currentBill };
+
+        // ✅ Build receipt including customerId + status from billAfter
         const receipt = buildReceipt({
           billBefore,
+          billAfter,
           payAmount,
           method,
           methodDetails
         });
+
+        // Debug if needed:
+        // console.log("RECEIPT OBJ =>", receipt);
 
         window.openReceiptModal?.(receipt);
 

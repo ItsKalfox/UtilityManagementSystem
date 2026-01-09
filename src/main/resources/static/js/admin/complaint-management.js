@@ -6,9 +6,7 @@ let filterStatus = 'all';
 let sortBy = 'submittedDate';
 let sortDirection = 'desc';
 
-/**
- * 1. FETCH & RENDER COMPLAINTS
- */
+
 async function fetchComplaints() {
     const params = new URLSearchParams({
         page: currentPage,
@@ -78,9 +76,7 @@ function renderRecords(records) {
     `).join('');
 }
 
-/**
- * 2. ADD NEW COMPLAINT MODAL
- */
+
 window.addRecord = async function () {
     const modal = document.getElementById('recordModal');
     const overlay = document.getElementById('modalOverlay');
@@ -151,9 +147,7 @@ window.addRecord = async function () {
     overlay.classList.add('active');
 };
 
-/**
- * 3. SAVE LOGIC
- */
+
 window.saveNewComplaint = async function () {
     const payload = {
         customerId: parseInt(document.getElementById('customer_id').value),

@@ -6,9 +6,6 @@ let filterStatus = 'all';
 let sortBy = 'connectionId';
 let sortDirection = 'asc';
 
-/**
- * 1. FETCH & RENDER CONNECTIONS
- */
 async function fetchConnections() {
     const params = new URLSearchParams({
         page: currentPage,
@@ -78,9 +75,7 @@ function renderRecords(records) {
     `).join('');
 }
 
-/**
- * 2. ADD NEW CONNECTION MODAL
- */
+
 window.addRecord = async function () {
     const modal = document.getElementById('recordModal');
     const overlay = document.getElementById('modalOverlay');
@@ -162,9 +157,7 @@ window.addRecord = async function () {
     overlay.classList.add('active');
 };
 
-/**
- * 3. SAVE LOGIC
- */
+
 window.saveNewConnection = async function () {
     const payload = {
         meterSerialNumber: document.getElementById('meter_serial_number').value.trim(),
@@ -203,9 +196,7 @@ window.saveNewConnection = async function () {
     }
 };
 
-/**
- * 4. UTILS
- */
+
 function closeModal() {
     document.getElementById('recordModal').classList.remove('active');
     document.getElementById('modalOverlay').classList.remove('active');}

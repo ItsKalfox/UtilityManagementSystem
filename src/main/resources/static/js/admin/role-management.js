@@ -75,6 +75,7 @@ async function fetchManagers() {
     }
 }
 
+
 function renderRecords(records) {
     const container = document.getElementById('recordsContainer');
 
@@ -106,6 +107,7 @@ function renderRecords(records) {
         </div>
     `).join('');
 }
+
 
 function renderPagination(totalPages) {
     const pagination = document.getElementById('pagination');

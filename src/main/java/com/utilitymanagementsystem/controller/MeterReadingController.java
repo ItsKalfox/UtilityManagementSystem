@@ -1,24 +1,32 @@
 package com.utilitymanagementsystem.controller;
 
+import com.utilitymanagementsystem.dto.customer.CustomerDetailView;
 import com.utilitymanagementsystem.dto.customer.CustomerListDTO;
+import com.utilitymanagementsystem.repository.MeterHistoryRepository;
 import com.utilitymanagementsystem.service.CustomerService;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
 @RequestMapping("/meter-reading")
 public class MeterReadingController {
     private final CustomerService customerService;
+    private final MeterHistoryRepository meterHistoryRepository;
+
 //    private final MeterReadingService meterReadingService;
 
-    public MeterReadingController(CustomerService customerService) {
+    public MeterReadingController(
+            CustomerService customerService,
+            MeterHistoryRepository meterHistoryRepository
+    ) {
         this.customerService = customerService;
+        this.meterHistoryRepository = meterHistoryRepository;
     }
 
     // 🔹 LIST customers for field officer
@@ -40,4 +48,18 @@ public class MeterReadingController {
         );
     }
 
+    @GetMapping("customers/{id}")
+    public CustomerDetailView getCustomer(@PathVariable Integer id) {
+        return customerService.getCustomerDetails(id);
+    }
+
+    @GetMapping("history/{id}")
+    public Map<String, Object> getHistory(@PathVariable Integer id) {
+        var bills =  meterHistoryRepository.findBillsByCustomerId(id);
+        var meter_readings = meterHistoryRepository.findMeterReadingsByCustomerId(id);
+        Map<String, Object> data = new HashMap<>();
+        data.put("bills", bills);
+        data.put("meterReadings", meter_readings);
+        return data;
+    }
 }

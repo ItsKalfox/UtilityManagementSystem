@@ -142,15 +142,15 @@ function renderRecords(records) {
             </div>
 
             <div class="record-actions">
-                <button class="btn btn-view"
-                    onclick="viewRecord(${record.userId})">
-                   yoo
+                <button class="btn btn-view" style="margin: 0 15px 0 0;"
+                    onclick="viewHistory(${record.userId})">
+                   History
                 </button>
             </div>
              <div class="record-actions">
                 <button class="btn btn-view"
                     onclick="viewRecord(${record.userId})">
-                    Full View
+                   Details
                 </button>
             </div>
         </div>
@@ -829,9 +829,156 @@ window.saveNewCustomer = async function () {
     }
 };
 
+window.viewHistory = async function (id) {
+    try {
+        const response = await  fetch(`/meter-reading/history/${id}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        let data;
+        if (response.status === 401) {
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+            if (data.message === 'Token expired') {
+                const confirmed = await handleTokenExpired();
+
+                if (!confirmed) return;
+
+                const theme = localStorage.getItem('theme');
+
+                localStorage.clear();
+
+                if (theme !== null) {
+                    localStorage.setItem('theme', theme);
+                }
+
+                window.location.replace('../../index.html');
+            }
+        }
+
+        if (!response.ok) {
+            showToast('Failed to load record', 'error');
+            return;
+        }
+
+        const record = await response.json();
+        console.log("test response", record);
+
+        const modal = document.getElementById('recordModal');
+        const overlay = document.getElementById('modalOverlay');
+
+        /* =========================
+           METER READINGS HTML
+        ========================= */
+        let meterReadingsHtml = `
+    <div class="record-item">
+        <div class="record-nic">Meter No</div>
+        <div class="record-nic">Reading</div>
+        <div class="record-nic">Consumption</div>
+        <div class="record-nic">Period</div>
+    </div>
+`;
+
+        if (record.meterReadings.length === 0) {
+            meterReadingsHtml += `
+        <div class="record-item">
+            <div class="record-nic" style="grid-column: span 4; text-align: center;">
+                No meter readings found
+            </div>
+        </div>
+    `;
+        } else {
+            record.meterReadings.forEach(reading => {
+                meterReadingsHtml += `
+            <div class="record-item">
+                <div class="record-nic">${reading.meter_serial_number}</div>
+                <div class="record-nic">${reading.reading_value}</div>
+                <div class="record-nic">${reading.consumption}</div>
+                <div class="record-nic">
+                    ${new Date(reading.billing_period_start).toLocaleString()}
+                    →
+                    ${new Date(reading.billing_period_end).toLocaleString()}
+                </div>
+            </div>
+        `;
+            });
+        }
+
+
+
+        /* =========================
+           BILL HISTORY HTML
+        ========================= */
+        let billsHtml = `
+    <div class="record-item">
+        <div class="record-nic">Bill ID</div>
+        <div class="record-nic">Total</div>
+        <div class="record-nic">Outstanding</div>
+        <div class="record-nic">Status</div>
+    </div>
+`;
+
+        if (record.bills.length === 0) {
+            billsHtml += `
+        <div class="record-item">
+            <div class="record-nic" style="grid-column: span 4; text-align: center;">
+                No bills found
+            </div>
+        </div>
+    `;
+        } else {
+            record.bills.forEach(bill => {
+                billsHtml += `
+            <div class="record-item">
+                <div class="record-nic">${bill.bill_id}</div>
+                <div class="record-nic">${bill.total_bill_amount}</div>
+                <div class="record-nic">${bill.outstanding_amount}</div>
+                <div class="record-nic">${bill.status}</div>
+            </div>
+        `;
+            });
+        }
+
+
+
+        modal.innerHTML = `
+    <div class="modal-header">
+        <h3>History</h3>
+    </div>
+
+    <div class="modal-body">
+        <h4>Meter Reading History</h4>
+        <div class="records-container">
+            ${meterReadingsHtml || '<div class="record-item">No meter readings found</div>'}
+        </div>
+
+        <h4 style="margin-top: 10px;">Billing History</h4>
+        <div class="records-container">
+            ${billsHtml || '<div class="record-item">No bills found</div>'}
+        </div>
+    </div>
+`;
+
+        modal.classList.add('active');
+        overlay.classList.add('active');
+
+
+    }
+    catch (e) {
+        console.error(e);
+        showToast('Unexpected error', 'error');
+    }
+}
+
+
 window.viewRecord = async function (id) {
     try {
-        const response = await fetch(`/customers/${id}`, {
+        const response = await fetch(`/meter-reading/customers/${id}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
                 'Content-Type': 'application/json'

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Creation - Utility Management System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
+</head>
+<body>
+<div class="theme-toggle-container">
+    <label class="theme-toggle">
+        <input type="checkbox" id="themeToggle">
+        <span class="slider"></span>
+    </label>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="dashboard-container">
+    <aside class="sidebar">
+        <div class="sidebar-header-container">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <div class="nav-group">
+            <div class="nav-group-title">Management</div>
+            <a href="customer-management.html" class="nav-item" data-tab="customers" id="customerManagementTab" style="display: none;">
+                <img src="../images/customer-icon.svg" class="nav-icon" alt="customer-icon">
+                Customer Management
+            </a>
+            <a href="manager-management.html" class="nav-item" data-tab="managers" id="managerManagementTab" style="display: none;">
+                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon">
+                Manager Management
+            </a>
+            <a href="cashier-management.html" class="nav-item" data-tab="cashiers" id="cashierManagementTab" style="display: none;">
+                <img src="../images/cashier-icon.svg" class="nav-icon" alt="cashier-icon">
+                Cashier Management
+            </a>
+            <a href="fieldofficer-management.html" class="nav-item" data-tab="officers" id="fieldOfficerManagementTab" style="display: none;">
+                <img src="../images/field-officer-icon.svg" class="nav-icon" alt="field-officer-icon">
+                Field Officer Management
+            </a>
+            <a href="admin-management.html" class="nav-item" data-tab="admins" id="adminManagementTab" style="display: none;">
+                <img src="../images/admin-icon.svg" class="nav-icon" alt="admin-icon">
+                Admin Management
+            </a>
+        </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Advanced</div>
+                <a href="admin-action-log.html" class="nav-item" id="adminActionLogTab" style="display: none;">
+                    <img src="../images/log-icon.svg" class="nav-icon" alt="log-icon">
+                    Admin Action Log
+                </a>
+                <a href="role-management.html" class="nav-item" data-tab="roles" id="roleCreationTab" style="display: none;">
+                    <img src="../images/role-icon.svg" class="nav-icon" alt="role-icon">
+                    Role Management
+                </a>
+                <a href="area-management.html" class="nav-item" data-tab="areas" id="areaCreationTab" style="display: none;">
+                    <img src="../images/area-icon.svg" class="nav-icon" alt="area-icon">
+                    Area Management
+                </a>
+                <a href="tariff-management.html" class="nav-item" data-tab="areas" id="tariffCreationTab" style="display: none;">
+                    <img src="../images/tariff-icon.svg" class="nav-icon" alt="area-icon">
+                    Tariff Management
+                </a>
+                <a href="connection-management.html" class="nav-item" data-tab="areas" id="connectionCreationTab" style="display: none;">
+                    <img src="../images/connection-icon.svg" class="nav-icon" alt="area-icon">
+                    Connection Management
+                </a>
+                <a href="complaint-management.html" class="nav-item" data-tab="areas" id="complaintManagementTab" style="display: none;">
+                    <img src="../images/complaint-icon.svg" class="nav-icon" alt="area-icon">
+                    Complaint Management
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer-container">
+            <div class="sidebar-footer">
+                <button class="icon-btn" onclick="handleSettings()"><img src="../images/settings-icon.svg" alt="s"></button>
+                <button class="icon-btn logout-btn" onclick="handleLogout()"><img src="../images/logout-icon.svg" alt="l"></button>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <div class="user-details">
+                    <div class="user-name" id="fullName">Admin User</div>
+                    <div class="user-email" id="email">admin@ums.com</div>
+                </div>
+                <div class="user-role" id="adminRole">Admin</div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="management-container">
+                <div class="management-header">
+                    <div class="management-title">
+                        <div>
+                            <h2>Area Management</h2>
+                            <p style="font-size: 13px; color: var(--text-secondary);">Define regional boundaries for meter reading and billing.</p>
+                        </div>
+                        <div class="management-title-right">
+                            <button class="icon-btn" onclick="fetchAreas()">
+                                <img src="../images/refresh-icon.svg" alt="refresh">
+                            </button>
+                            <button class="btn btn-view" onclick="addRecord()">
+                                Add New Area
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="management-controls">
+                        <div class="search-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                            </svg>
+                            <input type="text" id="searchInput" placeholder="Search by Area Code or Name...">
+                        </div>
+
+                        <select id="sortBySelect" class="sort-select">
+                            <option value="areaCode">Sort by Area Code</option>
+                            <option value="areaName">Sort by Name</option>
+                        </select>
+
+                        <select id="sortOrderSelect" class="sort-select">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="records-container" id="recordsContainer">
+                </div>
+
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal" id="recordModal"></div>
+
+<div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
+<div id="confirmModal" class="modal modal-confirm"></div>
+
+<script src="../js/common/theme.js"></script>
+<script src="../js/admin/utils.js"></script>
+<script src="../js/admin/area-management.js"></script>
+</body>
+</html>

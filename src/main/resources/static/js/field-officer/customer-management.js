@@ -148,9 +148,15 @@ function renderRecords(records) {
                 </button>
             </div>
              <div class="record-actions">
-                <button class="btn btn-view"
+                <button class="btn btn-view" style="margin: 0 15px 0 0;"
                     onclick="viewRecord(${record.userId})">
                    Details
+                </button>
+            </div>
+            <div class="record-actions">
+                <button class="btn btn-view"
+                    onclick="showAddReadingPopup(${record.userId})">
+                   Add Reading
                 </button>
             </div>
         </div>
@@ -828,6 +834,145 @@ window.saveNewCustomer = async function () {
         showToast('Unexpected error while creating customer', 'error');
     }
 };
+
+document.addEventListener()
+
+window.showAddReadingPopup = async function (id) {
+    try {
+        const response = await  fetch(`/meter-reading/get-details/${id}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        let data;
+        if (response.status === 401) {
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+            if (data.message === 'Token expired') {
+                const confirmed = await handleTokenExpired();
+
+                if (!confirmed) return;
+
+                const theme = localStorage.getItem('theme');
+
+                localStorage.clear();
+
+                if (theme !== null) {
+                    localStorage.setItem('theme', theme);
+                }
+
+                window.location.replace('../../index.html');
+            }
+        }
+
+        if (!response.ok) {
+            showToast('Failed to load record', 'error');
+            return;
+        }
+
+        const record = await response.json();
+        console.log("get details", record);
+
+        const modal = document.getElementById('recordModal');
+        const overlay = document.getElementById('modalOverlay');
+
+        /* =========================
+           BUILD OPTIONS HTML
+        ========================= */
+        const meterOptions = record.meters.length === 0
+            ? `<option disabled>No meters found</option>`
+            : record.meters
+                .map(meter => `
+            <option value="${meter.connection_id}">
+                ${meter.meter_serial_number}
+            </option>
+        `)
+                .join("");
+
+        let lastReadingHtml = `
+    <div class="record-item">
+        <div class="record-nic">Meter No</div>
+        <div class="record-nic">Reading</div>
+        <div class="record-nic">Consumption</div>
+        <div class="record-nic">Period</div>
+    </div>
+`;
+
+        if (Object.keys(record.last_reading).length === 0) {
+            lastReadingHtml += `
+        <div class="record-item">
+            <div class="record-nic" style="grid-column: span 4; text-align: center;">
+                No meters found
+            </div>
+        </div>
+    `;
+        } else {
+            Object.values(record.last_reading).forEach(reading => {
+                lastReadingHtml += `
+            <div class="record-item">
+                <div class="record-nic">${reading.meter_serial_number}</div>
+                <div class="record-nic">${reading.reading_value}</div>
+                <div class="record-nic">${reading.consumption}</div>
+                <div class="record-nic">
+                    ${new Date(reading.billing_period_start).toLocaleString()}
+                    →
+                    ${new Date(reading.billing_period_end).toLocaleString()}
+                </div>
+            </div>
+        `;
+            });
+        }
+
+
+        /* =========================
+           MODAL HTML
+        ========================= */
+        const fieldOfficerId = parseInt(localStorage.getItem("userId"));
+        modal.innerHTML = `
+    <div class="modal-header">
+        <h3>Add Reading</h3>
+    </div>
+
+    <div class="modal-body">
+        <div class="detail-item">
+            <span class="detail-label">Select Meter</span>
+            <select class="filter-select" id="connectionIdSelector">
+                ${meterOptions}
+            </select>
+        </div>
+        <div class="detail-item">
+        
+        <span class="detail-label" style="margin-top: 20px;">Last Reading Value</span>
+          ${lastReadingHtml}
+        </div>
+        <div class="detail-item" style="margin-top: 10px;">
+            <span class="detail-label">Current Reading Value</span>
+            <input type="number" class="detail-value detail-input" id="currectReadingValue">
+        </div>
+        <input hidden id="fieldOfficerId" type="number" value=${fieldOfficerId}>
+        
+        
+    </div>
+    
+    
+`;
+
+
+
+        modal.classList.add('active');
+        overlay.classList.add('active');
+
+
+    }
+    catch (e) {
+        console.error(e);
+        showToast('Unexpected error', 'error');
+    }
+}
 
 window.viewHistory = async function (id) {
     try {

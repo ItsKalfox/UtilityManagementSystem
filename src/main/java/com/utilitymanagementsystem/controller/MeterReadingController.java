@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -60,6 +61,34 @@ public class MeterReadingController {
         Map<String, Object> data = new HashMap<>();
         data.put("bills", bills);
         data.put("meterReadings", meter_readings);
+        return data;
+    }
+
+    @GetMapping("get-details/{id}")
+    public Map<String, Object> getDetails(@PathVariable Integer id) {
+        var meter_readings = meterHistoryRepository.findMeterReadingsByCustomerId(id);
+//        get maximum reading_value record (last reading)
+        // Get FULL record with maximum reading_value
+        Map<Integer, Map<String, Object>> lastReadingsPerConnection =
+                meter_readings.stream()
+                        .collect(Collectors.groupingBy(
+                                r -> ((Number) r.get("connection_id")).intValue(),
+                                Collectors.collectingAndThen(
+                                        Collectors.maxBy((a, b) -> {
+                                            Double r1 = ((Number) a.get("reading_value")).doubleValue();
+                                            Double r2 = ((Number) b.get("reading_value")).doubleValue();
+                                            return r1.compareTo(r2);
+                                        }),
+                                        opt -> opt.orElse(null)
+                                )
+                        ));
+
+
+        var meters = meterHistoryRepository.findSerialNumberByCustomerId(id);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("last_reading", lastReadingsPerConnection);
+        data.put("meters", meters);
         return data;
     }
 }

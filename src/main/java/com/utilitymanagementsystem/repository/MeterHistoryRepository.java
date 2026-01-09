@@ -24,4 +24,10 @@ public interface MeterHistoryRepository extends JpaRepository<UtilityConnection,
         WHERE uc.customer_id = :customerId
         """, nativeQuery = true)
     List<Map<String, Object>> findBillsByCustomerId(@Param("customerId") Integer customerId);
+
+    @Query(value = """
+        SELECT * FROM utility_connection AS uc
+        WHERE uc.customer_id = :customerId
+        """, nativeQuery = true)
+    List<Map<String, Object>> findSerialNumberByCustomerId(@Param("customerId") Integer customerId);
 }

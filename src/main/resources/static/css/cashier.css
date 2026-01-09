@@ -1048,7 +1048,6 @@ body.modal-blur-on .dashboard-container {
   margin-right: 6px;
 }
 
-
 .action-icon {
   width: 18px;
   height: 18px;
@@ -1084,4 +1083,450 @@ body.modal-blur-on .dashboard-container {
   vertical-align: middle;
   margin-right: 8px;
   filter: var(--icon-filter);
+}
+
+/* ===== Modal (Full-page iframe modal) ===== */
+.page-modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, .55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+  z-index: 9998;
+}
+
+.page-modal{
+  position: fixed;
+  inset: 40px;
+  background: transparent;
+  border-radius: 18px;
+  overflow: hidden;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity .18s ease, transform .18s ease;
+  z-index: 9999;
+
+  /* shadow like your admin cards */
+  box-shadow: 0 24px 60px rgba(0,0,0,.45);
+  border: 1px solid rgba(148, 163, 184, .22);
+}
+
+/* header bar */
+.page-modal-header{
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 14px;
+
+  background: rgba(15, 23, 42, .92);
+  border-bottom: 1px solid rgba(148, 163, 184, .22);
+  backdrop-filter: blur(10px);
+}
+
+.page-modal-title{
+  font-weight: 800;
+  color: #e5e7eb;
+  font-size: 14px;
+  letter-spacing: .2px;
+}
+
+.page-modal-close{
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 900;
+  background: rgba(148, 163, 184, .14);
+  color: #e5e7eb;
+}
+
+.page-modal-body{
+  height: calc(100% - 54px);
+  background: rgba(2, 6, 23, .35);
+}
+
+.page-modal-frame{
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: transparent;
+}
+
+/* active state */
+.page-modal-overlay.active{
+  opacity: 1;
+  pointer-events: auto;
+}
+.page-modal.active{
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* blur the dashboard behind modal */
+body.modal-blur-on .dashboard-wrapper,
+body.modal-blur-on .main-content,
+body.modal-blur-on .content,
+body.modal-blur-on .container{
+  filter: blur(8px);
+  transition: filter .18s ease;
+}
+
+/* responsive */
+@media (max-width: 900px){
+  .page-modal{ inset: 14px; }
+}
+
+/* =========================================
+   Embedded mode (when paybill/billdetail is inside iframe modal)
+   ========================================= */
+html.embedded, body.embedded {
+  margin: 0;
+  height: 100%;
+  background: transparent !important;
+}
+
+/* Hide stuff that belongs to standalone pages */
+body.embedded .theme-toggle-container,
+body.embedded #toast,
+body.embedded #confirmOverlay,
+body.embedded #confirmModal {
+  display: none !important;
+}
+
+/* Remove the full-page wrapper behavior */
+body.embedded .paybill-wrapper {
+  min-height: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* Make the card fit nicely inside modal */
+body.embedded .paybill-card {
+  max-width: 100% !important;
+  width: 100% !important;
+  border-radius: 14px;
+}
+
+/* (Optional) tighten header spacing inside modal */
+body.embedded .paybill-header {
+  padding: 16px 18px !important;
+}
+body.embedded .bill-summary {
+  padding: 14px 18px !important;
+}
+body.embedded .pay-form {
+  padding: 16px 18px 18px !important;
+}
+
+/* ======================================================
+   ✅ NEW: Card-only / Chromeless modal mode (no modal header)
+   ====================================================== */
+
+/* Hide modal header when chromeless */
+.page-modal.chromeless .page-modal-header {
+  display: none !important;
+}
+
+/* body fills full height */
+.page-modal.chromeless .page-modal-body {
+  height: 100% !important;
+  background: transparent;
+}
+
+/* Card-only dialog layout */
+.page-modal.card-only {
+  inset: 22px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.page-modal.card-only .page-modal-body {
+  height: 100%;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 18px;
+  overflow: auto; /* ✅ scroll inside modal */
+}
+
+/* Ensure cards fit nicely inside modal */
+.page-modal.card-only .billdetail-card {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.page-modal.card-only .paybill-card {
+  width: 100%;
+  max-width: 980px;
+}
+
+@media (max-width: 900px){
+  .page-modal.card-only { inset: 10px; }
+  .page-modal.card-only .page-modal-body { padding: 10px; }
+}
+
+/* =========================
+   Modal content padding + scrolling
+   ========================= */
+.page-modal-body{
+  padding: 16px;
+  overflow: auto;
+  background: transparent;
+}
+
+/* Make card-only modals fit nicely */
+.paybill-card--modal,
+.billdetail-card--modal,
+.receipt-card{
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Receipt UI */
+.receipt-card{
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.receipt-header{
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.receipt-header h2{
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.receipt-body{
+  padding: 18px 20px 22px;
+}
+
+.receipt-top{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.receipt-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.receipt-box{
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.box-title{
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.kv{
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px dashed rgba(148,163,184,.35);
+}
+
+.kv:last-child{
+  border-bottom: none;
+}
+
+.receipt-note{
+  margin-top: 12px;
+}
+
+@media (max-width: 900px){
+  .receipt-grid{ grid-template-columns: 1fr; }
+}
+
+/* =========================================
+   Page modal: make injected cards look perfect
+   ========================================= */
+
+.page-modal-body{
+  height: calc(100% - 54px);
+  overflow: auto;              /* ✅ scroll inside modal */
+  padding: 16px;               /* ✅ space around the card */
+  background: rgba(2, 6, 23, .22);
+}
+
+/* Make injected cards fit modal width */
+.page-modal-body .paybill-card,
+.page-modal-body .billdetail-card{
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+/* (Optional) nicer look: remove extra shadows if you want */
+.page-modal-body .paybill-card.paybill-card--modal,
+.page-modal-body .billdetail-card.billdetail-card--modal{
+  box-shadow: var(--shadow-lg);
+}
+
+/* =========================
+   ✅ FIX: Card-only modal body height (prevents "blank modal")
+   ========================= */
+.page-modal.chromeless .page-modal-body{
+  height: 100% !important;
+}
+
+/* =========================
+   ✅ Receipt: use application color a little bit
+   (uses your styles.css variables)
+   ========================= */
+.receipt-card.receipt-accent{
+  border-top: 4px solid var(--secondary-blue);
+}
+
+.receipt-card.receipt-accent .receipt-header{
+  background: linear-gradient(135deg, rgba(59,130,246,0.10), rgba(59,130,246,0.04));
+}
+
+.receipt-card.receipt-accent .box-title{
+  color: var(--text-primary);
+}
+
+.receipt-card.receipt-accent .chip-primary{
+  border-color: rgba(59,130,246,0.35);
+  background: rgba(59,130,246,0.10);
+  color: var(--primary-blue);
+  font-weight: 900;
+}
+
+/* =========================
+   ✅ FIX: Modal card-only mode actually applies
+   ========================= */
+
+/* Hide modal header when chromeless */
+.page-modal.chromeless .page-modal-header {
+  display: none !important;
+}
+
+/* When chromeless, body must fill full height */
+.page-modal.chromeless .page-modal-body {
+  height: 100% !important;
+  background: transparent;
+}
+
+/* Card-only dialog layout */
+.page-modal.card-only {
+  inset: 18px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* ✅ Important: make body scroll + center content */
+.page-modal.card-only .page-modal-body {
+  height: 100% !important;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 14px;
+  overflow: auto;
+}
+
+/* Ensure injected cards fit nicely */
+.page-modal.card-only .paybill-card,
+.page-modal.card-only .billdetail-card,
+.page-modal.card-only .receipt-card{
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .page-modal.card-only { inset: 10px; }
+  .page-modal.card-only .page-modal-body { padding: 10px; }
+}
+
+
+/* =========================
+   ✅ Receipt: use app blue accents (lightly)
+   ========================= */
+.receipt-card.receipt-accent{
+  border-top: 6px solid var(--secondary-blue);
+}
+
+.receipt-card.receipt-accent .receipt-header{
+  background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-blue) 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+
+.receipt-card.receipt-accent .receipt-header h2{
+  color: #fff;
+}
+
+.receipt-card.receipt-accent .receipt-header .muted{
+  color: rgba(255,255,255,0.80);
+}
+
+/* Accent chip */
+.chip-accent{
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.28);
+}
+
+/* Keep chips readable in dark theme too */
+.dark-theme .chip-accent{
+  background: rgba(59,130,246,0.18);
+  border-color: rgba(59,130,246,0.35);
+}
+
+:root{
+  --primary-blue:#1E3A8A;
+  --secondary-blue:#2563EB;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --bg:#ffffff;
+}
+.bill-print-header{
+  padding:14px 16px;
+  background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
+  color:#fff;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+.section-title{
+  color: var(--primary-blue);
+  font-weight:800;
+}
+.card{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px;
 }

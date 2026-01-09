@@ -6,13 +6,11 @@ window.CashierBillsDashboard = (() => {
   let serverBillsCache = [];
 
   function init() {
+    // ✅ grab elements only once
     els.searchInput = document.getElementById("billSearchInput");
     els.statusFilter = document.getElementById("billStatusFilter");
     els.utilityFilter = document.getElementById("utilityTypeFilter");
-
-    // FIX: match HTML id (customerTypeFilter)
     els.customerTypeFilter = document.getElementById("customerTypeFilter");
-
     els.limitSelect = document.getElementById("billLimit");
     els.list = document.getElementById("billList");
     els.hint = document.getElementById("billListHint");
@@ -20,6 +18,10 @@ window.CashierBillsDashboard = (() => {
     els.hideFullyPaid = document.getElementById("hideFullyPaid");
 
     if (!els.list) return;
+
+    // prevent duplicate wiring
+    if (init._wired) return;
+    init._wired = true;
 
     wireEvents();
     loadBills();
@@ -35,9 +37,13 @@ window.CashierBillsDashboard = (() => {
     els.utilityFilter?.addEventListener("change", applyClientFilter);
     els.customerTypeFilter?.addEventListener("change", applyClientFilter);
     els.hideFullyPaid?.addEventListener("change", applyClientFilter);
-
     els.limitSelect?.addEventListener("change", loadBills);
-    els.refreshBtn?.addEventListener("click", loadBills);
+
+    els.refreshBtn?.addEventListener("click", async () => {
+      els.refreshBtn.classList.add("loading");
+      await loadBills();
+      els.refreshBtn.classList.remove("loading");
+    });
   }
 
   async function loadBills() {
@@ -45,7 +51,7 @@ window.CashierBillsDashboard = (() => {
     renderLoader();
 
     const limit = parseInt(els.limitSelect?.value || "20", 10);
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || localStorage.getItem("jwt") || "";
 
     try {
       const url = new URL(API_BASE + "/api/cashier/bills", window.location.origin);
@@ -54,8 +60,8 @@ window.CashierBillsDashboard = (() => {
       const res = await fetch(url.toString(), {
         method: "GET",
         headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
-        }
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
 
       if (!res.ok) {
@@ -65,7 +71,6 @@ window.CashierBillsDashboard = (() => {
 
       const bills = await res.json();
       serverBillsCache = Array.isArray(bills) ? bills : [];
-
       applyClientFilter();
     } catch (err) {
       console.error(err);
@@ -85,35 +90,38 @@ window.CashierBillsDashboard = (() => {
     let filtered = [...serverBillsCache];
 
     if (hideFullyPaid) {
-      filtered = filtered.filter(b => String(pick(b, ["status"]) || "").toLowerCase() !== "fully paid");
+      filtered = filtered.filter(
+        (b) => String(pick(b, ["status"]) || "").toLowerCase() !== "fully paid"
+      );
     }
 
     if (status) {
-      filtered = filtered.filter(b => String(pick(b, ["status"]) || "").toLowerCase() === status);
+      filtered = filtered.filter(
+        (b) => String(pick(b, ["status"]) || "").toLowerCase() === status
+      );
     }
 
     if (utilityType) {
-      filtered = filtered.filter(b => String(pick(b, ["utilityType", "utility_type"]) || "").toLowerCase() === utilityType);
+      filtered = filtered.filter(
+        (b) => String(pick(b, ["utilityType", "utility_type"]) || "").toLowerCase() === utilityType
+      );
     }
 
     if (customerType) {
-      filtered = filtered.filter(b => String(pick(b, ["customerType", "customer_type"]) || "").toLowerCase() === customerType);
+      filtered = filtered.filter(
+        (b) => String(pick(b, ["customerType", "customer_type"]) || "").toLowerCase() === customerType
+      );
     }
 
     if (q) {
-      filtered = filtered.filter(b => {
+      filtered = filtered.filter((b) => {
         const billId = String(pick(b, ["billId", "bill_id"]) ?? "").toLowerCase();
         const name = String(pick(b, ["customerName", "fullName", "name"]) ?? "").toLowerCase();
         const customerId = String(pick(b, ["customerId", "customer_id"]) ?? "").toLowerCase();
         const connectionId = String(pick(b, ["connectionId", "connection_id"]) ?? "").toLowerCase();
         const util = String(pick(b, ["utilityType", "utility_type"]) ?? "").toLowerCase();
-        return (
-          billId.includes(q) ||
-          name.includes(q) ||
-          customerId.includes(q) ||
-          connectionId.includes(q) ||
-          util.includes(q)
-        );
+
+        return billId.includes(q) || name.includes(q) || customerId.includes(q) || connectionId.includes(q) || util.includes(q);
       });
     }
 
@@ -130,7 +138,7 @@ window.CashierBillsDashboard = (() => {
   function renderBills(bills) {
     els.list.innerHTML = "";
 
-    bills.forEach(b => {
+    bills.forEach((b) => {
       const billId = pick(b, ["billId", "bill_id"]) ?? "-";
       const customerName = pick(b, ["customerName", "fullName", "name"]) ?? "-";
       const customerId = pick(b, ["customerId", "customer_id"]) ?? "-";
@@ -154,19 +162,19 @@ window.CashierBillsDashboard = (() => {
         <div class="lr-col status">${statusBadge(status)}</div>
         <div class="lr-col action">
           <button class="btn btn-view-sm" type="button" data-view="1">Full View</button>
-          <button class="btn btn-pay" type="button" data-pay="1" ${canPay ? "" : "disabled"}>${canPay ? "Pay" : "Paid"}</button>
+          <button class="btn btn-pay" type="button" data-pay="1" ${canPay ? "" : "disabled"}>
+            ${canPay ? "Pay" : "Paid"}
+          </button>
         </div>
       `;
 
       row.querySelector("[data-view]")?.addEventListener("click", () => {
-        window.location.href =
-          `cashier-billdetail.html?billId=${encodeURIComponent(String(billId))}&connectionId=${encodeURIComponent(String(connectionId))}`;
+        window.openBillDetailModal?.(String(billId), String(connectionId));
       });
 
       row.querySelector("[data-pay]")?.addEventListener("click", () => {
         if (!canPay) return;
-        window.location.href =
-          `cashier-paybill.html?connectionId=${encodeURIComponent(String(connectionId))}`;
+        window.openPayBillModal?.(String(connectionId));
       });
 
       els.list.appendChild(row);
@@ -182,13 +190,8 @@ window.CashierBillsDashboard = (() => {
     `;
   }
 
-  function renderEmpty(msg) {
-    els.list.innerHTML = `<div class="empty-state">${esc(msg)}</div>`;
-  }
-
-  function setHint(msg) {
-    if (els.hint) els.hint.textContent = msg || "";
-  }
+  function renderEmpty(msg) { els.list.innerHTML = `<div class="empty-state">${esc(msg)}</div>`; }
+  function setHint(msg) { if (els.hint) els.hint.textContent = msg || ""; }
 
   function statusBadge(status) {
     const s = String(status || "").toUpperCase();
@@ -204,10 +207,7 @@ window.CashierBillsDashboard = (() => {
     return Number.isNaN(n) ? 0 : n;
   }
 
-  function money(val) {
-    const n = num(val);
-    return n.toFixed(2);
-  }
+  function money(val) { return num(val).toFixed(2); }
 
   function pick(obj, keys) {
     for (const k of keys) {
@@ -216,11 +216,8 @@ window.CashierBillsDashboard = (() => {
     return null;
   }
 
-  async function safeText(res) {
-    try { return await res.text(); } catch { return ""; }
-  }
+  async function safeText(res) { try { return await res.text(); } catch { return ""; } }
 
-  // FIX: always convert to string so replaceAll won't crash
   function esc(str) {
     return String(str ?? "")
       .replaceAll("&", "&amp;")
@@ -231,26 +228,12 @@ window.CashierBillsDashboard = (() => {
   }
 
   function toast(message, type = "success") {
-    if (typeof window.toast === "function") {
-      window.toast(message, type);
-      return;
-    }
     const el = document.getElementById("toast");
     if (!el) return;
     el.className = "toast active " + (type === "error" ? "error" : "success");
     el.textContent = message;
-    setTimeout(() => { el.className = "toast"; }, 2500);
+    setTimeout(() => (el.className = "toast"), 2500);
   }
 
   return { init, loadBills };
 })();
-
-document.addEventListener("DOMContentLoaded", () => {
-  window.CashierBillsDashboard?.init();
-});
-
-els.refreshBtn?.addEventListener("click", async () => {
-  els.refreshBtn.classList.add("loading");
-  await loadBills();
-  els.refreshBtn.classList.remove("loading");
-});

@@ -15,8 +15,6 @@ import com.utilitymanagementsystem.model.UtilityConnection;
 import com.utilitymanagementsystem.repository.BillRepository;
 import com.utilitymanagementsystem.repository.UtilityConnectionRepository;
 import com.utilitymanagementsystem.dto.cashier.CashierBillHistoryDTO;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import com.utilitymanagementsystem.dto.cashier.CashierBillListItemDTO;
 
 
@@ -90,9 +88,22 @@ public class CashierPortalService {
         Bill bill = billRepository.findFirstByConnection_ConnectionIdOrderByPeriodEndDesc(connectionId)
                 .orElseThrow(() -> new RuntimeException("No bill found for connectionId: " + connectionId));
 
+        // customer name safe fallback
+        String customerName = "-";
+        if (bill.getConnection() != null
+                && bill.getConnection().getCustomer() != null
+                && bill.getConnection().getCustomer().getUser() != null
+                && bill.getConnection().getCustomer().getUser().getFullName() != null) {
+            customerName = bill.getConnection().getCustomer().getUser().getFullName();
+        }
+
+        String utilityType = bill.getConnection() != null ? bill.getConnection().getUtilityType() : null;
+
         return new CashierBillDTO(
                 bill.getBillId(),
                 bill.getConnection().getConnectionId(),
+                utilityType,
+                customerName,
                 bill.getPeriodStart(),
                 bill.getPeriodEnd(),
                 bill.getTotalBillAmount(),
@@ -100,6 +111,7 @@ public class CashierPortalService {
                 bill.getStatus()
         );
     }
+
     @Transactional(readOnly = true)
     public List<CashierBillHistoryDTO> getBillHistoryByConnection(
             Integer connectionId,

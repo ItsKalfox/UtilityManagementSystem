@@ -128,8 +128,14 @@ window.CashierBillHistory = (() => {
       `;
 
       row.querySelector("button")?.addEventListener("click", () => {
-        window.location.href =
-          `cashier-billdetail.html?billId=${encodeURIComponent(billId)}&connectionId=${encodeURIComponent(connectionId)}`;
+        // ✅ Open modal instead of navigating
+        if (window.openBillDetailModal) {
+          window.openBillDetailModal(String(billId), String(connectionId));
+        } else {
+          // fallback
+          window.location.href =
+            `cashier-billdetail.html?billId=${encodeURIComponent(billId)}&connectionId=${encodeURIComponent(connectionId)}`;
+        }
       });
 
       els.list.appendChild(row);

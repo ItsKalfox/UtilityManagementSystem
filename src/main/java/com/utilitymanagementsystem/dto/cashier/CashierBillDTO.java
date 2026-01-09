@@ -6,6 +6,8 @@ import java.time.Instant;
 public record CashierBillDTO(
         Integer billId,
         Integer connectionId,
+        String utilityType,
+        String customerName,
         Instant periodStart,
         Instant periodEnd,
         BigDecimal totalBillAmount,

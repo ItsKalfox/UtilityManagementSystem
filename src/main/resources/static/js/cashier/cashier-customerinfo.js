@@ -24,27 +24,36 @@ window.CashierCustomerInfo = (() => {
     if (!els.list) return;
 
     wireEvents();
-    preloadBills(); // helps Full View show bill list fast
-    renderEmpty("Type to search customers…");
-    setHint("Ready.");
+    preloadBills();
+    loadInitialCustomers(); // ✅ NEW: show some customers by default
   }
 
   function wireEvents() {
     els.search?.addEventListener("input", () => {
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(searchCustomers, 300);
+      debounceTimer = setTimeout(() => {
+        const q = (els.search?.value || "").trim();
+        if (!q) loadInitialCustomers();
+        else searchCustomers();
+      }, 300);
     });
 
     els.typeFilter?.addEventListener("change", applyFilter);
-    els.limit?.addEventListener("change", searchCustomers);
+    els.limit?.addEventListener("change", () => {
+      const q = (els.search?.value || "").trim();
+      if (!q) loadInitialCustomers();
+      else searchCustomers();
+    });
+
     els.refreshBtn?.addEventListener("click", () => {
       preloadBills();
-      searchCustomers();
+      const q = (els.search?.value || "").trim();
+      if (!q) loadInitialCustomers();
+      else searchCustomers();
     });
 
     els.closeOverlayBtn?.addEventListener("click", closeOverlay);
 
-    // click outside card closes
     els.overlay?.addEventListener("click", (e) => {
       if (e.target === els.overlay) closeOverlay();
     });
@@ -52,7 +61,6 @@ window.CashierCustomerInfo = (() => {
 
   async function preloadBills() {
     try {
-      // big enough for cashier UI. adjust if needed
       billsCache = await fetchJson(`/api/cashier/bills?limit=500`);
     } catch (e) {
       billsCache = [];
@@ -60,12 +68,43 @@ window.CashierCustomerInfo = (() => {
     }
   }
 
+  // ✅ NEW: load some customers without needing search
+  async function loadInitialCustomers() {
+    const limit = parseInt(els.limit?.value || "20", 10);
+    setHint("Loading customers...");
+    renderLoader();
+
+    try {
+      // Try a common "list customers" endpoint first
+      let res;
+      try {
+        res = await fetchJson(`/api/cashier/customers?limit=${isNaN(limit) ? 20 : limit}`);
+      } catch {
+        // fallback: some backends only provide search endpoint
+        res = await fetchJson(`/api/cashier/customers/search?q=&limit=${isNaN(limit) ? 20 : limit}`);
+      }
+
+      customersCache = Array.isArray(res) ? res : [];
+      if (!customersCache.length) {
+        renderEmpty("No customers to show.");
+        setHint("0 customers");
+        return;
+      }
+
+      applyFilter();
+    } catch (e) {
+      console.error(e);
+      renderEmpty("Failed to load customers. Check API endpoints.");
+      setHint("Error");
+      toast("Failed to load customers", "error");
+    }
+  }
+
   async function searchCustomers() {
     const q = (els.search?.value || "").trim();
     if (!q) {
-      customersCache = [];
-      renderEmpty("Type to search customers…");
-      setHint("Ready.");
+      // ✅ if cleared search, go back to default list
+      loadInitialCustomers();
       return;
     }
 
@@ -75,7 +114,9 @@ window.CashierCustomerInfo = (() => {
     renderLoader();
 
     try {
-      const res = await fetchJson(`/api/cashier/customers/search?q=${encodeURIComponent(q)}&limit=${isNaN(limit) ? 20 : limit}`);
+      const res = await fetchJson(
+        `/api/cashier/customers/search?q=${encodeURIComponent(q)}&limit=${isNaN(limit) ? 20 : limit}`
+      );
       customersCache = Array.isArray(res) ? res : [];
       applyFilter();
     } catch (e) {
@@ -90,9 +131,7 @@ window.CashierCustomerInfo = (() => {
     const type = (els.typeFilter?.value || "").trim().toUpperCase();
     let list = [...customersCache];
 
-    if (type) {
-      list = list.filter(c => String(c.customerType || "").toUpperCase() === type);
-    }
+    if (type) list = list.filter(c => String(c.customerType || "").toUpperCase() === type);
 
     if (!list.length) {
       renderEmpty("No customers found.");
@@ -114,12 +153,10 @@ window.CashierCustomerInfo = (() => {
       const nic = c.nic ? `NIC: ${c.nic}` : null;
 
       const t = String(type).toUpperCase();
-
-const badgeClass =
-  t === "HOUSEHOLD" ? "household" :
-  t === "BUSINESS" ? "business" :
-  (t === "GOVERNMENT ORGANIZATION" || t === "GOVERNMENT_ORGANIZATION" || t === "GOV") ? "gov" : "";
-
+      const badgeClass =
+        t === "HOUSEHOLD" ? "household" :
+        t === "BUSINESS" ? "business" :
+        (t === "GOVERNMENT ORGANIZATION" || t === "GOVERNMENT_ORGANIZATION" || t === "GOV") ? "gov" : "";
 
       const card = document.createElement("div");
       card.className = "customer-card";
@@ -162,7 +199,6 @@ const badgeClass =
         .filter(b => String(b.customerId) === String(customerId))
         .sort((a, b) => (b.billId || 0) - (a.billId || 0));
 
-      // last payment: if you have payment history endpoint later, we can plug it in.
       els.overlayContent.innerHTML = `
         <div class="cu-grid">
           <div class="cu-box">
@@ -171,7 +207,7 @@ const badgeClass =
             <div class="muted"><b>Type:</b> ${escapeHtml(customer.customerType || "-")}</div>
             <div class="muted"><b>NIC:</b> ${escapeHtml(customer.nic || "-")}</div>
             <div class="muted"><b>Email:</b> ${escapeHtml(customer.email || "-")}</div>
-         <div class="muted"><b>Phone:</b> ${escapeHtml(customer.phoneNumber ?? customer.phone ?? "-")}</div>
+            <div class="muted"><b>Phone:</b> ${escapeHtml(customer.phoneNumber ?? customer.phone ?? "-")}</div>
           </div>
 
           <div class="cu-box">
@@ -217,9 +253,7 @@ const badgeClass =
   async function fetchJson(path) {
     const token = localStorage.getItem("token");
     const res = await fetch(API_BASE + path, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      }
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
     });
     if (!res.ok) throw new Error(`HTTP ${res.status} - ${await res.text()}`);
     return res.json();
@@ -265,5 +299,6 @@ const badgeClass =
       .replaceAll("'", "&#039;");
   }
 
-  return { init };
+  // ✅ Expose initial loader so dashboard can call it when switching tabs
+  return { init, loadInitial: loadInitialCustomers };
 })();

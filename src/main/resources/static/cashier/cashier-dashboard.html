@@ -49,7 +49,6 @@
         </a>
       </nav>
 
-
       <div class="sidebar-footer-container">
         <div class="sidebar-footer">
           <button class="icon-btn" id="settingsBtn" title="Settings" type="button">
@@ -90,15 +89,14 @@
                   <button class="icon-btn" id="refreshBillsBtn" title="Refresh" type="button">
                     <img src="../images/refresh-icon.svg" alt="Refresh" class="action-icon">
                   </button>
-
                 </div>
               </div>
 
               <div class="filters-row">
                 <div class="search-input">
                   <span class="search-icon">
-  <img src="../images/search-icon.svg" alt="Search">
-</span>
+                    <img src="../images/search-icon.svg" alt="Search">
+                  </span>
 
                   <input type="text" id="billSearchInput"
                     placeholder="Search by Bill ID / Name / Customer ID / Connection ID..." />
@@ -118,7 +116,7 @@
                   <option value="GAS">GAS</option>
                 </select>
 
-                <!-- IMPORTANT: keep this id because your JS expects it -->
+                <!-- IMPORTANT: keep this id because your bills dashboard JS expects it -->
                 <select id="customerTypeFilter" class="filter-select">
                   <option value="">All Customers</option>
                   <option value="HOUSEHOLD">HOUSEHOLD</option>
@@ -167,21 +165,19 @@
                 <button class="icon-btn" id="refreshCustomersBtn" title="Refresh" type="button">
                   <img src="../images/refresh-icon.svg" alt="Refresh" class="action-icon">
                 </button>
-
-
               </div>
             </div>
 
             <div class="filters-row">
               <div class="search-input">
-               <span class="search-icon">
-  <img src="../images/search-icon.svg" alt="Search">
-</span>
+                <span class="search-icon">
+                  <img src="../images/search-icon.svg" alt="Search">
+                </span>
                 <input id="customerSearchInput" placeholder="Search by Name / NIC / Customer ID" />
               </div>
 
-              <!-- IMPORTANT: keep this id because your customerinfo.js expects it -->
-              <select id="customerTypeFilter" class="filter-select">
+              <!-- ✅ FIXED: unique id (no more duplicate customerTypeFilter) -->
+              <select id="customerTypeFilterCustomers" class="filter-select">
                 <option value="">All Types</option>
                 <option value="HOUSEHOLD">HOUSEHOLD</option>
                 <option value="BUSINESS">BUSINESS</option>
@@ -210,10 +206,9 @@
                     <p class="muted" id="overlaySub">Details</p>
                   </div>
                   <button class="btn btn-secondary" id="closeOverlayBtn" type="button">
-  <img src="../images/close-icon.svg" class="inline-icon" alt="Close">
-  Close
-</button>
-
+                    <img src="../images/close-icon.svg" class="inline-icon" alt="Close">
+                    Close
+                  </button>
                 </div>
 
                 <div class="cu-overlay-body" id="overlayContent"></div>
@@ -230,15 +225,14 @@
                 <button class="icon-btn" id="refreshBillHistoryBtn" title="Refresh" type="button">
                   <img src="../images/refresh-icon.svg" alt="Refresh" class="action-icon">
                 </button>
-
               </div>
             </div>
 
             <div class="filters-row">
               <div class="search-input">
                 <span class="search-icon">
-  <img src="../images/search-icon.svg" alt="Search">
-</span>
+                  <img src="../images/search-icon.svg" alt="Search">
+                </span>
 
                 <input type="text" id="billHistorySearchInput"
                   placeholder="Search by Bill ID / Customer Name / Customer ID / Connection ID..." />
@@ -298,6 +292,18 @@
     </main>
   </div>
 
+  <!-- ===== Page Modal Overlay + Wrapper ===== -->
+  <div id="pageModalOverlay" class="page-modal-overlay" aria-hidden="true"></div>
+
+  <div id="pageModal" class="page-modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="page-modal-header">
+      <div class="page-modal-title" id="pageModalTitle">Details</div>
+      <button class="page-modal-close" id="pageModalCloseBtn" type="button">✖</button>
+    </div>
+
+    <div class="page-modal-body" id="pageModalBody"></div>
+  </div>
+
   <!-- Confirm Modal Overlay (admin-style: leave empty, JS will fill it) -->
   <div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
   <div id="confirmModal" class="modal modal-confirm"></div>
@@ -307,6 +313,12 @@
   <!-- IMPORTANT: include cashier utils here -->
   <script src="../js/cashier/utils.js"></script>
 
+  <!-- ✅ Modal modules -->
+  <script src="../js/cashier/cashier-receipt.js"></script>
+  <script src="../js/cashier/cashier-paybill.js"></script>
+  <script src="../js/cashier/cashier-billdetail.js"></script>
+
+  <!-- Dashboard controller + pages -->
   <script src="../js/cashier/cashier-dashboard.js"></script>
   <script src="../js/cashier/cashier-bills-dashboard.js"></script>
   <script src="../js/cashier/cashier-customerinfo.js"></script>

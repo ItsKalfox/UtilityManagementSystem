@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Utility Management System</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
+</head>
+<body>
+    <div class="theme-toggle-container">
+        <label class="theme-toggle">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <h1 id="roleTitle">Field Officer Login</h1>
+            <p class="subtitle">Enter your credentials</p>
+
+            <form id="loginForm" >
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password">
+                </div>
+
+                <div id="login-error" class="errorMsg" style="display:none;"></div>
+
+                <button id="loginBtn" type="submit" class="login-btn">Login</button>
+            </form>
+
+            <a href="../index.html" class="back-link">Back to role selection</a>
+        </div>
+    </div>
+
+    <script src="../js/common/theme.js"></script>
+    <script src="../js/field-officer/field-officer-auth.js"></script>
+
+</body>
+</html>
+

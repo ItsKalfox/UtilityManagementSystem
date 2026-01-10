@@ -835,7 +835,7 @@ window.saveNewCustomer = async function () {
     }
 };
 
-document.addEventListener()
+//document.addEventListener()
 
 window.showAddReadingPopup = async function (id) {
     try {

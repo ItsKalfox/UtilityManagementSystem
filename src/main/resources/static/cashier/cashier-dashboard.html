@@ -116,7 +116,6 @@
                   <option value="GAS">GAS</option>
                 </select>
 
-                <!-- IMPORTANT: keep this id because your bills dashboard JS expects it -->
                 <select id="customerTypeFilter" class="filter-select">
                   <option value="">All Customers</option>
                   <option value="HOUSEHOLD">HOUSEHOLD</option>
@@ -176,7 +175,6 @@
                 <input id="customerSearchInput" placeholder="Search by Name / NIC / Customer ID" />
               </div>
 
-              <!-- ✅ FIXED: unique id (no more duplicate customerTypeFilter) -->
               <select id="customerTypeFilterCustomers" class="filter-select">
                 <option value="">All Types</option>
                 <option value="HOUSEHOLD">HOUSEHOLD</option>
@@ -292,7 +290,7 @@
     </main>
   </div>
 
-  <!-- ===== Page Modal Overlay + Wrapper ===== -->
+  <!-- Page Modal Overlay -->
   <div id="pageModalOverlay" class="page-modal-overlay" aria-hidden="true"></div>
 
   <div id="pageModal" class="page-modal" aria-hidden="true" role="dialog" aria-modal="true">
@@ -304,21 +302,17 @@
     <div class="page-modal-body" id="pageModalBody"></div>
   </div>
 
-  <!-- Confirm Modal Overlay (admin-style: leave empty, JS will fill it) -->
+  <!-- Confirm Modal Overlay-->
   <div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
   <div id="confirmModal" class="modal modal-confirm"></div>
 
+
+
   <script src="../js/common/theme.js"></script>
-
-  <!-- IMPORTANT: include cashier utils here -->
   <script src="../js/cashier/utils.js"></script>
-
-  <!-- ✅ Modal modules -->
   <script src="../js/cashier/cashier-receipt.js"></script>
   <script src="../js/cashier/cashier-paybill.js"></script>
   <script src="../js/cashier/cashier-billdetail.js"></script>
-
-  <!-- Dashboard controller + pages -->
   <script src="../js/cashier/cashier-dashboard.js"></script>
   <script src="../js/cashier/cashier-bills-dashboard.js"></script>
   <script src="../js/cashier/cashier-customerinfo.js"></script>

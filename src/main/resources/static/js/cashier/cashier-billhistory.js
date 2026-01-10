@@ -1,5 +1,5 @@
 window.CashierBillHistory = (() => {
-  const API_BASE = ""; // same origin
+  const API_BASE = ""; 
 
   const els = {};
   let debounceTimer = null;
@@ -128,11 +128,11 @@ window.CashierBillHistory = (() => {
       `;
 
       row.querySelector("button")?.addEventListener("click", () => {
-        // ✅ Open modal instead of navigating
+
         if (window.openBillDetailModal) {
           window.openBillDetailModal(String(billId), String(connectionId));
         } else {
-          // fallback
+
           window.location.href =
             `cashier-billdetail.html?billId=${encodeURIComponent(billId)}&connectionId=${encodeURIComponent(connectionId)}`;
         }

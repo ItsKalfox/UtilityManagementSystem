@@ -25,7 +25,7 @@ window.CashierCustomerInfo = (() => {
 
     wireEvents();
     preloadBills();
-    loadInitialCustomers(); // ✅ NEW: show some customers by default
+    loadInitialCustomers(); 
   }
 
   function wireEvents() {
@@ -68,19 +68,17 @@ window.CashierCustomerInfo = (() => {
     }
   }
 
-  // ✅ NEW: load some customers without needing search
   async function loadInitialCustomers() {
     const limit = parseInt(els.limit?.value || "20", 10);
     setHint("Loading customers...");
     renderLoader();
 
     try {
-      // Try a common "list customers" endpoint first
+
       let res;
       try {
         res = await fetchJson(`/api/cashier/customers?limit=${isNaN(limit) ? 20 : limit}`);
       } catch {
-        // fallback: some backends only provide search endpoint
         res = await fetchJson(`/api/cashier/customers/search?q=&limit=${isNaN(limit) ? 20 : limit}`);
       }
 
@@ -103,7 +101,7 @@ window.CashierCustomerInfo = (() => {
   async function searchCustomers() {
     const q = (els.search?.value || "").trim();
     if (!q) {
-      // ✅ if cleared search, go back to default list
+ 
       loadInitialCustomers();
       return;
     }
@@ -299,6 +297,5 @@ window.CashierCustomerInfo = (() => {
       .replaceAll("'", "&#039;");
   }
 
-  // ✅ Expose initial loader so dashboard can call it when switching tabs
   return { init, loadInitial: loadInitialCustomers };
 })();

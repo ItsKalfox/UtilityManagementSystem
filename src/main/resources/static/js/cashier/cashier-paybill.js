@@ -2,7 +2,7 @@ window.CashierPayBillModal = (() => {
   const API_BASE = "";
 
   function template() {
-    // ✅ Card-only (no wrapper)
+ 
     return `
   <div class="paybill-card paybill-card--modal">
     <div class="paybill-header">
@@ -308,12 +308,12 @@ window.CashierPayBillModal = (() => {
       if (balanceOutput) balanceOutput.value = money(change);
     }
 
-    // ✅ FIX: include customerId (now backend gives it)
+  
     function normalizeBill(b) {
       return {
         billId: b.billId ?? b.bill_id ?? null,
         connectionId: b.connectionId ?? b.connection_id ?? connectionId,
-        customerId: b.customerId ?? b.customer_id ?? null, // ✅ NEW
+        customerId: b.customerId ?? b.customer_id ?? null, 
         utilityType: b.utilityType ?? b.utility_type ?? null,
         customerName: b.customerName ?? b.customer_name ?? "-",
         periodStart: b.periodStart ?? b.period_start ?? null,
@@ -385,7 +385,7 @@ window.CashierPayBillModal = (() => {
 
         updateCashBalance();
         if (pageHint) pageHint.textContent = "Bill loaded. Select a method and pay.";
-        toast("Bill loaded ✅", "success");
+        toast("Bill loaded ", "success");
         debug("Ready.");
       } catch (err) {
         console.error(err);
@@ -413,7 +413,7 @@ window.CashierPayBillModal = (() => {
       const last4 = randInt(1000, 9999);
       if (maskedCardNo) maskedCardNo.value = `**** **** **** ${last4}`;
 
-      toast("Simulated card swipe ✅", "success");
+      toast("Simulated card swipe ", "success");
     }
 
     function simulateBankTransfer() {
@@ -424,10 +424,10 @@ window.CashierPayBillModal = (() => {
       if (bankAccountNo) bankAccountNo.value = String(randInt(1000000000, 9999999999));
       if (txnNumber) txnNumber.value = `TRX-${randInt(100000, 999999)}-${randInt(10, 99)}`;
 
-      toast("Simulated bank transfer ✅", "success");
+      toast("Simulated bank transfer ", "success");
     }
 
-    // ✅ FIX: includes customerId + status (after payment)
+
     function buildReceipt({ billBefore, billAfter, payAmount, method, methodDetails }) {
       const now = new Date();
 
@@ -435,8 +435,8 @@ window.CashierPayBillModal = (() => {
 
       const afterOut =
         billAfter?.outstandingAmount != null
-          ? Number(billAfter.outstandingAmount)              // ✅ from backend after refresh
-          : Math.max(0, beforeOut - Number(payAmount || 0));  // fallback
+          ? Number(billAfter.outstandingAmount)            
+          : Math.max(0, beforeOut - Number(payAmount || 0));  
 
       return {
         receiptNo: `RCPT-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${now.getTime()}`,
@@ -444,13 +444,13 @@ window.CashierPayBillModal = (() => {
 
         billId: billBefore?.billId ?? "-",
         connectionId: billBefore?.connectionId ?? connectionId ?? "-",
-        customerId: billBefore?.customerId ?? billAfter?.customerId ?? "-", // ✅ NEW
+        customerId: billBefore?.customerId ?? billAfter?.customerId ?? "-", 
         utilityType: billBefore?.utilityType ?? "-",
         customerName: billBefore?.customerName ?? "-",
         periodStart: billBefore?.periodStart ?? null,
         periodEnd: billBefore?.periodEnd ?? null,
 
-        status: billAfter?.status ?? billBefore?.status ?? "-", // ✅ NEW (so receipt status works)
+        status: billAfter?.status ?? billBefore?.status ?? "-", 
 
         outstandingBefore: beforeOut,
         amountPaid: Number(payAmount || 0),
@@ -550,15 +550,15 @@ window.CashierPayBillModal = (() => {
 
         toast("Payment successful ✅", "success");
 
-        // refresh bill data (after payment)
+    
         await loadCurrentBill();
 
-        // refresh dashboard list behind modal
+  
         window.CashierBillsDashboard?.loadBills?.();
 
         const billAfter = { ...currentBill };
 
-        // ✅ Build receipt including customerId + status from billAfter
+    
         const receipt = buildReceipt({
           billBefore,
           billAfter,
@@ -567,8 +567,6 @@ window.CashierPayBillModal = (() => {
           methodDetails
         });
 
-        // Debug if needed:
-        // console.log("RECEIPT OBJ =>", receipt);
 
         window.openReceiptModal?.(receipt);
 

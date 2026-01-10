@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (page === "customer-info") {
       document.getElementById("customerSearchInput")?.focus();
-      // optional: ensure initial customers load when visiting the page
+
       window.CashierCustomerInfo?.loadInitial?.();
     }
     if (page === "bill-history" && window.CashierBillHistory?.loadBills) {
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Toast helper
+  // Toast 
   function safeToast(message, type = "success") {
     if (typeof window.toast === "function") {
       window.toast(message, type);
@@ -62,11 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => (el.className = "toast"), 2500);
   }
 
-  // Blur helper
+  // Blur 
   function blurOn() { document.body.classList.add("modal-blur-on"); }
   function blurOff() { document.body.classList.remove("modal-blur-on"); }
 
-  // ===== Confirm modal =====
+  // Confirm modal 
   function showConfirmModal({
     title = "Confirm",
     message = "Are you sure?",
@@ -176,9 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .replaceAll("'", "&#039;");
   }
 
-  // =========================
-  // ✅ Page Modal (Card-only fixed)
-  // =========================
+
   const pageOverlay = document.getElementById("pageModalOverlay");
   const pageModal = document.getElementById("pageModal");
   const pageTitle = document.getElementById("pageModalTitle");
@@ -191,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
     title = "Details",
     html = "",
     onMount = null,
-    // ✅ NEW: layout controls
     chromeless = false,
     cardOnly = false
   } = {}) {
@@ -200,11 +197,11 @@ document.addEventListener("DOMContentLoaded", () => {
     try { currentModalCleanup?.(); } catch {}
     currentModalCleanup = null;
 
-    // ✅ Apply classes that your CSS expects
+
     pageModal.classList.toggle("chromeless", !!chromeless);
     pageModal.classList.toggle("card-only", !!cardOnly);
 
-    // If chromeless, we still set title for accessibility/debug, but header is hidden by CSS
+  
     if (pageTitle) pageTitle.textContent = title;
 
     pageBody.innerHTML = html;
@@ -245,7 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
     pageOverlay.style.display = "none";
     pageModal.style.display = "none";
 
-    // reset mode classes
+
     pageModal.classList.remove("chromeless", "card-only");
 
     pageBody.innerHTML = "";
@@ -255,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.openPageModal = openPageModal;
   window.closePageModal = closePageModal;
 
-  // ✅ Convenience wrappers (use card-only mode)
+  //Convenience wrappers 
   window.openPayBillModal = function (connectionId) {
     if (!window.CashierPayBillModal) {
       safeToast("CashierPayBillModal not loaded", "error");
@@ -298,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Default page + init modules once
+
   showPage("dashboard");
   window.CashierBillsDashboard?.init?.();
   window.CashierCustomerInfo?.init?.();

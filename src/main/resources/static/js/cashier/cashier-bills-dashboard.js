@@ -6,7 +6,6 @@ window.CashierBillsDashboard = (() => {
   let serverBillsCache = [];
 
   function init() {
-    // ✅ grab elements only once
     els.searchInput = document.getElementById("billSearchInput");
     els.statusFilter = document.getElementById("billStatusFilter");
     els.utilityFilter = document.getElementById("utilityTypeFilter");
@@ -19,7 +18,7 @@ window.CashierBillsDashboard = (() => {
 
     if (!els.list) return;
 
-    // prevent duplicate wiring
+
     if (init._wired) return;
     init._wired = true;
 

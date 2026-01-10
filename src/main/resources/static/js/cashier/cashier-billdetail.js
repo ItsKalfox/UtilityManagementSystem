@@ -2,7 +2,6 @@ window.CashierBillDetailModal = (() => {
   const API_BASE = "";
 
   function template() {
-    // ✅ Card-only (no full-page wrapper)
     return `
   <div class="billdetail-card billdetail-card--modal">
     <div class="billdetail-header">

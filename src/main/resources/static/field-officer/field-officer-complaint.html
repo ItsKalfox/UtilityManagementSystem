@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Handling - Field Officer</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="theme-toggle-container">
+  <label class="theme-toggle">
+    <input type="checkbox" id="themeToggle">
+    <span class="slider"></span>
+  </label>
+</div>
+
+<div class="dashboard-container">
+  <aside class="sidebar">
+    <div class="sidebar-header-container">
+      <div class="sidebar-header">
+        <h2>Field Officer</h2>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="field-officer-dashboard.html" class="nav-item">
+        Dashboard
+      </a>
+      <a href="field-officer-meter-readings.html" class="nav-item">
+        Meter Readings
+      </a>
+      <a href="field-officer-add-readings.html" class="nav-item">
+        Add Readings
+      </a>
+      <a href="field-officer-complaint.html" class="nav-item active">
+        Complaint Handling
+      </a>
+    </nav>
+    <div class="sidebar-footer-container">
+      <div class="sidebar-footer">
+        <button class="icon-btn" onclick="handleSettings()">
+          <img src="../images/settings-icon.svg" alt="settings">
+        </button>
+        <button class="icon-btn logout-btn" id="logoutBtn" onclick="handleLogout()">
+          <img src="../images/logout-icon.svg" alt="logout">
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="header">
+      <div class="user-info">
+        <div class="user-avatar">F</div>
+        <div>
+          <div class="user-name">Field Officer</div>
+          <div class="user-email">fieldofficer@ums.com</div>
+        </div>
+      </div>
+    </header>
+  </main>
+</div>
+
+
+<script src="../js/field-officer/field-officer-meter-readings.js"></script>
+<script src="../js/common/theme.js"></script>
+<script src="../js/admin/utils.js"></script>
+<script src="../js/admin/dashboard.js"></script>
+</body>
+</html>

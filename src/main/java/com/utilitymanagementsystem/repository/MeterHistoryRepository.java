@@ -2,10 +2,13 @@ package com.utilitymanagementsystem.repository;
 
 import com.utilitymanagementsystem.model.UtilityConnection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -30,4 +33,20 @@ public interface MeterHistoryRepository extends JpaRepository<UtilityConnection,
         WHERE uc.customer_id = :customerId
         """, nativeQuery = true)
     List<Map<String, Object>> findSerialNumberByCustomerId(@Param("customerId") Integer customerId);
+
+    @Modifying
+    @Transactional
+    @Query(value = """
+        INSERT INTO meter_reading(field_officer_id, connection_id, reading_value, consumption, billing_period_start, billing_period_end )
+        VALUES (:fieldOfficerId, :connectionId, :readingValue, :consumption, :billingPeriodStart, :billingPeriodEnd)
+        """, nativeQuery = true)
+    void addMeterReading(
+            @Param("fieldOfficerId") Integer fieldOfficerId,
+            @Param("connectionId") Integer connectionId,
+            @Param("readingValue") Integer readingValue,
+            @Param("consumption") Integer consumption,
+            @Param("billingPeriodStart") OffsetDateTime billingPeriodStart,
+            @Param("billingPeriodEnd") OffsetDateTime billingPeriodEnd
+
+    );
 }

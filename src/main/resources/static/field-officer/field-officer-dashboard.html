@@ -32,7 +32,10 @@
                 Meter Readings
             </a>
             <a href="field-officer-add-readings.html" class="nav-item">
-                Meter Readings
+                Add Readings
+            </a>
+            <a href="field-officer-complaint.html" class="nav-item">
+                Complaint Handling
             </a>
         </nav>
         <div class="sidebar-footer-container">
@@ -57,11 +60,68 @@
                 </div>
             </div>
         </header>
+        <div class="dashboard-content">
+            <section class="stats-section">
+                <h2 class="section-title">System Users</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Active Customers<img src="../images/customer-icon.svg" class="stat-icon" alt="customer-icon"></div>
+                        <div class="stat-value" id="active-customers">0</div>
+                        <div class="stat-meta">
+                            <span>Inactive: <strong id="inactive-customers">0</strong></span>
+                            <span>Total: <strong id="total-customers">0</strong></span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Active Field Officers<img src="../images/field-officer-icon.svg" class="stat-icon" alt="field-officer-icon"></div>
+                        <div class="stat-value" id="active-officers">0</div>
+                        <div class="stat-meta">
+                            <span>Inactive: <strong id="inactive-officers">0</strong></span>
+                            <span>Total: <strong id="total-officers">0</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="stats-section">
+                <h2 class="section-title">Total Connections</h2>
+                <div class="stats-grid">
+                    <div class="stat-card highlight">
+                        <div class="stat-label">All Connections</div>
+                        <div class="stat-value" id="active-connections-all">0</div>
+                        <div class="stat-meta">
+                            <span>Inactive: <strong id="inactive-connections-all">0</strong></span>
+                            <span>Total: <strong id="total-connections-all">0</strong></span>
+                        </div>
+                    </div>
 
-        <div class="content-area">
-            <div class="management-container">
+                    <div class="stat-card">
+                        <div class="stat-label">Water Connections<img src="../images/water-icon.svg" class="stat-icon" alt="water-icon"></div>
+                        <div class="stat-value" id="active-water">0</div>
+                        <div class="stat-meta">
+                            <span>Inactive: <strong id="inactive-water">0</strong></span>
+                            <span>Total: <strong id="total-water">0</strong></span>
+                        </div>
+                    </div>
 
-            </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Electricity Connections<img src="../images/electricity-icon.svg" class="stat-icon" alt="electricity-icon"></div>
+                        <div class="stat-value" id="active-electricity">0</div>
+                        <div class="stat-meta">
+                            <span>Inactive: <strong id="inactive-electricity">0</strong></span>
+                            <span>Total: <strong id="total-electricity">0</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Gas Connections<img src="../images/gas-icon.svg" class="stat-icon" alt="gas-icon"></div>
+                        <div class="stat-value" id="active-gas">0</div>
+                        <div class="stat-meta">
+                            <span>Inactive: <strong id="inactive-gas">0</strong></span>
+                            <span>Total: <strong id="total-gas">0</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 </div>

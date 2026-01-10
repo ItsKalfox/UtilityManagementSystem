@@ -104,20 +104,6 @@ async function loadRecentReadings() {
     } catch (err) {
         // 🟡 Seed data fallback (matches your SQL inserts)
         tableBody.innerHTML = `
-            <tr>
-                <td>Customer One</td>
-                <td>Electricity</td>
-                <td>ELX-1001</td>
-                <td>450</td>
-                <td>2025-12-10</td>
-            </tr>
-            <tr>
-                <td>Customer One</td>
-                <td>Electricity</td>
-                <td>ELX-1001</td>
-                <td>360</td>
-                <td>2025-12-09</td>
-            </tr>
         `;
 
         document.getElementById("totalReadings").textContent = "3";

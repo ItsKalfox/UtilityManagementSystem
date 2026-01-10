@@ -932,9 +932,18 @@ window.showAddReadingPopup = async function (id) {
            MODAL HTML
         ========================= */
         const fieldOfficerId = parseInt(localStorage.getItem("userId"));
+        const stringData = JSON.stringify(record);
+
         modal.innerHTML = `
     <div class="modal-header">
         <h3>Add Reading</h3>
+        <input class="" value=${stringData} hidden id="recordDataString">
+        <button class="close-btn" onclick="closeModal()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+        </button>
     </div>
 
     <div class="modal-body">
@@ -953,15 +962,16 @@ window.showAddReadingPopup = async function (id) {
             <span class="detail-label">Current Reading Value</span>
             <input type="number" class="detail-value detail-input" id="currectReadingValue">
         </div>
-        <input hidden id="fieldOfficerId" type="number" value=${fieldOfficerId}>
-        
-        
+        <div class="" id="modelWaringText"></div>
+        <input hidden id="fieldOfficerId" type="number" value=${fieldOfficerId}>   
     </div>
-    
-    
+    <div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-save" onclick="saveMeterReading()">Save</button>
+        </div>
+    </div>  
 `;
-
-
 
         modal.classList.add('active');
         overlay.classList.add('active');
@@ -972,6 +982,64 @@ window.showAddReadingPopup = async function (id) {
         console.error(e);
         showToast('Unexpected error', 'error');
     }
+}
+
+window.saveMeterReading = async function (){
+const modal = document.getElementById('recordModal');
+const overlay = document.getElementById('modalOverlay');
+
+const connectionId = document.getElementById("connectionIdSelector").value;
+let readingValue = document.getElementById("currectReadingValue").value;
+readingValue = parseInt(readingValue);
+const recordDataString = document.getElementById("recordDataString").value;
+const data = JSON.parse(recordDataString);
+const modelWarning = document.getElementById("modelWaringText");
+const fieldOfficerId = parseInt(document.getElementById("fieldOfficerId").value);
+
+const previous_reading_val = data.last_reading[connectionId].reading_value
+let consumption = readingValue - previous_reading_val;
+// START DATE (already correct)
+let start_date = data.last_reading[connectionId]?.billing_period_end
+    ?? new Date().toISOString().replace('Z', '+00:00');
+
+// END DATE (match format exactly)
+let end_date = new Date().toISOString().replace('Z', '+00:00');
+
+
+
+
+if (previous_reading_val < readingValue) {
+    console.log("ok")
+    const response = await  fetch(`/meter-reading/add`, {
+        method:"POST",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            connection_id: connectionId,
+            field_officer_id: fieldOfficerId,
+            reading_value: readingValue,
+            consumption: consumption,
+            billing_period_start: start_date,
+            billing_period_end: end_date,
+        })
+    })
+    const _data = response.json();
+    if (_data) {
+        modal.classList.remove('active');
+        overlay.classList.remove('active');
+    }
+    console.log("returned", _data);
+    modelWarning.innerHTML = "";
+
+} else {
+    modelWarning.innerHTML = `Current reading value must be greter than ${previous_reading_val}`
+}
+
+console.log(connectionId, readingValue, data);
+
+
 }
 
 window.viewHistory = async function (id) {
@@ -1094,6 +1162,12 @@ window.viewHistory = async function (id) {
         modal.innerHTML = `
     <div class="modal-header">
         <h3>History</h3>
+        <button class="close-btn" onclick="closeModal()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+        </button>
     </div>
 
     <div class="modal-body">
@@ -1217,9 +1291,7 @@ window.viewRecord = async function (id) {
         }
 
         if (hasPermission('UPDATE_CUSTOMER')) {
-            editButtonHtml = `<button class="icon-btn-long" id="editBtn" onclick="enableEdit()">
-                                <img src="../images/edit-icon-text.svg" alt="EditBtn">
-                            </button>`;
+            editButtonHtml = ``;
             if (record.status === 'ACTIVE') {
                 statusButtonHtml = `
                 <button class="btn-adv btn-secondary" onclick="deactivateAccount(${record.userId})">Deactivate Account</button>`;

@@ -41,7 +41,13 @@ public class SecurityConfig {
                                 "/login/**",
                                 "/admin/**",
                                 "/images/**",
-                                "/favicon.ico"
+                                "/favicon.ico",
+                                "/api/auth/**",
+                                "/customer/**",// ✅ ADDED THIS
+                                "/CustomerLogin.html", // ✅ ADDED THIS
+                                "/CustomerDashboard.html", // ✅ ADDED THIS
+                                "/api/customer/**",   // ✅ ADDED THIS
+                                "/api/complaints/**"// ✅ ADDED THIS
                         ).permitAll()
 
                         .requestMatchers(

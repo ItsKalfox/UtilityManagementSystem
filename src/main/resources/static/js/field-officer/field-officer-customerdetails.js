@@ -141,24 +141,13 @@ function renderRecords(records) {
                 </div>
             </div>
 
-            <div class="record-actions">
-                <button class="btn btn-view" style="margin: 0 15px 0 0;"
-                    onclick="viewHistory(${record.userId})">
-                   History
-                </button>
-            </div>
              <div class="record-actions">
                 <button class="btn btn-view" style="margin: 0 15px 0 0;"
                     onclick="viewRecord(${record.userId})">
-                   Details
+                   Customer Details
                 </button>
             </div>
-            <div class="record-actions">
-                <button class="btn btn-view"
-                    onclick="showAddReadingPopup(${record.userId})">
-                   Add Reading
-                </button>
-            </div>
+           
         </div>
     `).join('');
 }
@@ -985,59 +974,59 @@ window.showAddReadingPopup = async function (id) {
 }
 
 window.saveMeterReading = async function (){
-const modal = document.getElementById('recordModal');
-const overlay = document.getElementById('modalOverlay');
+    const modal = document.getElementById('recordModal');
+    const overlay = document.getElementById('modalOverlay');
 
-const connectionId = document.getElementById("connectionIdSelector").value;
-let readingValue = document.getElementById("currectReadingValue").value;
-readingValue = parseInt(readingValue);
-const recordDataString = document.getElementById("recordDataString").value;
-const data = JSON.parse(recordDataString);
-const modelWarning = document.getElementById("modelWaringText");
-const fieldOfficerId = parseInt(document.getElementById("fieldOfficerId").value);
+    const connectionId = document.getElementById("connectionIdSelector").value;
+    let readingValue = document.getElementById("currectReadingValue").value;
+    readingValue = parseInt(readingValue);
+    const recordDataString = document.getElementById("recordDataString").value;
+    const data = JSON.parse(recordDataString);
+    const modelWarning = document.getElementById("modelWaringText");
+    const fieldOfficerId = parseInt(document.getElementById("fieldOfficerId").value);
 
-const previous_reading_val = data.last_reading[connectionId].reading_value
-let consumption = readingValue - previous_reading_val;
+    const previous_reading_val = data.last_reading[connectionId].reading_value
+    let consumption = readingValue - previous_reading_val;
 // START DATE (already correct)
-let start_date = data.last_reading[connectionId]?.billing_period_end
-    ?? new Date().toISOString().replace('Z', '+00:00');
+    let start_date = data.last_reading[connectionId]?.billing_period_end
+        ?? new Date().toISOString().replace('Z', '+00:00');
 
 // END DATE (match format exactly)
-let end_date = new Date().toISOString().replace('Z', '+00:00');
+    let end_date = new Date().toISOString().replace('Z', '+00:00');
 
 
 
 
-if (previous_reading_val < readingValue) {
-    console.log("ok")
-    const response = await  fetch(`/meter-reading/add`, {
-        method:"POST",
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            connection_id: connectionId,
-            field_officer_id: fieldOfficerId,
-            reading_value: readingValue,
-            consumption: consumption,
-            billing_period_start: start_date,
-            billing_period_end: end_date,
+    if (previous_reading_val < readingValue) {
+        console.log("ok")
+        const response = await  fetch(`/meter-reading/add`, {
+            method:"POST",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                connection_id: connectionId,
+                field_officer_id: fieldOfficerId,
+                reading_value: readingValue,
+                consumption: consumption,
+                billing_period_start: start_date,
+                billing_period_end: end_date,
+            })
         })
-    })
-    const _data = response.json();
-    if (_data) {
-        modal.classList.remove('active');
-        overlay.classList.remove('active');
+        const _data = response.json();
+        if (_data) {
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+        console.log("returned", _data);
+        modelWarning.innerHTML = "";
+
+    } else {
+        modelWarning.innerHTML = `Current reading value must be greter than ${previous_reading_val}`
     }
-    console.log("returned", _data);
-    modelWarning.innerHTML = "";
 
-} else {
-    modelWarning.innerHTML = `Current reading value must be greter than ${previous_reading_val}`
-}
-
-console.log(connectionId, readingValue, data);
+    console.log(connectionId, readingValue, data);
 
 
 }
@@ -1308,25 +1297,7 @@ window.viewRecord = async function (id) {
 
         if (hasPermission('UPDATE_CUSTOMER') || hasPermission('DELETE_CUSTOMER')) {
             advancedSectionHtml = `
-                    <div class="expandable-section">
-                        <div class="expandable-header" onclick="toggleExpandable()">
-                            <span class="expandable-title">Advanced</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="expandIcon">
-                                <polyline points="6 9 12 15 18 9"/>
-                            </svg>
-                        </div>
-                        <div class="expandable-content" id="expandableContent">
-                            <div class="system-actions">
-                                <div class="system-actions-left">
-                                    ${statusButtonHtml}
-                                    ${resetPasswordButtonHtml}
-                                </div>
-                                <div class="system-actions-right">
-                                    ${deleteButtonHtml}
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
+                   `;
         } else {
             advancedSectionHtml = ``;
         }

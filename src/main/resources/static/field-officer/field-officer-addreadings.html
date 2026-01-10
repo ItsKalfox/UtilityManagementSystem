@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meter Reading - Field Officer</title>
+    <title>Add Reading - Field Officer</title>
     <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
     <link rel="stylesheet" href="../css/styles.css">
 </head>
@@ -14,7 +14,7 @@
         <span class="slider"></span>
     </label>
 </div>
-
+<div class="toast" id="toast"></div>
 <div class="dashboard-container">
     <aside class="sidebar">
         <div class="sidebar-header-container">
@@ -27,14 +27,14 @@
             <a href="field-officer-dashboard.html" class="nav-item">
                 Dashboard
             </a>
-            <a href="field-officer-meter-readings.html" class="nav-item active">
-                Meter Readings
-            </a>
-            <a href="field-officer-add-readings.html" class="nav-item">
+            <a href="field-officer-addreadings.html" class="nav-item active">
                 Add Readings
             </a>
-            <a href="field-officer-complaint.html" class="nav-item">
-                Complaint Handling
+            <a href="field-officer-viewhistory.html" class="nav-item">
+                View History
+            </a>
+            <a href="field-officer-customerdetails.html" class="nav-item">
+                Customer Details
             </a>
         </nav>
         <div class="sidebar-footer-container">
@@ -64,7 +64,7 @@
                 <div class="management-header">
                     <div class="management-title">
                         <div>
-                            <h2>Customers</h2>
+                            <h2>Add Reading</h2>
                         </div>
                         <div class="management-title-right">
                             <button class="icon-btn" id="refreshBtn" onclick="refreshCustomers()">
@@ -79,7 +79,7 @@
                                 <circle cx="11" cy="11" r="8"/>
                                 <path d="m21 21-4.35-4.35"/>
                             </svg>
-                            <input type="text" id="searchInput" placeholder="Search by Name, Email, NIC, Id, Branch...">
+                            <input type="text" id="searchInput" placeholder="Search by Name, Email, NIC, Id...">
                         </div>
 
                         <select id="filterStatus" class="filter-select">
@@ -105,12 +105,12 @@
                 <div class="records-container" id="recordsContainer">
                 </div>
 
-                </div>
-
-                <div class="pagination" id="pagination"></div>
             </div>
 
-    </main>
+            <div class="pagination" id="pagination"></div>
+        </div>
+
+</main>
 </div>
 
 <div class="modal-overlay" id="modalOverlay"></div>
@@ -121,6 +121,6 @@
 
 <script src="../js/common/theme.js"></script>
 <script src="../js/admin/utils.js"></script>
-<script src="../js/field-officer/customer-management.js"></script>
+<script src="../js/field-officer/field-officer-addreadings.js"></script>
 </body>
 </html>

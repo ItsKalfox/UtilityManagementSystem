@@ -17,10 +17,9 @@ async function fetchAreas() {
     if (searchTerm) params.append('search', searchTerm);
 
     try {
-        const response = await fetch(`/areas?${params.toString()}`, {
+        const response = await fetch(`/api/list/areas?${params.toString()}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
             }
         });
 
@@ -95,7 +94,7 @@ window.addRecord = async function () {
                         <h4>How area creation works</h4>
                     </div>
                     <ul>
-                        <li><strong>Area Code</strong> is the unique identifier (e.g., 'COL-01').</li>
+                        <li><strong>Area Code</strong> is the unique identifier (e.g., 'A001').</li>
                         <li>This code will be used to group customers and meter readers.</li>
                     </ul>
                 </div>
@@ -104,14 +103,14 @@ window.addRecord = async function () {
             <div>
                 <div class="detail-item">
                     <span class="detail-label">Area Code</span>
-                    <input class="detail-value detail-input" id="area_code" placeholder="e.g. ZN-001">
+                    <input class="detail-value detail-input" id="area_code" placeholder="e.g. A001">
                 </div>
             </div>
 
             <div>
                 <div class="detail-item">
                     <span class="detail-label">Area Name</span>
-                    <input class="detail-value detail-input" id="area_name" placeholder="e.g. North District">
+                    <input class="detail-value detail-input" id="area_name" placeholder="e.g. Colombo">
                 </div>
             </div>
         </div>
@@ -211,5 +210,37 @@ async function refreshAudits() {
         }
     }, remaining);
 }
+
+const areas = response; // plain list, no "content"
+areas.forEach(area => {
+    console.log(area.areaCode, area.areaName);
+});
+
+
+// Fetch areas from your API
+fetch("/api/list/areas?page=0&size=20")
+    .then(res => res.json())
+    .then(data => {
+        const tableBody = document.querySelector("#area-table tbody"); // target tbody
+        tableBody.innerHTML = ""; // clear old data
+
+        data.forEach(area => {
+            const row = document.createElement("tr");
+
+            const codeCell = document.createElement("td");
+            codeCell.textContent = area.areaCode;
+            row.appendChild(codeCell);
+
+            const nameCell = document.createElement("td");
+            nameCell.textContent = area.areaName;
+            row.appendChild(nameCell);
+
+            tableBody.appendChild(row); // add row to table
+        });
+    })
+    .catch(err => {
+        console.error("Error fetching areas:", err);
+    });
+
 
 document.addEventListener('DOMContentLoaded', fetchAreas);

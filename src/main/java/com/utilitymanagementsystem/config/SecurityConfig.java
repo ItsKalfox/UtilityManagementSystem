@@ -49,7 +49,8 @@ public class SecurityConfig {
                                 "/customer/**",
                                 "/customer-index.html",
                                 "/api/customer/**",
-                                "/api/complaints/**"
+                                "/api/complaints/**",
+                                "/field-officer/**"
                         ).permitAll()
 
                         .requestMatchers(

@@ -29,6 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -42,6 +43,7 @@ public class SecurityConfig {
                                 "/admin/**",
                                 "/images/**",
                                 "/favicon.ico",
+                                "/cashier/**",
                                 "/api/auth/**",
                                 "/customer/**",
                                 "/customer-index.html",
@@ -65,6 +67,7 @@ public class SecurityConfig {
 
                 .httpBasic(basic -> basic.disable())
                 .formLogin(login -> login.disable());
+
         return http.build();
     }
 }

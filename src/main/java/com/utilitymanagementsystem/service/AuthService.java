@@ -1,16 +1,31 @@
 package com.utilitymanagementsystem.service;
 
-import com.utilitymanagementsystem.dto.auth.*;
-import com.utilitymanagementsystem.model.*;
-import com.utilitymanagementsystem.repository.*;
-import com.utilitymanagementsystem.security.JwtUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import com.utilitymanagementsystem.dto.auth.LoginAdminResponseDTO;
+import com.utilitymanagementsystem.dto.auth.LoginRequestDTO;
+import com.utilitymanagementsystem.dto.auth.LoginResponseDTO;
+import com.utilitymanagementsystem.dto.auth.PasswordSetupRequestDTO;
+import com.utilitymanagementsystem.model.Admin;
+import com.utilitymanagementsystem.model.Cashier;
+import com.utilitymanagementsystem.model.Customer;
+import com.utilitymanagementsystem.model.FieldOfficer;
+import com.utilitymanagementsystem.model.Manager;
+import com.utilitymanagementsystem.model.User;
+import com.utilitymanagementsystem.repository.AdminRepository;
+import com.utilitymanagementsystem.repository.CashierRepository;
+import com.utilitymanagementsystem.repository.CustomerRepository;
+import com.utilitymanagementsystem.repository.FieldOfficerRepository;
+import com.utilitymanagementsystem.repository.ManagerRepository;
+import com.utilitymanagementsystem.repository.PermissionRepository;
+import com.utilitymanagementsystem.repository.UserRepository;
+import com.utilitymanagementsystem.security.JwtUtil;
 
 @Service
 public class AuthService {
@@ -251,6 +266,8 @@ public class AuthService {
         String email = user.getEmail();
 
         List<String> roles = new ArrayList<>();
+        roles.add("CASHIER");
+
         List<String> permissions = new ArrayList<>();
 
         String token = jwtUtil.generateToken(email, roles, permissions);

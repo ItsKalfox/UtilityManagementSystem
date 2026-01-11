@@ -48,8 +48,6 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/customer/**",
                                 "/customer-index.html",
-                                "/api/customer/**",
-                                "/api/complaints/**",
                                 "/field-officer/**",
                                 "/manager/**"
                         ).permitAll()
@@ -62,8 +60,9 @@ public class SecurityConfig {
                                 "/api/auth/cashier/login",
                                 "/api/auth/field-officer/login",
                                 "/api/manager/dashboard",
-                                "/api/manager/revenue/report"
-
+                                "/api/manager/revenue/report",
+                                "/api/customer/**",
+                                "/api/complaints/**"
                         ).permitAll()
 
                         .anyRequest().authenticated()

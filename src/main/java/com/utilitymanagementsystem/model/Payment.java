@@ -2,11 +2,13 @@ package com.utilitymanagementsystem.model;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "payment")
 public class Payment {
     @Id
@@ -29,7 +31,7 @@ public class Payment {
     private BigDecimal amount;
 
     @ColumnDefault("getdate()")
-    @Column(name = "payment_date")
+    @Column(name = "payment_date", insertable = false, updatable = false)
     private Instant paymentDate;
 
     @OneToOne(mappedBy = "payment")

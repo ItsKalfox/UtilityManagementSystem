@@ -1,8 +1,3 @@
-(function authGuard() {
-    const token = localStorage.getItem("token");
-    if (!token) window.location.replace("../login/login.html");
-})();
-
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
     const fullName = localStorage.getItem("fullName") || "Manager";
@@ -32,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.clear();
                 if (theme !== null) localStorage.setItem("theme", theme);
 
-                window.location.replace("../login/login.html");
+                window.location.replace("../index.html");
                 return;
             }
 
@@ -40,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("fullName");
                 localStorage.removeItem("email");
-                window.location.replace("../login/login.html");
+                window.location.replace("../index.html");
             }
         });
     }

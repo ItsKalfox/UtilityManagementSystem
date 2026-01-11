@@ -1,8 +1,3 @@
-(function authGuard() {
-    const token = localStorage.getItem("token");
-    if (!token) window.location.replace("../login/login.html");
-})();
-
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
     const fullName = localStorage.getItem("fullName") || "Manager";

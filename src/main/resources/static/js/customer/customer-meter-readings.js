@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => console.error(err));
 });
 
-// ================= SUMMARY CARDS =================
 function renderSummaryCards(data) {
     const totalUnits = data.reduce((sum, r) => sum + r[2], 0);
     const avg = (totalUnits / data.length).toFixed(2);
@@ -29,7 +28,6 @@ function renderSummaryCards(data) {
     document.getElementById("lastReading").innerText = last;
 }
 
-// ================= TABLE =================
 function renderTable(data) {
     const tbody = document.getElementById("meterTableBody");
     if (!tbody) return;
@@ -48,7 +46,6 @@ function renderTable(data) {
     });
 }
 
-// ================= CHART =================
 let meterChartInstance = null;
 
 function renderChart(data) {
@@ -61,7 +58,6 @@ function renderChart(data) {
 
     const units = data.map(r => r[2]);
 
-    // Destroy old chart if exists
     if (meterChartInstance) {
         meterChartInstance.destroy();
     }

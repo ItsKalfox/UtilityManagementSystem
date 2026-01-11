@@ -1,30 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
     const isLoggedIn = localStorage.getItem("customerLoggedIn");
 
-    // If NOT logged in and trying to access dashboard
-    if (!isLoggedIn && window.location.pathname.includes("CustomerDashboard")) {
-        window.location.replace("/CustomerLogin.html");
+    if (!isLoggedIn && window.location.pathname.includes("customer-dashboard")) {
+        window.location.replace("../../customer-index.html");
     }
 });
 
-// ==================================================
-// AUTH STATUS
-// ==================================================
 const isLoggedIn = localStorage.getItem("customerLoggedIn");
 
-// ==================================================
-// PAGE GUARD (PROTECT DASHBOARD PAGE)
-// ==================================================
 if (document.body.classList.contains("dashboard-page")) {
     if (!isLoggedIn) {
-       // window.location.href = "/CustomerDashboard.html";
-        window.location.href = "/CustomerLogin.html";
+        window.location.href = "../../customer-index.html";
     }
 }
 
-// ==================================================
-// SIGN-IN MODAL OPEN / CLOSE (LANDING PAGE)
-// ==================================================
 const openBtn = document.getElementById("openSignup");
 const closeBtn = document.getElementById("closeModal");
 const modal = document.getElementById("signupModal");
@@ -43,11 +32,6 @@ if (closeBtn) {
     });
 }
 
-
-
-// ==================================================
-// NAVIGATION BLOCK BEFORE LOGIN
-// ==================================================
 const restrictedLinks = document.querySelectorAll(
     'a[href="#bill"], a[href="#tariff"], a[href="#meter"], a[href="#complaint"]'
 );
@@ -61,9 +45,6 @@ restrictedLinks.forEach(link => {
     });
 });
 
-// ==================================================
-// SLIDESHOW (3 IMAGES)
-// ==================================================
 let currentSlide = 0;
 const slides = document.querySelectorAll(".slide-item");
 const progress = document.querySelector(".progress");
@@ -73,14 +54,11 @@ function showSlide(index) {
     slides[index].classList.add("active");
 
     if (progress) {
-        // 1️⃣ Remove transition
         progress.style.transition = "none";
         progress.style.width = "0%";
 
-        // 2️⃣ FORCE browser reflow 🔥
-        progress.offsetHeight; // <-- THIS LINE IS THE MAGIC
+        progress.offsetHeight;
 
-        // 3️⃣ Re-apply transition
         progress.style.transition = "width 6s linear";
         progress.style.width = "100%";
     }
@@ -96,9 +74,6 @@ if (slides.length > 0) {
     }, 6000);
 }
 
-// ==================================================
-// LIVE DATE & TIME
-// ==================================================
 function updateDateTime() {
     const dt = document.getElementById("datetime");
     if (!dt) return;
@@ -115,5 +90,5 @@ function logout() {
     localStorage.removeItem("customerLoggedIn");
     localStorage.removeItem("customerEmail");
     localStorage.removeItem("customerToken");
-    window.location.replace("/CustomerLogin.html");
+    window.location.replace("/customer-index.html");
 }

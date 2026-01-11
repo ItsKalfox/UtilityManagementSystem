@@ -18,13 +18,11 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
         .then(data => {
             console.log("Login success:", data);
 
-            // 🔑 SAVE LOGGED-IN CUSTOMER DETAILS
             localStorage.setItem("customerId", data.userId);
             localStorage.setItem("customerEmail", data.email);
             localStorage.setItem("customerLoggedIn", "true");
 
-            // 🚀 GO TO DASHBOARD
-            window.location.replace("/CustomerDashboard.html");
+            window.location.replace("customer/customer-dashboard.html");
         })
 
         .catch(err => alert("Login failed"));

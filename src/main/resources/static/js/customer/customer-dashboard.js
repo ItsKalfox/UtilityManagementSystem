@@ -1,25 +1,15 @@
-// ==========================================
-// CUSTOMER DASHBOARD – TARIFF PLAN HANDLING
-// ==========================================
-
 document.addEventListener("DOMContentLoaded", () => {
 
-    // Get logged-in customer ID
     const customerId = localStorage.getItem("customerId");
 
-    // If customer not logged in → redirect
     if (!customerId) {
-        window.location.href = "/CustomerLogin.html";
+        window.location.href = "/customer-index.html";
         return;
     }
 
-    // Load tariff history
     loadTariffHistory(customerId);
 });
 
-// ==========================================
-// LOAD TARIFF HISTORY FROM BACKEND
-// ==========================================
 function loadTariffHistory(customerId) {
     fetch(`/api/customer/${customerId}/tariff-history`)
         .then(response => response.json())
@@ -29,9 +19,6 @@ function loadTariffHistory(customerId) {
         });
 }
 
-// ==========================================
-// RENDER TARIFF HISTORY + CURRENT TARIFF
-// ==========================================
 function renderTariffHistory(data) {
 
     const historyContainer = document.getElementById("tariffHistoryContainer");

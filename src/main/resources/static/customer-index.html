@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/customer-style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <header>
+        <h2 class="logo">Utility Management</h2>
+        <button class="btn-outline" id="openSignup">Sign In</button>
+    </header>
+
+    <section class="hero">
+        <div class="slides">
+            <div class="slide-item active">
+                <img src="images/electricity2.jpg">
+            </div>
+            <div class="slide-item">
+                <img src="images/water2.jpg">
+            </div>
+            <div class="slide-item">
+                <img src="images/gas2.jpg">
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-text-box">
+                <h1 style="font-size: 50px" >Reliable Electricity Services</h1>
+                <p style="font-size: 30px">View your bills, track usage, and manage services easily.</p>
+                <p style="font-size: 30px">Fast. Secure. Transparent.</p>
+            </div>
+        </div>
+
+        <div class="datetime" id="datetime"></div>
+
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="service-card">
+            <span class="material-icons-outlined">bolt</span>
+            <h4>Electricity</h4>
+            <p>View usage & billing history</p>
+        </div>
+
+        <div class="service-card">
+            <span class="material-icons-outlined">water_drop</span>
+            <h4>Water</h4>
+            <p>Track monthly consumption</p>
+        </div>
+
+        <div class="service-card">
+            <span class="material-icons-outlined">local_fire_department</span>
+            <h4>Gas</h4>
+            <p>Monitor supply & reports</p>
+        </div>
+    </section>
+
+    <div class="signin-cta open-login">
+        <div class="signin-overlay">
+            <h2>Sign in to view your details</h2>
+            <p>Access billing history, payments, and usage insights</p>
+        </div>
+    </div>
+
+    <section class="services-description">
+
+        <div class="service-row">
+            <div class="service-text">
+                <h2>Electricity Services</h2>
+                <p>
+                    Customers can easily view their electricity bills, check previous
+                    billing history, and explore available tariff plans. Our platform
+                    helps manage electricity-related information in a simple and
+                    convenient way.
+                </p>
+
+            </div>
+            <div class="service-image">
+                <img src="images/electricity3.jpg" alt="Electricity Service">
+            </div>
+        </div>
+
+        <div class="service-row reverse">
+            <div class="service-image">
+                <img src="images/water3.jpg" alt="Water Service">
+            </div>
+            <div class="service-text">
+                <h2>Water Services</h2>
+                <p>
+                    Customers can access water bill details, view usage records,
+                    and track payment history at any time. This service ensures
+                    easy access to important water-related information.
+                </p>
+            </div>
+        </div>
+
+        <div class="service-row">
+            <div class="service-text">
+                <h2>Gas Services</h2>
+                <p>
+                    Our gas services allow customers to check gas bills, review
+                    previous usage, and view tariff details online. This provides
+                    better control and transparency for gas utility management.
+                </p>
+
+            </div>
+            <div class="service-image">
+                <img src="images/gas3.jpg" alt="Gas Service">
+            </div>
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-box large">
+            <span class="close-btn" id="closeModal">&times;</span>
+
+            <h1>Sign In</h1>
+
+            <form id="loginForm">
+
+                <div class="input-group">
+                    <span class="material-icons-outlined">email</span>
+                    <input type="email" id= "email" placeholder="Email" required>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons-outlined">lock</span>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+
+                <button type="submit" id="openLoginBtn" class="login-btn">Sign In</button>
+
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Contact: <i class="bi bi-envelope-at-fill"></i> support@utility.com |  <i class="bi bi-telephone-fill"></i> +94 77 123 4567</p>
+        <i class="bi bi-instagram"></i>
+        <i class="bi bi-facebook"></i>
+        <i class="bi bi-whatsapp"></i>
+    </footer>
+
+    <script src="js/customer/customer-auth.js"></script>
+    <script src="js/customer/customer-login.js"></script>
+</body>
+</html>

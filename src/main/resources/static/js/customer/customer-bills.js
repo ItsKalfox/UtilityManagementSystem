@@ -4,22 +4,16 @@ function loadBills() {
     const email = localStorage.getItem("customerEmail");
 
     if (!email) {
-        window.location.href = "/CustomerLogin.html";
+        window.location.href = "/customer-index.html";
         return;
     }
 
 
     if (!email) {
-        // If no logged-in customer, redirect to login
-        window.location.href = "CustomerLogin.html";
+        window.location.href = "customer-index.html";
         console.error("Customer email not found in localStorage");
         return;
     }
-
-   // if (!email) {
-     //   console.error("Customer email not found in localStorage");
-       // return;
-    //}
 
     fetch(`http://localhost:8080/api/customer/bills?email=${email}`)
         .then(response => response.json())

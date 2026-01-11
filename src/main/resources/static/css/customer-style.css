@@ -1,0 +1,893 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css");
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+h1{
+    font-size: 50px;
+    font-family: "Times New Roman";
+}
+
+header {
+    position: fixed;
+    top: 0;left: 0;right: 0;
+    padding: 15px 24px;
+    background: linear-gradient(
+            90deg, rgb(13, 43, 28), rgb(13, 43, 28,0.9));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    box-sizing: border-box;
+    padding-right: 20px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-right: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: rgba(218, 232, 156, 0.24);
+}
+
+/* Optional: disabled look before login */
+nav a.disabled {
+    pointer-events: none;opacity: 0.6;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logout-btn {
+    margin-left: auto;
+    padding: 8px 18px;
+    background-color: #f3f1f1;
+    color: #0d2b1c;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    //align-items: ;
+}
+
+
+
+.logout-btn:hover {
+    background-color: rgba(243, 241, 241, 0.7);
+}
+
+
+.btn-outline {
+    border: 2px solid #fff;background: rgba(248, 245, 245, 0.09);color: #fff;
+    padding: 8px 18px;
+    border-radius: 25px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-right: 10px;
+
+}
+.btn-outline:hover {
+    background: #fff;color: #0d2b1c;
+}
+
+.hero {
+    height: 75vh;
+    position: relative;
+    color: white;background: #0d2b1c;
+    overflow: hidden;
+}
+
+.hero.small {
+    height: 40vh;
+}
+.datetime{
+    font-size: 36px;
+}
+
+
+/* ===== TEXT BOX ON IMAGE (BLACK TRANSPARENT BLUR) ===== */
+
+.description{
+    font-size: 37px;
+}
+.hero-content {
+    position: absolute;
+    top: 50%;left: 60px;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+
+.hero-text-box {
+    background: rgb(13, 43, 28,0.45);  color: #fff;
+    backdrop-filter: blur(6px);
+    padding: 25px 30px;
+    max-width: 420px;
+    border-radius: 8px;
+
+}
+
+.hero-text-box h1 {
+    margin-bottom: 12px;
+    font-size: 28px;
+}
+
+.hero-text-box p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 6px;
+    color: #f1f1f1;
+}
+
+
+.datetime {
+    position: absolute;
+    bottom: 20px;
+    left: 50px;
+}
+
+.progress-bar {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.progress {
+    width: 0%;height: 100%;
+    background: rgb(34, 67, 51);
+    border-radius: 0 4px 4px 0;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgb(13, 43, 28,0.37);
+    backdrop-filter: blur(10px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+
+.modal-box.large {
+    background: #fff; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    width: 420px;
+    padding: 40px;
+    border-radius: 14px;
+    position: relative;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+}
+
+.input-group span {
+    color: #0d2b1c;
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.input-group input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+}
+
+
+.section {
+    padding: 60px;
+}
+
+footer {
+    background: #0d2b1c; color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+
+.services {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.service-card {
+    background: white;  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-6px);
+}
+
+.service-card span {
+    font-size: 40px;
+    color: #0d2b1c;
+}
+
+.service-card h4 {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+
+.services-description {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 20px;
+}
+
+.service-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border-radius: 12px;
+    margin-bottom: 50px;
+    padding: 40px;gap: 40px;
+}
+
+.service-row.reverse {
+    flex-direction: row-reverse;
+}
+
+.service-text {
+    flex: 1;
+}
+
+.service-text h2 {
+    font-size: 26px;
+    margin-bottom: 15px;
+    color: #1f2933;
+}
+
+.service-text p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #4b5563;
+    margin-bottom: 20px;
+}
+
+.service-text button {
+    padding: 10px 22px;
+    border: none;
+    background-color: #1f2933;color: #ffffff;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.service-text button:hover {
+    background-color: #374151;
+}
+
+.service-image {
+    flex: 1;
+    text-align: center;
+}
+
+.service-image img {
+    width: 100%;
+    max-width: 380px;
+    border-radius: 12px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .service-row,
+    .service-row.reverse {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 30px;
+    background: #0d2b1c;color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.login-btn:hover {
+    background: #0d2b1c;
+}
+
+.close-btn {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 22px;
+    cursor: pointer;
+
+}
+
+
+.logo{
+    font-family: "Times New Roman";
+}
+
+/* ===== BILL HISTORY SECTION ===== */
+
+.bill-section {
+    padding: 80px 60px;
+    background: #f5f7f6;
+}
+
+.section,
+.bill-section {
+    min-height: 100vh;                /* full screen height */
+    scroll-margin-top: 90px;          /* offset for fixed navbar */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.bill-title {
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #0d2b1c;
+    font-family: "Times New Roman";
+    padding-top: 120px;               /* space from top */
+}
+
+/* Tariff, meter, complaint spacing */
+#tariff,
+#meter,
+#complaint {
+    padding-top: 120px;
+}
+
+/* GREEN TRANSPARENT BOX */
+.bill-score-box {
+    background: rgb(92, 138, 120);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* WHITE CARD */
+.bill-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    overflow-x: auto;
+}
+
+/* TABLE */
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.bill-table thead {
+    background: rgba(13, 43, 28, 0.08);
+}
+
+.bill-table th {
+    padding: 14px 12px;
+    text-align: left;
+    color: #0d2b1c;
+    font-weight: 600;
+}
+
+.bill-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.bill-table tr:hover {
+    background: rgba(13, 43, 28, 0.04);
+}
+
+/* STATUS COLORS */
+.paid {
+    color: #0a8f4d;
+    font-weight: 600;
+}
+
+.due {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+
+/* ===== SIGN-IN CTA SHAPE ===== */
+
+/*.signin-cta {*/
+/*    margin: 90px auto;*/
+/*    width: 95%;                 !* slightly wider *!*/
+/*    max-width: 1450px;          !* increased from 1100 *!*/
+/*    height: 300px;              !* increased from 260 *!*/
+/*    border-radius: 24px;*/
+/*    background: linear-gradient(*/
+/*            rgb(13, 44, 29), rgba(13, 43, 28, 0.65)*/
+/*    );*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    transition: transform 0.3s ease, box-shadow 0.3s ease;*/
+/*}*/
+
+
+/*.signin-cta:hover {*/
+/*    transform: translateY(-6px);*/
+/*    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);*/
+/*}*/
+
+.signin-overlay {
+    text-align: center;
+    color: #ffffff;
+    padding: 40px;
+    backdrop-filter: blur(6px);
+}
+
+.signin-overlay h2 {
+    font-size: 34px;
+    font-family: "Times New Roman";
+    margin-bottom: 12px;
+}
+
+.signin-overlay p {
+    font-size: 16px;
+    opacity: 0.9;
+}
+.footer {
+    font-size: 15px;
+}
+.header-section{
+    font-family: "Times New Roman";
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+}
+
+/* ===============================
+   TARIFF PLAN SECTION
+================================ */
+
+.tariff-section {
+    min-height: 100vh;
+    padding: 140px 0 100px;
+    background: linear-gradient(
+            180deg,
+            #0f3d2e 0%, #145a42 50%, #0b2e22 100%
+    );
+    display: flex;
+    justify-content: center;
+}
+
+.tariff-section > div {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.tariff-section h2 {
+    text-align: center;
+    color: #eafff4;
+    font-size: 36px;
+    font-family: "Times New Roman";
+    margin-bottom: 70px;
+}
+
+/* ===============================
+   CARD ROW (CENTERED 2-COLUMN)
+================================ */
+.tariff-card-row {
+    display: grid;
+    grid-template-columns: repeat(2, 420px);
+    justify-content: center;   /* center the grid */
+    gap: 190px;
+}
+
+
+.plan-card {
+    position: relative;
+    width: 420px;
+    height: 560px; box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);background: #ffffff;
+    padding: 50px 45px;
+    border-radius: 20px;
+    text-align: center;
+    animation: fadeUp 0.8s ease forwards;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertical centering inside card */
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    animation: fadeUp 0.8s ease forwards;
+}
+.plan-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 25px 55px rgba(0, 0, 0, 0.35);
+}
+.plan-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f3d2e;
+    margin-bottom: 30px;
+}
+
+/* ===== PRICE ===== */
+
+.plan-price {
+    font-size: 46px;
+    font-weight: 700;
+    color: #145a42;
+    margin-bottom: 35px;
+}
+
+.plan-price span,
+.plan-price small {
+    font-size: 18px;
+    color: #1b5e44;
+}
+
+/* ===== FEATURES ===== */
+
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.plan-features li {
+    font-size: 17px;
+    padding: 14px 0;
+    color: #1e5f46;
+    border-top: 1px solid rgba(13, 43, 28, 0.08);
+}
+
+.active-plan {
+    border: 3px solid #f5c542;
+    box-shadow:
+            0 0 0 rgba(245, 197, 66, 0), 0 18px 45px rgba(0, 0, 0, 0.35);
+    animation: glowPulse 2.5s infinite ease-in-out;
+}
+
+.plan-badge {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f5c542;color: #1f3b2c;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 20px;
+}
+
+@media (max-width: 900px) {
+    .tariff-card-row {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .plan-card {
+        width: 90%;
+        height: auto;
+    }
+}
+/* Entrance animation */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glowPulse {
+    0% {
+        box-shadow: 0 0 0 rgba(245, 197, 66, 0.4), 0 18px 45px rgba(0, 0, 0, 0.35);
+    }
+    50% {
+        box-shadow:
+                0 0 25px rgba(245, 197, 66, 0.9), 0 22px 55px rgba(0, 0, 0, 0.45);
+    }
+    100% {
+        box-shadow:
+                0 0 0 rgba(245, 197, 66, 0.4), 0 18px 45px rgba(0, 0, 0, 0.35);
+    }
+}
+#currentTariffCard .plan-card {
+    animation-delay: 0.1s;
+}
+
+#tariffHistoryContainer .plan-card {
+    animation-delay: 0.25s;
+}
+
+/* ===============================
+   METER READING SECTION
+================================ */
+
+.meter-wrapper {
+    width: 100%;
+    max-width: 1700px;
+    margin: auto;
+    padding: 20px 18px 70px;
+}
+
+.meter-title {
+    text-align: center;
+    font-size: 34px;
+    color: #eafff4;
+    margin-bottom: 40px;
+}
+
+/* SUMMARY CARDS */
+.meter-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 50px;
+}
+
+
+.meter-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.25);
+}
+
+.meter-card h4 {
+    color: #145a42;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.meter-main {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr; /* chart wider than table */
+    gap: 30px;margin-top: 40px;
+}
+.meter-card p {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0f3d2e;
+}
+
+.meter-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px 20px;text-align: center;
+    transition: all 0.25s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+.meter-chart {
+    background: #ffffff; box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+    border-radius: 18px;
+    padding: 25px;
+    transition: all 0.25s ease;
+}
+
+
+.meter-table {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 16px;
+    overflow-y: auto;
+    max-height: 420px;
+}
+
+
+.meter-chart:hover {
+    transform: translateY(-4px);
+}
+.meter-table:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 55px rgba(31,122,85,0.35);
+}
+
+.meter-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.meter-table th {
+    background: rgba(13, 43, 28, 0.08);
+    color: #0d2b1c;
+    padding: 14px;
+    text-align: left;
+}
+
+.meter-table td {
+    padding: 14px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.meter-table tbody tr {
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.meter-table tbody tr:hover {
+    background: rgba(13, 43, 28, 0.07);
+    transform: scale(1.01);
+}
+
+
+#meter {
+    min-height: auto;
+    padding-bottom: 80px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .meter-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .meter-main {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Complaint section takes full width */
+#complaint {
+    width: 100%;
+    padding: 40px 60px;
+}
+#complaint h2 {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 28px;   /* slightly bigger */
+    margin-bottom: 20px;
+}
+
+.complaint-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+/* Form card */
+.complaint-form {
+    width: 100%;
+    max-width: 800px;   /* Uses empty space nicely */
+    background: #ffffff;box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    padding: 30px;
+    border-radius: 12px;
+}
+
+/* Each input group */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+/* Inputs */
+.complaint-form select,
+.complaint-form textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* Textarea size */
+.complaint-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Button */
+.complaint-form button {
+    padding: 12px;
+    width: 200px;
+    background-color: #2e7d32;color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Button hover */
+.complaint-form button:hover {
+    background-color: #1b5e20;
+}
+.complaint-info {
+    margin-top: 40px;color: #555;font-size: 14px;
+}
+#complaint {
+    background: linear-gradient(
+            180deg,
+            #ffffff 0%, #f4f8f4 100%
+    );
+}
+#description {
+    min-height: 180px;   /* increased height */
+    resize: vertical;    /* user can resize if needed */
+}
+#complaint.section {
+    min-height: unset;
+    padding-bottom: 40px;
+}
+/* ===============================
+   PURE CSS SLIDESHOW
+================================ */
+
+.slides {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.slide-item {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+
+}
+
+.slide-item.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+.slide-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.hero-content,
+.datetime,
+.progress-bar {
+    position: absolute;
+    z-index: 10;
+}
+.complaint-error {
+    color: #c0392b;
+    font-size: 14px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.invalid {
+    border: 2px solid #c0392b;
+}
+.complaint-message {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.complaint-message.success {
+    color: green;
+}
+
+.complaint-message.error {
+    color: red;
+}

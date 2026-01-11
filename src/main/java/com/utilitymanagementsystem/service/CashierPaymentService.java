@@ -18,8 +18,6 @@ import com.utilitymanagementsystem.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
-
-
 import java.math.BigDecimal;
 
 @Service

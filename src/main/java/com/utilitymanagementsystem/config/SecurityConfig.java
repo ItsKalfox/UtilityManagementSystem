@@ -43,7 +43,13 @@ public class SecurityConfig {
                                 "/admin/**",
                                 "/images/**",
                                 "/favicon.ico",
-                                "/cashier/**"
+                                "/cashier/**",
+                                "/cashier/**",
+                                "/api/auth/**",
+                                "/customer/**",
+                                "/customer-index.html",
+                                "/api/customer/**",
+                                "/api/complaints/**"
                         ).permitAll()
 
                         .requestMatchers(

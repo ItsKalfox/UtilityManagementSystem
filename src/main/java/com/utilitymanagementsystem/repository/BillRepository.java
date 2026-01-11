@@ -14,6 +14,16 @@ import java.util.Optional;
 
 public interface BillRepository extends JpaRepository<Bill, Integer> {
 
+    @Query(value = """
+        SELECT b.*
+        FROM bill b
+        JOIN utility_connection uc ON b.connection_id = uc.connection_id
+        JOIN customer c ON uc.customer_id = c.user_id
+        JOIN users u ON c.user_id = u.user_id
+        WHERE u.email = :email
+        ORDER BY b.period_end DESC
+    """, nativeQuery = true)
+    List<Bill> findBillsByCustomerEmail(@Param("email") String email);
     Optional<Bill> findFirstByConnection_ConnectionIdOrderByPeriodEndDesc(Integer connectionId);
     List<Bill> findByConnection_ConnectionIdOrderByPeriodEndDesc(Integer connectionId, Pageable pageable);
 

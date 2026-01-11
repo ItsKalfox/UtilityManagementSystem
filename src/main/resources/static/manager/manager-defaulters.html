@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Manager - Defaulters</title>
+
+    <link rel="stylesheet" href="../css/styles.css"/>
+    <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon"/>
+</head>
+
+<body>
+<div class="theme-toggle-container">
+    <label class="theme-toggle">
+        <input type="checkbox" id="themeToggle"/>
+        <span class="slider"></span>
+    </label>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="dashboard-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header-container">
+            <div class="sidebar-header">
+                <h2>Manager Panel</h2>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="revenue-report.html" class="nav-item">
+                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon"/>
+                Revenue Reports
+            </a>
+
+            <a href="manager-defaulters.html" class="nav-item active">
+                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon"/>
+                Defaulters
+            </a>
+
+            <a href="manager-usage.html" class="nav-item">
+                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon"/>
+                Usage Report
+            </a>
+        </nav>
+
+        <div class="sidebar-footer-container">
+            <div class="sidebar-footer">
+                <button class="icon-btn" onclick="handleSettings()">
+                    <img src="../images/settings-icon.svg" alt="settings"/>
+                </button>
+
+                <!-- ✅ FIX: call logout modal -->
+                <button class="icon-btn logout-btn" id="logoutBtn" onclick="handleLogout()">
+                    <img src="../images/logout-icon.svg" alt="logout"/>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <header class="header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">M</div>
+                <div class="user-details">
+                    <div class="user-name" id="fullName">Manager</div>
+                    <div class="user-email" id="email">manager@ums.com</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="management-container">
+                <div class="management-header">
+                    <div class="management-title">
+                        <h2>Defaulters & Outstanding Payments</h2>
+                        <p class="muted">Customers with outstanding amounts.</p>
+                    </div>
+
+                    <div class="info-box" style="border-left: 4px solid var(--danger);">
+                        <h4>Attention</h4>
+                        <p>Review customers and take action if required.</p>
+                    </div>
+                </div>
+
+                <div class="management-controls">
+                    <div class="search-box">
+                        <input id="searchInput" type="text" placeholder="Search by ID / Name / Area..."/>
+                    </div>
+
+                    <select id="sortSelect" class="sort-select">
+                        <option value="amountDesc">Sort by Highest Due</option>
+                        <option value="amountAsc">Sort by Lowest Due</option>
+                        <option value="nameAsc">Sort by Name (A-Z)</option>
+                    </select>
+
+                    <button class="btn btn-secondary" id="reloadBtn" type="button">Reload</button>
+                </div>
+
+                <div class="records-container" id="recordsContainer">
+                    <div class="record-item" style="background: var(--gray-100); font-weight: 600;">
+                        <div class="record-info">
+                            <span style="color: var(--text-primary)">Customer ID</span>
+                            <span style="color: var(--text-primary)">Customer</span>
+                            <span style="color: var(--text-primary)">Area</span>
+                            <span style="color: var(--text-primary)">Outstanding (Rs.)</span>
+                            <span style="color: var(--text-primary)">Status</span>
+                        </div>
+                        <div class="record-actions">Action</div>
+                    </div>
+                    <!-- dynamic -->
+                </div>
+
+                <div class="pagination">
+                    <button class="page-btn" id="prevBtn" type="button">Prev</button>
+                    <span class="muted" id="pageInfo">Page 1</span>
+                    <button class="page-btn" id="nextBtn" type="button">Next</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal" id="recordModal"></div>
+
+<!-- ✅ ADD: confirm modal needed for logout -->
+<div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
+<div id="confirmModal" class="modal modal-confirm"></div>
+
+<!-- ✅ FIX: script order (utils BEFORE defaulters.js) -->
+<script src="../js/common/theme.js"></script>
+<script src="../js/manager/utils.js"></script>
+<script src="../js/manager/defaulters.js"></script>
+</body>
+</html>

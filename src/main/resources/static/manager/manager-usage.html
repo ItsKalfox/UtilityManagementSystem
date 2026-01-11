@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Manager - Usage Report</title>
+
+    <link rel="stylesheet" href="../css/styles.css"/>
+    <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon"/>
+</head>
+
+<body>
+<div class="theme-toggle-container">
+    <label class="theme-toggle">
+        <input type="checkbox" id="themeToggle"/>
+        <span class="slider"></span>
+    </label>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="dashboard-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header-container">
+            <div class="sidebar-header">
+                <h2>Manager Panel</h2>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                Dashboard
+            </a>
+
+            <a href="revenue-report.html" class="nav-item">
+                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon"/>
+                Revenue Reports
+            </a>
+
+            <a href="manager-defaulters.html" class="nav-item">
+                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon"/>
+                Defaulters
+            </a>
+
+            <a href="manager-usage.html" class="nav-item active">
+                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon"/>
+                Usage Report
+            </a>
+        </nav>
+
+        <div class="sidebar-footer-container">
+            <div class="sidebar-footer">
+                <button class="icon-btn" onclick="handleSettings()">
+                    <img src="../images/settings-icon.svg" alt="settings"/>
+                </button>
+
+                <!-- ✅ NOW WORKS (same as dashboard) -->
+                <button class="icon-btn logout-btn" id="logoutBtn" onclick="handleLogout()">
+                    <img src="../images/logout-icon.svg" alt="logout"/>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <header class="header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">M</div>
+                <div class="user-details">
+                    <div class="user-name" id="fullName">Manager</div>
+                    <div class="user-email" id="email">manager@ums.com</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+
+            <!-- KPIs -->
+            <section class="stats-section">
+                <h3 class="section-title">Usage Summary</h3>
+
+                <div class="stats-grid">
+                    <div class="stat-card success">
+                        <div class="stat-label">Total Income (All Bills)</div>
+                        <div class="stat-value" id="kpiIncome">Rs. 0</div>
+                    </div>
+
+                    <div class="stat-card highlight">
+                        <div class="stat-label">Total Customers</div>
+                        <div class="stat-value" id="kpiCustomers">0</div>
+                    </div>
+
+                    <div class="stat-card alert">
+                        <div class="stat-label">Total Connections</div>
+                        <div class="stat-value" id="kpiConnections">0</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Utility overview -->
+            <section class="stats-section">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                    <h3 class="section-title" style="margin:0;">Utility Type Overview</h3>
+                    <button class="btn btn-secondary" id="reloadBtn" type="button">Reload</button>
+                </div>
+
+                <div class="records-container" id="utilityContainer" style="margin-top:12px;">
+                    <div class="record-item" style="background: var(--gray-100); font-weight: 600;">
+                        <div class="record-info">
+                            <span style="color: var(--text-primary)">Utility</span>
+                            <span style="color: var(--text-primary)">Income (Rs.)</span>
+                            <span style="color: var(--text-primary)">Customers</span>
+                            <span style="color: var(--text-primary)">Connections</span>
+                            <span style="color: var(--text-primary)">Status</span>
+                        </div>
+                        <div class="record-actions">Action</div>
+                    </div>
+                    <!-- dynamic rows -->
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- Modals -->
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal" id="recordModal"></div>
+
+<!-- ✅ Needed for logout confirm modal -->
+<div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
+<div id="confirmModal" class="modal modal-confirm"></div>
+
+<!-- ✅ Script order FIXED -->
+<script src="../js/common/theme.js"></script>
+<script src="../js/manager/utils.js"></script>
+<script src="../js/manager/usage-report.js"></script>
+
+</body>
+</html>

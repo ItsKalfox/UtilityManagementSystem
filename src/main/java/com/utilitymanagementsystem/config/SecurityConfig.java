@@ -29,6 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -41,7 +42,16 @@ public class SecurityConfig {
                                 "/login/**",
                                 "/admin/**",
                                 "/images/**",
-                                "/favicon.ico"
+                                "/favicon.ico",
+                                "/cashier/**",
+                                "/cashier/**",
+                                "/api/auth/**",
+                                "/customer/**",
+                                "/customer-index.html",
+                                "/api/customer/**",
+                                "/api/complaints/**",
+                                "/field-officer/**",
+                                "/manager/**"
                         ).permitAll()
 
                         .requestMatchers(
@@ -50,7 +60,10 @@ public class SecurityConfig {
                                 "/api/auth/customer/login",
                                 "/api/auth/manager/login",
                                 "/api/auth/cashier/login",
-                                "/api/auth/field-officer/login"
+                                "/api/auth/field-officer/login",
+                                "/api/manager/dashboard",
+                                "/api/manager/revenue/report"
+
                         ).permitAll()
 
                         .anyRequest().authenticated()
@@ -60,6 +73,7 @@ public class SecurityConfig {
 
                 .httpBasic(basic -> basic.disable())
                 .formLogin(login -> login.disable());
+
         return http.build();
     }
 }

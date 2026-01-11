@@ -25,4 +25,7 @@ public interface UtilityConnectionRepository extends JpaRepository<UtilityConnec
     // Custom JPQL example: get all connections for a specific customer
     @Query("SELECT u FROM UtilityConnection u WHERE u.customer.userId = :customerId")
     List<UtilityConnection> findByCustomerId(@Param("customerId") Integer customerId);
+
+    List<UtilityConnection> findByCustomer_UserId(Integer customerId);
+    List<UtilityConnection> findByCustomer_UserIdAndStatus(Integer customerId, String status);
 }

@@ -81,7 +81,7 @@ public class ManagerController {
     @PostMapping("/{id}/reset-password")
     public ResponseEntity<Void> resetManagerPassword(@PathVariable Integer id) {
         managerService.resetManagerPassword(id);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAuthority('UPDATE_MANAGER')")

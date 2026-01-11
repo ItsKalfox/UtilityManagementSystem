@@ -255,7 +255,6 @@ CREATE TABLE complaint (
     FOREIGN KEY (admin_id) REFERENCES admin(user_id)
 );
 
-GO
 CREATE TRIGGER trg_after_meterreading_insert
 ON meter_reading
 AFTER INSERT
@@ -411,7 +410,6 @@ BEGIN
 
 END;
 
-GO
 CREATE TRIGGER trg_after_payment
 ON payment
 AFTER INSERT
@@ -433,5 +431,3 @@ BEGIN
     FROM bill b
     INNER JOIN inserted i ON b.bill_id = i.bill_id;
 END;
-GO
-

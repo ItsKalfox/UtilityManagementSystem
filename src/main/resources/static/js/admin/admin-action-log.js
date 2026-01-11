@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterAdminSelect = document.getElementById('filterAdmin');
     if (filterAdminSelect) {
         filterAdminSelect.addEventListener('change', e => {
-            filterAdmin = e.target.value === 'all'? null : Number(e.target.value);
+        filterAdmin = e.target.value === 'all'? null : Number(e.target.value);
             currentPage = 0;
             fetchAudits();
         });

@@ -247,8 +247,8 @@ window.saveRole = async function () {
     ).map((cb) => parseInt(cb.value, 10));
 
     const payload = {
-        role_name: roleName,
-        permission_ids: selectedPermissions,
+        roleName: roleName,
+        permissionIds: selectedPermissions,
     };
 
     const url = linkedRoleId ? `/roles/${linkedRoleId}` : "/roles";
@@ -282,7 +282,6 @@ window.saveRole = async function () {
         showToast("Server error while saving role", "error");
     }
 };
-
 
 window.closeModal = function () {
     document.getElementById("recordModal")?.classList.remove("active");

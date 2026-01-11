@@ -48,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return Number(n || 0).toFixed(2);
     }
 
-
     function openModal(html) {
         const overlay = document.getElementById("modalOverlay");
         const modal = document.getElementById("recordModal");
@@ -215,7 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
           </p>
         </div>
       `;
-
             const billsBlock = renderBills(d.bills || []);
 
             openModal(`

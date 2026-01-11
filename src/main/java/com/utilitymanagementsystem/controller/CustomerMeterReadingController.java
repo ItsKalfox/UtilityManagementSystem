@@ -8,7 +8,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/customer")
 public class CustomerMeterReadingController {
-
     private final CustomerMeterReadingService service;
 
     public CustomerMeterReadingController(

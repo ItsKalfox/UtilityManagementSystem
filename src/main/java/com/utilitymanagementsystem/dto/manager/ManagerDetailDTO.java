@@ -17,4 +17,3 @@ public record ManagerDetailDTO(
         String department,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}
-

@@ -9,14 +9,14 @@ public class TariffRequestDTO {
     private Boolean isProrated;
     private BigDecimal fixedCharge;
     private BigDecimal taxPercentage;
-    private String utilityType; // ELECTRICITY/WATER/GAS
-    private String status; // ACTIVE/INACTIVE
+    private String utilityType;
+    private String status;
     private List<TariffSlabDTO> slabs;
 
     public static class TariffSlabDTO {
         private Integer slabOrder;
         private Integer startUnit;
-        private Integer endUnit; // null allowed
+        private Integer endUnit;
         private BigDecimal unitRate;
 
         public Integer getSlabOrder() { return slabOrder; }
@@ -29,7 +29,6 @@ public class TariffRequestDTO {
         public void setUnitRate(BigDecimal unitRate) { this.unitRate = unitRate; }
     }
 
-    // getters/setters...
     public String getTariffName() { return tariffName; }
     public void setTariffName(String tariffName) { this.tariffName = tariffName; }
     public String getTariffDescription() { return tariffDescription; }

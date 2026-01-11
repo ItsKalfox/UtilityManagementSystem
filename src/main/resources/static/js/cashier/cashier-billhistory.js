@@ -72,7 +72,6 @@ window.CashierBillHistory = (() => {
     const utility = (els.utility?.value || "").trim().toLowerCase();
     const customerType = (els.customerType?.value || "").trim().toLowerCase();
 
-    // ✅ only paid/partially-paid
     let list = billsCache.filter(b => {
       const s = String(b.status || "").toUpperCase();
       return s === "FULLY PAID" || s === "PARTIALLY PAID";

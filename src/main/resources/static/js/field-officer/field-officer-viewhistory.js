@@ -224,7 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
 window.addRecord = async function () {
     const modal = document.getElementById('recordModal');
     const overlay = document.getElementById('modalOverlay');
@@ -824,8 +823,6 @@ window.saveNewCustomer = async function () {
     }
 };
 
-//document.addEventListener()
-
 window.showAddReadingPopup = async function (id) {
     try {
         const response = await  fetch(`/meter-reading/get-details/${id}`, {
@@ -868,10 +865,6 @@ window.showAddReadingPopup = async function (id) {
 
         const modal = document.getElementById('recordModal');
         const overlay = document.getElementById('modalOverlay');
-
-        /* =========================
-           BUILD OPTIONS HTML
-        ========================= */
         const meterOptions = record.meters.length === 0
             ? `<option disabled>No meters found</option>`
             : record.meters
@@ -916,10 +909,6 @@ window.showAddReadingPopup = async function (id) {
             });
         }
 
-
-        /* =========================
-           MODAL HTML
-        ========================= */
         const fieldOfficerId = parseInt(localStorage.getItem("userId"));
         const stringData = JSON.stringify(record);
 
@@ -987,15 +976,9 @@ window.saveMeterReading = async function (){
 
     const previous_reading_val = data.last_reading[connectionId].reading_value
     let consumption = readingValue - previous_reading_val;
-// START DATE (already correct)
     let start_date = data.last_reading[connectionId]?.billing_period_end
         ?? new Date().toISOString().replace('Z', '+00:00');
-
-// END DATE (match format exactly)
     let end_date = new Date().toISOString().replace('Z', '+00:00');
-
-
-
 
     if (previous_reading_val < readingValue) {
         console.log("ok")
@@ -1027,8 +1010,6 @@ window.saveMeterReading = async function (){
     }
 
     console.log(connectionId, readingValue, data);
-
-
 }
 
 window.viewHistory = async function (id) {
@@ -1074,9 +1055,6 @@ window.viewHistory = async function (id) {
         const modal = document.getElementById('recordModal');
         const overlay = document.getElementById('modalOverlay');
 
-        /* =========================
-           METER READINGS HTML
-        ========================= */
         let meterReadingsHtml = `
     <div class="record-item">
         <div class="record-nic">Meter No</div>
@@ -1111,11 +1089,6 @@ window.viewHistory = async function (id) {
             });
         }
 
-
-
-        /* =========================
-           BILL HISTORY HTML
-        ========================= */
         let billsHtml = `
     <div class="record-item">
         <div class="record-nic">Bill ID</div>
@@ -1146,43 +1119,38 @@ window.viewHistory = async function (id) {
             });
         }
 
-
-
         modal.innerHTML = `
-    <div class="modal-header">
-        <h3>History</h3>
-        <button class="close-btn" onclick="closeModal()">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-        </button>
-    </div>
-
-    <div class="modal-body">
-        <h4>Meter Reading History</h4>
-        <div class="records-container">
-            ${meterReadingsHtml || '<div class="record-item">No meter readings found</div>'}
+        <div class="modal-header">
+            <h3>History</h3>
+            <button class="close-btn" onclick="closeModal()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+            </button>
         </div>
 
-        <h4 style="margin-top: 10px;">Billing History</h4>
-        <div class="records-container">
-            ${billsHtml || '<div class="record-item">No bills found</div>'}
+        <div class="modal-body">
+            <h4>Meter Reading History</h4>
+            <div class="records-container">
+                ${meterReadingsHtml || '<div class="record-item">No meter readings found</div>'}
+            </div>
+
+            <h4 style="margin-top: 10px;">Billing History</h4>
+            <div class="records-container">
+                ${billsHtml || '<div class="record-item">No bills found</div>'}
+            </div>
         </div>
-    </div>
-`;
+        `;
 
         modal.classList.add('active');
         overlay.classList.add('active');
-
-
     }
     catch (e) {
         console.error(e);
         showToast('Unexpected error', 'error');
     }
 }
-
 
 window.viewRecord = async function (id) {
     try {

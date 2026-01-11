@@ -47,6 +47,5 @@ public interface MeterHistoryRepository extends JpaRepository<UtilityConnection,
             @Param("consumption") Integer consumption,
             @Param("billingPeriodStart") OffsetDateTime billingPeriodStart,
             @Param("billingPeriodEnd") OffsetDateTime billingPeriodEnd
-
     );
 }

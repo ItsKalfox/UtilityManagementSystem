@@ -80,5 +80,4 @@ public class AdminActionLog {
     public void setTimeStamp(Instant timeStamp) {
         this.timeStamp = timeStamp;
     }
-
 }

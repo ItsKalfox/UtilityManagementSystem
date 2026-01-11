@@ -10,7 +10,6 @@ import java.util.List;
 
 @Repository
 public class ManagerRevenueRepository {
-
     private final JdbcTemplate jdbcTemplate;
 
     public ManagerRevenueRepository(JdbcTemplate jdbcTemplate) {

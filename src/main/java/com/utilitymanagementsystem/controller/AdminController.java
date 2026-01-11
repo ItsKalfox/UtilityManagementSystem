@@ -83,7 +83,7 @@ public class AdminController {
     @PostMapping("/{id}/reset-password")
     public ResponseEntity<Void> resetAdminPassword(@PathVariable Integer id) {
         adminService.resetAdminPassword(id);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAuthority('UPDATE_ADMIN')")

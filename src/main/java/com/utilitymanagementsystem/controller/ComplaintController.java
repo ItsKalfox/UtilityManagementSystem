@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/complaints")
 @CrossOrigin
 public class ComplaintController {
-
     @Autowired
     private ComplaintService complaintService;
 

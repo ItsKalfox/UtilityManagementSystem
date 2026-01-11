@@ -15,4 +15,3 @@ public class CashierPortalController {
         return "cashier ok";
     }
 }
-

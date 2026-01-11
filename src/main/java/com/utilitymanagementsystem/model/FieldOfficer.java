@@ -112,5 +112,4 @@ public class FieldOfficer {
     public void setMeterReadings(Set<MeterReading> meterReadings) {
         this.meterReadings = meterReadings;
     }
-
 }

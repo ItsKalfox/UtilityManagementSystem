@@ -12,7 +12,6 @@
 </head>
 
 <body>
-  <!-- Theme Toggle -->
   <div class="theme-toggle-container">
     <label class="theme-toggle">
       <input type="checkbox" id="themeToggle">
@@ -20,11 +19,9 @@
     </label>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
   <div class="dashboard-container">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header-container">
         <div class="sidebar-header">
@@ -62,7 +59,6 @@
       </div>
     </aside>
 
-    <!-- Main -->
     <main class="main-content">
       <header class="header">
         <div class="user-info">
@@ -77,8 +73,6 @@
 
       <div class="content-area">
         <div class="management-container">
-
-          <!-- DASHBOARD (PAYMENT TERMINAL) -->
           <section class="page-section" id="page-dashboard" data-page="dashboard">
             <div class="dashboard-content">
 
@@ -156,7 +150,6 @@
             </div>
           </section>
 
-          <!-- CUSTOMER INFO -->
           <section class="page-section hidden" data-page="customer-info">
             <div class="page-title-bar">
               <h2>Customer Information</h2>
@@ -214,7 +207,6 @@
             </div>
           </section>
 
-          <!-- BILL HISTORY -->
           <section class="page-section hidden" data-page="bill-history" id="billHistoryPage">
             <div class="page-title-bar">
               <h2>Bill History</h2>
@@ -290,7 +282,6 @@
     </main>
   </div>
 
-  <!-- Page Modal Overlay -->
   <div id="pageModalOverlay" class="page-modal-overlay" aria-hidden="true"></div>
 
   <div id="pageModal" class="page-modal" aria-hidden="true" role="dialog" aria-modal="true">
@@ -302,11 +293,8 @@
     <div class="page-modal-body" id="pageModalBody"></div>
   </div>
 
-  <!-- Confirm Modal Overlay-->
   <div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
   <div id="confirmModal" class="modal modal-confirm"></div>
-
-
 
   <script src="../js/common/theme.js"></script>
   <script src="../js/cashier/utils.js"></script>
@@ -318,5 +306,4 @@
   <script src="../js/cashier/cashier-customerinfo.js"></script>
   <script src="../js/cashier/cashier-billhistory.js"></script>
 </body>
-
 </html>

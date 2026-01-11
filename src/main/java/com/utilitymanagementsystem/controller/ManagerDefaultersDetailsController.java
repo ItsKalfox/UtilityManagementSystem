@@ -42,7 +42,6 @@ public class ManagerDefaultersDetailsController {
         ManagerDefaulterDetailsDTO dto = new ManagerDefaulterDetailsDTO();
         dto.customerId = customer.getUserId();
 
-        // User details (Customer -> User)
         dto.fullName = customer.getUser() != null ? customer.getUser().getFullName() : null;
         dto.email = customer.getUser() != null ? customer.getUser().getEmail() : null;
         dto.nic = customer.getUser() != null ? customer.getUser().getNic() : null;
@@ -50,7 +49,6 @@ public class ManagerDefaultersDetailsController {
         dto.customerType = customer.getCustomerType();
         dto.status = customer.getStatus();
 
-        // Area details (Customer -> Area mapped as areaCode)
         if (customer.getAreaCode() != null) {
             dto.areaCode = customer.getAreaCode().getAreaCode();
             dto.areaName = customer.getAreaCode().getAreaName();
@@ -61,7 +59,6 @@ public class ManagerDefaultersDetailsController {
         dto.addressCity = customer.getAddressCity();
         dto.addressPostalCode = customer.getAddressPostalCode();
 
-        // Bills + payments
         List<Bill> bills = managerBillingRepository.findBillsByCustomerId(customerId);
         dto.bills = new ArrayList<>();
 
@@ -75,7 +72,6 @@ public class ManagerDefaultersDetailsController {
                 bd.utilityType = b.getConnection().getUtilityType();
             }
 
-            // ✅ dates as String to avoid type mismatch
             bd.periodStart = String.valueOf(b.getPeriodStart());
             bd.periodEnd = String.valueOf(b.getPeriodEnd());
 
@@ -94,17 +90,11 @@ public class ManagerDefaultersDetailsController {
                 pd.paymentId = p.getPaymentId();
                 pd.paymentMethod = p.getPaymentMethod();
                 pd.amount = p.getAmount();
-
-                // ✅ date as String (works for Date/Timestamp/LocalDateTime)
                 pd.paymentDate = String.valueOf(p.getPaymentDate());
 
-                // ✅ cashierId safe mapping
-                // If your Payment has cashier object:
                 if (p.getCashier() != null) {
                     pd.cashierId = p.getCashier().getUserId();
                 } else {
-                    // If your Payment has cashierId int instead, replace this whole block with:
-                    // pd.cashierId = p.getCashierId();
                     pd.cashierId = null;
                 }
 

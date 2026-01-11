@@ -9,4 +9,4 @@ public record UtilityConnectionRequestDTO(
         String utility_type,
         Instant install_date,
         String status
-) {}
+) { }

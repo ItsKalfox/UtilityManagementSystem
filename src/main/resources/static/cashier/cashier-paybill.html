@@ -12,7 +12,6 @@
 </head>
 
 <body>
-  <!-- Theme Toggle -->
   <div class="theme-toggle-container">
     <label class="theme-toggle">
       <input type="checkbox" id="themeToggle" />
@@ -20,7 +19,6 @@
     </label>
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
   <div class="paybill-wrapper">
@@ -44,7 +42,6 @@
         </div>
       </div>
 
-      <!-- Bill Summary -->
       <div class="bill-summary" id="billSummary">
         <div class="summary-grid">
           <div class="summary-item">
@@ -79,7 +76,6 @@
         </div>
       </div>
 
-      <!-- Payment Form -->
       <div class="pay-form">
         <div class="form-row">
           <div class="form-group">
@@ -99,7 +95,6 @@
           </div>
         </div>
 
-        <!-- CASH -->
         <div class="method-box" id="cashBox" style="display:none;">
           <h3>Cash Payment</h3>
           <div class="form-row">
@@ -115,7 +110,6 @@
           </div>
         </div>
 
-        <!-- CARD -->
         <div class="method-box" id="cardBox" style="display:none;">
           <div class="row-between">
             <h3>Card Payment</h3>
@@ -154,7 +148,6 @@
           </div>
         </div>
 
-        <!-- BANK TRANSFER -->
         <div class="method-box" id="bankBox" style="display:none;">
           <div class="row-between">
             <h3>Bank Transfer</h3>
@@ -205,13 +198,10 @@
     </div>
   </div>
   
-  <!-- Confirm Modal-->
   <div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
   <div id="confirmModal" class="modal modal-confirm"></div>
-
 
   <script src="../js/common/theme.js"></script>
   <script src="../js/cashier/cashier-paybill.js"></script>
 </body>
-
 </html>

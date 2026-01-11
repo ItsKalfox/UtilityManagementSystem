@@ -890,15 +890,11 @@ input:checked + .slider:before {
     margin: 0;
 }
 
-/* ===== Custom Scrollbar (Theme Aware) ===== */
-
-/* Firefox */
 .records-container {
     scrollbar-width: thin;
     scrollbar-color: var(--gray-300) var(--gray-50);
 }
 
-/* Chrome, Edge, Brave, Opera */
 .records-container::-webkit-scrollbar {
     width: 10px;
 }
@@ -1526,15 +1522,6 @@ input:checked + .slider:before {
 .icon-btn.spinning img {
     animation: spinInfinite 0.8s linear infinite;
 }
-
-/* .icon-btn:active img {
-    transform: scale(0.9);
-}
-
-.icon-btn:not(.spinning):hover img {
-    transform: rotate(15deg);
-    transition: transform 0.2s ease;
-} */
 
 @keyframes slideDown {
     from {

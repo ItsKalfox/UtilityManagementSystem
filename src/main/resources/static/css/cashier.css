@@ -1,4 +1,3 @@
-/* ===== Bill Status Badges ===== */
 .status-badge.paid {
   background: #d1fae5;
   color: #065f46;
@@ -29,7 +28,6 @@
   color: #fca5a5;
 }
 
-/* Bills list rows */
 .list-container { width: 100%; }
 .list-header, .bill-row {
     display: grid;
@@ -96,7 +94,6 @@
 .list-body { min-height: 220px; }
 .list-footer { padding: 10px 14px; color: var(--text-secondary); font-size: 0.85rem; }
 
-/* ===== Cashier Bill Terminal UI ===== */
 .page-title-bar {
   display: flex;
   align-items: center;
@@ -188,7 +185,6 @@
 .status-pill.partial { background: #eef2ff; color: #4338ca; }
 .status-pill.paid { background: var(--success-50); color: var(--success-600); }
 
-/* map classes used by JS */
 .status-pill.paid { }
 .status-pill.partial { }
 .status-pill.pending { }
@@ -230,7 +226,6 @@
   display: none;
 }
 
-/* Uses your styles.css variables */
 .paybill-wrapper {
   min-height: 100vh;
   display: flex;
@@ -384,7 +379,6 @@
   justify-content: flex-end;
 }
 
-/* Buttons (match your style system) */
 .btn {
   padding: 10px 14px;
   border-radius: 10px;
@@ -428,12 +422,11 @@
 .paybill-wrapper {
   min-height: 100vh;
   display: flex;
-  justify-content: center;     /* horizontal center */
-  align-items: center;          /* ✅ vertical center */
+  justify-content: center;
+  align-items: center;
   padding: 28px;
 }
 
-/* optional: if you want it slightly higher than dead-center */
 @media (min-height: 700px) {
   .paybill-wrapper {
     padding-top: 20px;
@@ -441,12 +434,9 @@
   }
 }
 
-/* if the page becomes taller due to long forms, this keeps it nice */
 .paybill-card {
-  margin: auto;                /* ✅ extra safety */
+  margin: auto;
 }
-
-/*bill detail css*/
 
 .billdetail-wrapper {
   min-height: 100vh;
@@ -568,8 +558,6 @@
     grid-template-columns: 1fr;
   }
 }
-
-/* ===== Bill Detail Polish ===== */
 
 .billdetail-wrapper{
   min-height: 100vh;
@@ -710,7 +698,6 @@
   color: var(--text-primary);
 }
 
-/* Status pills */
 .status-pill{
   display:inline-flex;
   align-items:center;
@@ -740,12 +727,10 @@
   border-color: rgba(239,68,68,.3);
 }
 
-/* Debug hidden by default */
 .debug-only{
   display:none;
 }
 
-/* Mobile */
 @media (max-width: 900px){
   .billdetail-body{
     grid-template-columns: 1fr;
@@ -786,7 +771,6 @@
   box-shadow: var(--shadow-lg);
 }
 
-/* Customer card */
 .customer-card {
   background: var(--white);
   border: 1px solid var(--border-color);
@@ -828,7 +812,6 @@
 .badge.business { border-left: 4px solid var(--warning-500); }
 .badge.gov { border-left: 4px solid var(--success-500); }
 
-/* Overlay */
 .cu-overlay {
   position: fixed;
   inset: 0;
@@ -894,7 +877,6 @@
   .cu-grid { grid-template-columns: 1fr; }
 }
 
-/* ===== Bill History grid layout ===== */
 .billhistory-grid,
 .billhistory-row {
   display: grid;
@@ -908,7 +890,6 @@
   opacity: 0.9;
 }
 
-/* Row style */
 .billhistory-row {
   padding: 14px 12px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -924,14 +905,12 @@
   text-overflow: ellipsis;
 }
 
-/* Action area */
 .billhistory-row .action-cell {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
 }
 
-/* Smaller Full View button */
 .btn-view-sm {
   padding: 7px 10px;
   border-radius: 10px;
@@ -939,13 +918,11 @@
   font-size: 0.85rem;
 }
 
-/* Make list-body scroll nicely (optional) */
 #billHistoryList {
   max-height: 520px;
   overflow: auto;
 }
 
-/* Cashier confirm modal - force on top */
 #confirmOverlay {
   display: none;
   position: fixed;
@@ -988,21 +965,19 @@ body.modal-blur-on .dashboard-container {
   pointer-events: auto;
 }
 
-/* Center confirm modal text */
 .modal.modal-confirm .modal-body {
   text-align: center;
 }
 
-/* Optional: slightly better spacing */
 .modal.modal-confirm .confirm-text {
   margin: 0;
   line-height: 1.5;
 }
+
 .modal.modal-confirm {
   text-align: center;
 }
 
-/* Force center the confirm message text */
 #confirmModal.modal-confirm .confirm-text,
 #confirmModal.modal-confirm p.confirm-text,
 #confirmModal.modal-confirm .modal-body,
@@ -1085,7 +1060,6 @@ body.modal-blur-on .dashboard-container {
   filter: var(--icon-filter);
 }
 
-/* ===== Modal (Full-page iframe modal) ===== */
 .page-modal-overlay{
   position: fixed;
   inset: 0;
@@ -1102,19 +1076,15 @@ body.modal-blur-on .dashboard-container {
   background: transparent;
   border-radius: 18px;
   overflow: hidden;
-
   opacity: 0;
   pointer-events: none;
   transform: translateY(8px);
   transition: opacity .18s ease, transform .18s ease;
   z-index: 9999;
-
-  /* shadow like your admin cards */
   box-shadow: 0 24px 60px rgba(0,0,0,.45);
   border: 1px solid rgba(148, 163, 184, .22);
 }
 
-/* header bar */
 .page-modal-header{
   height: 54px;
   display: flex;
@@ -1122,7 +1092,6 @@ body.modal-blur-on .dashboard-container {
   justify-content: space-between;
   gap: 12px;
   padding: 0 14px;
-
   background: rgba(15, 23, 42, .92);
   border-bottom: 1px solid rgba(148, 163, 184, .22);
   backdrop-filter: blur(10px);
@@ -1159,7 +1128,6 @@ body.modal-blur-on .dashboard-container {
   background: transparent;
 }
 
-/* active state */
 .page-modal-overlay.active{
   opacity: 1;
   pointer-events: auto;
@@ -1170,7 +1138,6 @@ body.modal-blur-on .dashboard-container {
   transform: translateY(0);
 }
 
-/* blur the dashboard behind modal */
 body.modal-blur-on .dashboard-wrapper,
 body.modal-blur-on .main-content,
 body.modal-blur-on .content,
@@ -1179,21 +1146,16 @@ body.modal-blur-on .container{
   transition: filter .18s ease;
 }
 
-/* responsive */
 @media (max-width: 900px){
   .page-modal{ inset: 14px; }
 }
 
-/* =========================================
-   Embedded mode (when paybill/billdetail is inside iframe modal)
-   ========================================= */
 html.embedded, body.embedded {
   margin: 0;
   height: 100%;
   background: transparent !important;
 }
 
-/* Hide stuff that belongs to standalone pages */
 body.embedded .theme-toggle-container,
 body.embedded #toast,
 body.embedded #confirmOverlay,
@@ -1201,7 +1163,6 @@ body.embedded #confirmModal {
   display: none !important;
 }
 
-/* Remove the full-page wrapper behavior */
 body.embedded .paybill-wrapper {
   min-height: auto !important;
   height: auto !important;
@@ -1209,14 +1170,12 @@ body.embedded .paybill-wrapper {
   display: block !important;
 }
 
-/* Make the card fit nicely inside modal */
 body.embedded .paybill-card {
   max-width: 100% !important;
   width: 100% !important;
   border-radius: 14px;
 }
 
-/* (Optional) tighten header spacing inside modal */
 body.embedded .paybill-header {
   padding: 16px 18px !important;
 }
@@ -1227,22 +1186,15 @@ body.embedded .pay-form {
   padding: 16px 18px 18px !important;
 }
 
-/* ======================================================
-   ✅ NEW: Card-only / Chromeless modal mode (no modal header)
-   ====================================================== */
-
-/* Hide modal header when chromeless */
 .page-modal.chromeless .page-modal-header {
   display: none !important;
 }
 
-/* body fills full height */
 .page-modal.chromeless .page-modal-body {
   height: 100% !important;
   background: transparent;
 }
 
-/* Card-only dialog layout */
 .page-modal.card-only {
   inset: 22px;
   background: transparent;
@@ -1258,10 +1210,9 @@ body.embedded .pay-form {
   justify-content: center;
   align-items: flex-start;
   padding: 18px;
-  overflow: auto; /* ✅ scroll inside modal */
+  overflow: auto;
 }
 
-/* Ensure cards fit nicely inside modal */
 .page-modal.card-only .billdetail-card {
   width: 100%;
   max-width: 1100px;
@@ -1277,16 +1228,12 @@ body.embedded .pay-form {
   .page-modal.card-only .page-modal-body { padding: 10px; }
 }
 
-/* =========================
-   Modal content padding + scrolling
-   ========================= */
 .page-modal-body{
   padding: 16px;
   overflow: auto;
   background: transparent;
 }
 
-/* Make card-only modals fit nicely */
 .paybill-card--modal,
 .billdetail-card--modal,
 .receipt-card{
@@ -1295,7 +1242,6 @@ body.embedded .pay-form {
   margin: 0 auto;
 }
 
-/* Receipt UI */
 .receipt-card{
   background: var(--white);
   border: 1px solid var(--border-color);
@@ -1368,18 +1314,13 @@ body.embedded .pay-form {
   .receipt-grid{ grid-template-columns: 1fr; }
 }
 
-/* =========================================
-   Page modal: make injected cards look perfect
-   ========================================= */
-
 .page-modal-body{
   height: calc(100% - 54px);
-  overflow: auto;              /* ✅ scroll inside modal */
-  padding: 16px;               /* ✅ space around the card */
+  overflow: auto;
+  padding: 16px;
   background: rgba(2, 6, 23, .22);
 }
 
-/* Make injected cards fit modal width */
 .page-modal-body .paybill-card,
 .page-modal-body .billdetail-card{
   width: 100%;
@@ -1387,23 +1328,15 @@ body.embedded .pay-form {
   margin: 0;
 }
 
-/* (Optional) nicer look: remove extra shadows if you want */
 .page-modal-body .paybill-card.paybill-card--modal,
 .page-modal-body .billdetail-card.billdetail-card--modal{
   box-shadow: var(--shadow-lg);
 }
 
-/* =========================
-   ✅ FIX: Card-only modal body height (prevents "blank modal")
-   ========================= */
 .page-modal.chromeless .page-modal-body{
   height: 100% !important;
 }
 
-/* =========================
-   ✅ Receipt: use application color a little bit
-   (uses your styles.css variables)
-   ========================= */
 .receipt-card.receipt-accent{
   border-top: 4px solid var(--secondary-blue);
 }
@@ -1423,22 +1356,15 @@ body.embedded .pay-form {
   font-weight: 900;
 }
 
-/* =========================
-   ✅ FIX: Modal card-only mode actually applies
-   ========================= */
-
-/* Hide modal header when chromeless */
 .page-modal.chromeless .page-modal-header {
   display: none !important;
 }
 
-/* When chromeless, body must fill full height */
 .page-modal.chromeless .page-modal-body {
   height: 100% !important;
   background: transparent;
 }
 
-/* Card-only dialog layout */
 .page-modal.card-only {
   inset: 18px;
   background: transparent;
@@ -1447,7 +1373,6 @@ body.embedded .pay-form {
   overflow: visible;
 }
 
-/* ✅ Important: make body scroll + center content */
 .page-modal.card-only .page-modal-body {
   height: 100% !important;
   background: transparent;
@@ -1458,7 +1383,6 @@ body.embedded .pay-form {
   overflow: auto;
 }
 
-/* Ensure injected cards fit nicely */
 .page-modal.card-only .paybill-card,
 .page-modal.card-only .billdetail-card,
 .page-modal.card-only .receipt-card{
@@ -1467,16 +1391,11 @@ body.embedded .pay-form {
   margin: 0 auto;
 }
 
-/* Responsive */
 @media (max-width: 900px){
   .page-modal.card-only { inset: 10px; }
   .page-modal.card-only .page-modal-body { padding: 10px; }
 }
 
-
-/* =========================
-   ✅ Receipt: use app blue accents (lightly)
-   ========================= */
 .receipt-card.receipt-accent{
   border-top: 6px solid var(--secondary-blue);
 }
@@ -1494,13 +1413,11 @@ body.embedded .pay-form {
   color: rgba(255,255,255,0.80);
 }
 
-/* Accent chip */
 .chip-accent{
   background: rgba(59, 130, 246, 0.12);
   border-color: rgba(59, 130, 246, 0.28);
 }
 
-/* Keep chips readable in dark theme too */
 .dark-theme .chip-accent{
   background: rgba(59,130,246,0.18);
   border-color: rgba(59,130,246,0.35);

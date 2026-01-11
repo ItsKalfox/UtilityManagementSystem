@@ -9,11 +9,9 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-
 import java.util.Optional;
 
 public interface BillRepository extends JpaRepository<Bill, Integer> {
-
     @Query(value = """
         SELECT b.*
         FROM bill b
@@ -43,21 +41,20 @@ public interface BillRepository extends JpaRepository<Bill, Integer> {
     );
 
     @Query("""
-SELECT b
-FROM Bill b
-JOIN FETCH b.connection c
-JOIN FETCH c.customer cust
-JOIN FETCH cust.user u
-WHERE (:status IS NULL OR b.status = :status)
-  AND (:utilityType IS NULL OR c.utilityType = :utilityType)
-  AND (:customerType IS NULL OR cust.customerType = :customerType)
-ORDER BY b.periodEnd DESC
-""")
+    SELECT b
+    FROM Bill b
+    JOIN FETCH b.connection c
+    JOIN FETCH c.customer cust
+    JOIN FETCH cust.user u
+    WHERE (:status IS NULL OR b.status = :status)
+    AND (:utilityType IS NULL OR c.utilityType = :utilityType)
+    AND (:customerType IS NULL OR cust.customerType = :customerType)
+    ORDER BY b.periodEnd DESC
+    """)
     List<Bill> cashierGetAllBills(
             @Param("status") String status,
             @Param("utilityType") String utilityType,
             @Param("customerType") String customerType,
             Pageable pageable
     );
-
 }

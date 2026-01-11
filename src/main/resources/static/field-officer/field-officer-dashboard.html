@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,134 +9,140 @@
     <link rel="icon" href="../images/ums-favicon.svg" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
+
 <body>
-<div class="theme-toggle-container">
-    <label class="theme-toggle">
-        <input type="checkbox" id="themeToggle">
-        <span class="slider"></span>
-    </label>
-</div>
+    <div class="theme-toggle-container">
+        <label class="theme-toggle">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
 
-<div class="dashboard-container">
-    <aside class="sidebar">
-        <div class="sidebar-header-container">
-            <div class="sidebar-header">
-                <h2>Field Officer</h2>
-            </div>
-        </div>
-
-        <nav class="sidebar-nav">
-            <a href="field-officer-dashboard.html" class="nav-item active">
-                Dashboard
-            </a>
-            <a href="field-officer-addreadings.html" class="nav-item">
-                Add Readings
-            </a>
-            <a href="field-officer-viewhistory.html" class="nav-item">
-                View History
-            </a>
-            <a href="field-officer-customerdetails.html" class="nav-item">
-                Customer Details
-            </a>
-        </nav>
-        <div class="sidebar-footer-container">
-            <div class="sidebar-footer">
-                <button class="icon-btn" onclick="handleSettings()">
-                    <img src="../images/settings-icon.svg" alt="settings">
-                </button>
-                <button class="icon-btn logout-btn" id="logoutBtn" onclick="handleLogout()">
-                    <img src="../images/logout-icon.svg" alt="logout">
-                </button>
-            </div>
-        </div>
-    </aside>
-
-    <main class="main-content">
-        <header class="header">
-            <div class="user-info">
-                <div class="user-avatar">F</div>
-                <div>
-                    <div class="user-name">Field Officer</div>
-                    <div class="user-email">fieldofficer@ums.com</div>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header-container">
+                <div class="sidebar-header">
+                    <h2>Field Officer</h2>
                 </div>
             </div>
-        </header>
-        <div class="dashboard-content">
-            <section class="stats-section">
-                <h2 class="section-title">System Users</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Active Customers<img src="../images/customer-icon.svg" class="stat-icon" alt="customer-icon"></div>
-                        <div class="stat-value" id="active-customers">0</div>
-                        <div class="stat-meta">
-                            <span>Inactive: <strong id="inactive-customers">0</strong></span>
-                            <span>Total: <strong id="total-customers">0</strong></span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Active Field Officers<img src="../images/field-officer-icon.svg" class="stat-icon" alt="field-officer-icon"></div>
-                        <div class="stat-value" id="active-officers">0</div>
-                        <div class="stat-meta">
-                            <span>Inactive: <strong id="inactive-officers">0</strong></span>
-                            <span>Total: <strong id="total-officers">0</strong></span>
-                        </div>
+
+            <nav class="sidebar-nav">
+                <a href="field-officer-dashboard.html" class="nav-item active">
+                    Dashboard
+                </a>
+                <a href="field-officer-addreadings.html" class="nav-item">
+                    Add Readings
+                </a>
+                <a href="field-officer-viewhistory.html" class="nav-item">
+                    View History
+                </a>
+                <a href="field-officer-customerdetails.html" class="nav-item">
+                    Customer Details
+                </a>
+            </nav>
+            <div class="sidebar-footer-container">
+                <div class="sidebar-footer">
+                    <button class="icon-btn" onclick="handleSettings()">
+                        <img src="../images/settings-icon.svg" alt="settings">
+                    </button>
+                    <button class="icon-btn logout-btn" id="logoutBtn" onclick="handleLogout()">
+                        <img src="../images/logout-icon.svg" alt="logout">
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="user-info">
+                    <div class="user-avatar">F</div>
+                    <div>
+                        <div class="user-name">Field Officer</div>
+                        <div class="user-email">fieldofficer@ums.com</div>
                     </div>
                 </div>
-            </section>
-            <section class="stats-section">
-                <h2 class="section-title">Total Connections</h2>
-                <div class="stats-grid">
-                    <div class="stat-card highlight">
-                        <div class="stat-label">All Connections</div>
-                        <div class="stat-value" id="active-connections-all">0</div>
-                        <div class="stat-meta">
-                            <span>Inactive: <strong id="inactive-connections-all">0</strong></span>
-                            <span>Total: <strong id="total-connections-all">0</strong></span>
+            </header>
+            <div class="dashboard-content">
+                <section class="stats-section">
+                    <h2 class="section-title">System Users</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Active Customers<img src="../images/customer-icon.svg"
+                                    class="stat-icon" alt="customer-icon"></div>
+                            <div class="stat-value" id="active-customers">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-customers">0</strong></span>
+                                <span>Total: <strong id="total-customers">0</strong></span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Active Field Officers<img src="../images/field-officer-icon.svg"
+                                    class="stat-icon" alt="field-officer-icon"></div>
+                            <div class="stat-value" id="active-officers">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-officers">0</strong></span>
+                                <span>Total: <strong id="total-officers">0</strong></span>
+                            </div>
                         </div>
                     </div>
+                </section>
+                <section class="stats-section">
+                    <h2 class="section-title">Total Connections</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card highlight">
+                            <div class="stat-label">All Connections</div>
+                            <div class="stat-value" id="active-connections-all">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-connections-all">0</strong></span>
+                                <span>Total: <strong id="total-connections-all">0</strong></span>
+                            </div>
+                        </div>
 
-                    <div class="stat-card">
-                        <div class="stat-label">Water Connections<img src="../images/water-icon.svg" class="stat-icon" alt="water-icon"></div>
-                        <div class="stat-value" id="active-water">0</div>
-                        <div class="stat-meta">
-                            <span>Inactive: <strong id="inactive-water">0</strong></span>
-                            <span>Total: <strong id="total-water">0</strong></span>
+                        <div class="stat-card">
+                            <div class="stat-label">Water Connections<img src="../images/water-icon.svg"
+                                    class="stat-icon" alt="water-icon"></div>
+                            <div class="stat-value" id="active-water">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-water">0</strong></span>
+                                <span>Total: <strong id="total-water">0</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Electricity Connections<img src="../images/electricity-icon.svg"
+                                    class="stat-icon" alt="electricity-icon"></div>
+                            <div class="stat-value" id="active-electricity">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-electricity">0</strong></span>
+                                <span>Total: <strong id="total-electricity">0</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-label">Gas Connections<img src="../images/gas-icon.svg" class="stat-icon"
+                                    alt="gas-icon"></div>
+                            <div class="stat-value" id="active-gas">0</div>
+                            <div class="stat-meta">
+                                <span>Inactive: <strong id="inactive-gas">0</strong></span>
+                                <span>Total: <strong id="total-gas">0</strong></span>
+                            </div>
                         </div>
                     </div>
+                </section>
+            </div>
+        </main>
+    </div>
 
-                    <div class="stat-card">
-                        <div class="stat-label">Electricity Connections<img src="../images/electricity-icon.svg" class="stat-icon" alt="electricity-icon"></div>
-                        <div class="stat-value" id="active-electricity">0</div>
-                        <div class="stat-meta">
-                            <span>Inactive: <strong id="inactive-electricity">0</strong></span>
-                            <span>Total: <strong id="total-electricity">0</strong></span>
-                        </div>
-                    </div>
+    <div class="toast" id="toast"></div>
 
-                    <div class="stat-card">
-                        <div class="stat-label">Gas Connections<img src="../images/gas-icon.svg" class="stat-icon" alt="gas-icon"></div>
-                        <div class="stat-value" id="active-gas">0</div>
-                        <div class="stat-meta">
-                            <span>Inactive: <strong id="inactive-gas">0</strong></span>
-                            <span>Total: <strong id="total-gas">0</strong></span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-</div>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal" id="recordModal"></div>
 
-<div class="toast" id="toast"></div>
+    <div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
+    <div id="confirmModal" class="modal modal-confirm"></div>
 
-<div class="modal-overlay" id="modalOverlay"></div>
-<div class="modal" id="recordModal"></div>
-
-<div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
-<div id="confirmModal" class="modal modal-confirm"></div>
-
-<script src="../js/common/theme.js"></script>
-<script src="../js/admin/utils.js"></script>
-<script src="../js/admin/dashboard.js"></script>
+    <script src="../js/common/theme.js"></script>
+    <script src="../js/admin/utils.js"></script>
+    <script src="../js/admin/dashboard.js"></script>
 </body>
 </html>

@@ -135,7 +135,6 @@ window.saveNewArea = async function () {
     }
 };
 
-
 function closeModal() {
     document.getElementById('recordModal').classList.remove('active');
     document.getElementById('modalOverlay').classList.remove('active');

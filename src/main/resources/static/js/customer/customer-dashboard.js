@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
     const customerId = localStorage.getItem("customerId");
 
     if (!customerId) {
@@ -40,7 +39,6 @@ function renderTariffHistory(data) {
     data.forEach(row => {
         const isActive = row[7] === "ACTIVE";
 
-        // ⭐ CURRENT ACTIVE TARIFF
         if (isActive) {
             currentContainer.innerHTML = `
                 <div class="plan-card active-plan">
@@ -62,8 +60,7 @@ function renderTariffHistory(data) {
                 </div>
             `;
         }
-
-        // 📜 HISTORY CARD (ALL TARIFFS)
+        
         const card = document.createElement("div");
         card.className = "plan-card";
 

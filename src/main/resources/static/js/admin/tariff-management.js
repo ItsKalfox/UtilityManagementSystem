@@ -1,16 +1,11 @@
-
 let linkedTariffId = null;
 let allTariffs = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Search input should filter live
     const searchInput = document.getElementById("searchInput");
     if (searchInput) searchInput.addEventListener("input", applyTariffFilters);
-
-    // Initial load
     fetchTariffs();
 });
-
 
 function authHeader() {
     return { Authorization: `Bearer ${localStorage.getItem("token")}` };
@@ -25,7 +20,6 @@ function safeInt(v) {
     const n = parseInt(v, 10);
     return Number.isFinite(n) ? n : null;
 }
-
 
 window.fetchTariffs = async function fetchTariffs() {
     try {
@@ -43,7 +37,6 @@ window.fetchTariffs = async function fetchTariffs() {
 window.refreshAudits = function () {
     window.fetchTariffs();
 };
-
 
 function applyTariffFilters() {
     const searchValue = (document.getElementById("searchInput")?.value || "")
@@ -82,7 +75,6 @@ function applyTariffFilters() {
             va = Number(a.fixed_charge || 0);
             vb = Number(b.fixed_charge || 0);
         } else {
-            // tariffId
             va = Number(a.tariff_id || 0);
             vb = Number(b.tariff_id || 0);
         }
@@ -94,7 +86,6 @@ function applyTariffFilters() {
 
     renderTariffs(tariffs);
 }
-
 
 function renderTariffs(tariffs) {
     const container = document.getElementById("recordsContainer");
@@ -127,7 +118,6 @@ function renderTariffs(tariffs) {
         )
         .join("");
 }
-
 
 window.addRecord = function () {
     linkedTariffId = null;
@@ -252,7 +242,6 @@ function openTariffModal(title, tariff) {
     refreshSlabEmpty();
 }
 
-
 window.addSlabRow = function (slab = null) {
     const container = document.getElementById("slabsContainer");
     if (!container) return;
@@ -305,7 +294,6 @@ window.editTariff = async function (tariffId) {
         showToast("Error fetching tariff data", "error");
     }
 };
-
 
 window.saveTariff = async function () {
     const tariffName = document.getElementById("tariff_name")?.value.trim();
@@ -393,7 +381,6 @@ window.saveTariff = async function () {
         showToast("Server error while saving tariff", "error");
     }
 };
-
 
 window.closeModal = function () {
     document.getElementById("recordModal")?.classList.remove("active");

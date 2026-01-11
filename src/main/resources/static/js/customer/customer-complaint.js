@@ -30,19 +30,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 description: text
             })
         })
-            .then(res => {
-                if (!res.ok) throw new Error();
-                return res.text();
-            })
-            .then(() => {
-                messageBox.innerText =
-                    "Complaint submitted successfully. Our support team will review it.";
-                messageBox.classList.add("success");
-                complaintForm.reset();
-            })
-            .catch(() => {
-                messageBox.innerText = "Failed to submit complaint.";
-                messageBox.classList.add("error");
-            });
+        .then(res => {
+            if (!res.ok) throw new Error();
+            return res.text();
+        })
+        .then(() => {
+            messageBox.innerText =
+                "Complaint submitted successfully. Our support team will review it.";
+            messageBox.classList.add("success");
+            complaintForm.reset();
+        })
+        .catch(() => {
+            messageBox.innerText = "Failed to submit complaint.";
+            messageBox.classList.add("error");
+        });
     });
 });

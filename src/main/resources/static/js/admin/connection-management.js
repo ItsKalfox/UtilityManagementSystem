@@ -3,10 +3,8 @@ let linkedConnectionId = null;
 let allConnections = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Load all connections on page load
     fetchConnections();
 
-    // Wire controls
     const searchInput = document.getElementById("searchInput");
     const filterStatus = document.getElementById("filterStatus");
     const filterUtilityType = document.getElementById("filterUtilityType");
@@ -36,7 +34,6 @@ function toDateInputValue(dateStr) {
     if (!dateStr) return "";
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return "";
-    // yyyy-mm-dd for <input type="date">
     return d.toISOString().split("T")[0];
 }
 
@@ -107,7 +104,6 @@ function applyFilters() {
             va = String(a.meter_serial_number || "").toLowerCase();
             vb = String(b.meter_serial_number || "").toLowerCase();
         } else {
-            // connectionId
             va = Number(a.connection_id || 0);
             vb = Number(b.connection_id || 0);
         }
@@ -119,7 +115,6 @@ function applyFilters() {
 
     renderConnections(list);
 }
-
 
 function renderConnections(connections) {
     const container = document.getElementById("recordsContainer");
@@ -153,12 +148,10 @@ function renderConnections(connections) {
         .join("");
 }
 
-
 window.addRecord = function () {
     linkedConnectionId = null;
     openConnectionModal(null);
 };
-
 
 window.editConnection = async function (connectionId) {
     linkedConnectionId = connectionId;
@@ -174,7 +167,6 @@ window.editConnection = async function (connectionId) {
         showToast("Error loading connection", "error");
     }
 };
-
 
 function openConnectionModal(connection = null) {
     const overlay = document.getElementById("modalOverlay");
@@ -263,11 +255,10 @@ function openConnectionModal(connection = null) {
     overlay.classList.add("active");
 }
 
-
 window.saveConnection = async function () {
     const meter_serial_number = document.getElementById("meter_serial_number")?.value.trim();
     const utility_type = document.getElementById("utility_type")?.value;
-    const install_date = document.getElementById("install_date")?.value; // yyyy-mm-dd
+    const install_date = document.getElementById("install_date")?.value;
     const customer_id = parseInt(document.getElementById("customer_id")?.value, 10);
     const tariff_id = parseInt(document.getElementById("tariff_id")?.value, 10);
     const status = document.getElementById("status")?.value;
@@ -280,7 +271,6 @@ window.saveConnection = async function () {
     const payload = {
         meter_serial_number,
         utility_type,
-        // convert date to ISO (midnight UTC)
         install_date: new Date(install_date + "T00:00:00Z").toISOString(),
         customer_id,
         tariff_id,
@@ -316,7 +306,6 @@ window.saveConnection = async function () {
     }
 };
 
-
 window.deleteConnection = async function (connectionId) {
     if (!confirm("Are you sure you want to delete this connection?")) return;
 
@@ -335,7 +324,6 @@ window.deleteConnection = async function (connectionId) {
         showToast("Error deleting connection", "error");
     }
 };
-
 
 window.closeModal = function () {
     document.getElementById("recordModal")?.classList.remove("active");

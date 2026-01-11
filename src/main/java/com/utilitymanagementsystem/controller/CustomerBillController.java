@@ -9,7 +9,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/customer/bills")
 public class CustomerBillController {
-
     private final CustomerBillService customerBillService;
 
     public CustomerBillController(CustomerBillService customerBillService) {

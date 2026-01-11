@@ -18,4 +18,3 @@ public record FieldOfficerDetailDTO(
         String areaCode,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}
-

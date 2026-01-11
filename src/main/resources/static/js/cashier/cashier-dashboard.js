@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (avatarEl) avatarEl.textContent = String(fullName).charAt(0).toUpperCase();
   if (roleEl) roleEl.textContent = "Cashier";
 
-  // Sidebar navigation
   navItems.forEach((item) => {
     item.addEventListener("click", (e) => {
       e.preventDefault();
@@ -49,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Toast 
   function safeToast(message, type = "success") {
     if (typeof window.toast === "function") {
       window.toast(message, type);
@@ -62,11 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => (el.className = "toast"), 2500);
   }
 
-  // Blur 
   function blurOn() { document.body.classList.add("modal-blur-on"); }
   function blurOff() { document.body.classList.remove("modal-blur-on"); }
 
-  // Confirm modal 
   function showConfirmModal({
     title = "Confirm",
     message = "Are you sure?",
@@ -252,7 +248,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.openPageModal = openPageModal;
   window.closePageModal = closePageModal;
 
-  //Convenience wrappers 
   window.openPayBillModal = function (connectionId) {
     if (!window.CashierPayBillModal) {
       safeToast("CashierPayBillModal not loaded", "error");
@@ -294,7 +289,6 @@ document.addEventListener("DOMContentLoaded", () => {
       onMount: (mountEl) => window.CashierReceiptModal.init(mountEl, { receipt })
     });
   };
-
 
   showPage("dashboard");
   window.CashierBillsDashboard?.init?.();

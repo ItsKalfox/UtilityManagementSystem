@@ -22,4 +22,3 @@ public record HouseholdCustomerDetailDTO(
         Integer householdSize,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}
-

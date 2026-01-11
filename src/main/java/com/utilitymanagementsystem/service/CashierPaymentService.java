@@ -22,14 +22,11 @@ import java.math.BigDecimal;
 
 @Service
 public class CashierPaymentService {
-
     private final BillRepository billRepository;
     private final PaymentRepository paymentRepository;
     private final JdbcTemplate jdbcTemplate;
     private final CashierRepository cashierRepository;
     private final UserRepository userRepository;
-
-
 
     public CashierPaymentService(BillRepository billRepository,
                                  PaymentRepository paymentRepository,
@@ -61,11 +58,7 @@ public class CashierPaymentService {
             throw new RuntimeException("Amount must be > 0");
         }
 
-
-
-
         Integer cashierId = getCurrentUserId();
-
 
         Payment payment = new Payment();
         payment.setBill(bill);
@@ -80,7 +73,6 @@ public class CashierPaymentService {
         paymentRepository.flush();
         entityManager.refresh(bill);
         entityManager.clear();
-
 
         String method = normalizeMethod(req.method());
 
@@ -105,7 +97,7 @@ public class CashierPaymentService {
                     "INSERT INTO card (payment_id, platform_name, card_type, approval_code) VALUES (?, ?, ?, ?)",
                     saved.getPaymentId(),
                     req.card().platformName(),
-                    req.card().cardType(),   // CREDIT/DEBIT
+                    req.card().cardType(),
                     req.card().approvalCode()
             );
         } else if ("BANK TRANSFER".equals(method)) {
@@ -120,7 +112,6 @@ public class CashierPaymentService {
         } else {
             throw new RuntimeException("Invalid method: " + req.method());
         }
-
 
         Bill updatedBill = billRepository.findById(req.billId()).orElseThrow();
 
@@ -156,5 +147,4 @@ public class CashierPaymentService {
                 .map(User::getUserId)
                 .orElseThrow(() -> new RuntimeException("User not found for email: " + name));
     }
-
 }

@@ -23,7 +23,6 @@ public class UtilityConnectionController {
         this.em = em;
     }
 
-    // ✅ NO LOOP: return DTOs
     @GetMapping
     public List<UtilityConnectionDTO> getConnections() {
         return service.getAllConnections()
@@ -32,14 +31,12 @@ public class UtilityConnectionController {
                 .toList();
     }
 
-    // ✅ NO LOOP: return DTO
     @GetMapping("/{id}")
     public UtilityConnectionDTO getConnection(@PathVariable Integer id) {
         UtilityConnection c = service.getConnectionById(id).orElseThrow();
         return toDto(c);
     }
 
-    // ✅ Accept request DTO (customer_id, tariff_id)
     @PostMapping
     public UtilityConnectionDTO addConnection(@RequestBody UtilityConnectionRequestDTO req) {
         UtilityConnection c = new UtilityConnection();
@@ -61,9 +58,6 @@ public class UtilityConnectionController {
         service.deleteConnection(id);
     }
 
-    // -------------------------
-    // Helpers
-    // -------------------------
     private UtilityConnectionDTO toDto(UtilityConnection c) {
         return new UtilityConnectionDTO(
                 c.getConnectionId(),
@@ -82,7 +76,6 @@ public class UtilityConnectionController {
         c.setInstallDate(req.install_date());
         c.setStatus(req.status());
 
-        // ✅ references without loading full objects
         Customer customerRef = em.getReference(Customer.class, req.customer_id());
         Tariff tariffRef = em.getReference(Tariff.class, req.tariff_id());
         c.setCustomer(customerRef);

@@ -34,4 +34,3 @@ public class CustomerBillService {
         }).collect(Collectors.toList());
     }
 }
-

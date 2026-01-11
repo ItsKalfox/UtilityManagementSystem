@@ -10,13 +10,9 @@ import java.time.Instant;
 import java.util.List;
 
 public interface ManagerUsageRepository extends JpaRepository<Payment, Integer> {
-
-    // ====== KPI: Total income from ALL payments ======
     @Query("select coalesce(sum(p.amount), 0) from Payment p")
     BigDecimal totalIncomeAll();
 
-    // ====== Utility overview (income + customer count + connection count) ======
-    // income here = sum of payments (actual income)
     interface UtilityOverviewProjection {
         String getUtilityType();
         BigDecimal getIncome();
@@ -38,7 +34,6 @@ public interface ManagerUsageRepository extends JpaRepository<Payment, Integer> 
     """)
     List<UtilityOverviewProjection> utilityOverview();
 
-    // ====== Total income for a utility within time range (payments in range) ======
     @Query("""
         select coalesce(sum(p.amount), 0)
         from Payment p
@@ -53,7 +48,6 @@ public interface ManagerUsageRepository extends JpaRepository<Payment, Integer> 
             @Param("to") Instant to
     );
 
-    // ====== Detail rows per customer+connection in time range ======
     interface UtilityIncomeRowProjection {
         Integer getCustomerId();
         String getFullName();

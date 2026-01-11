@@ -17,4 +17,3 @@ public record CashierDetailDTO(
         String branchName,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}
-

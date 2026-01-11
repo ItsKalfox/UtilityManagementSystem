@@ -17,9 +17,6 @@ import com.utilitymanagementsystem.repository.UtilityConnectionRepository;
 import com.utilitymanagementsystem.dto.cashier.CashierBillHistoryDTO;
 import com.utilitymanagementsystem.dto.cashier.CashierBillListItemDTO;
 
-
-
-
 import java.util.List;
 
 @Service
@@ -28,8 +25,6 @@ public class CashierPortalService {
     private final CustomerRepository customerRepository;
     private final UtilityConnectionRepository utilityConnectionRepository;
     private final BillRepository billRepository;
-
-
 
     public CashierPortalService(
             CustomerRepository customerRepository,
@@ -125,34 +120,29 @@ public class CashierPortalService {
             String utilityType,
             int limit
     ) {
-
         int safeLimit = Math.max(1, Math.min(limit, 50));
         Pageable pageable = PageRequest.of(0, safeLimit);
 
         List<Bill> bills;
 
-        // Utility type filter (ELECTRICITY/WATER/GAS)
         if (utilityType != null && !utilityType.isBlank()) {
             bills = billRepository
                     .findByConnection_ConnectionIdAndConnection_UtilityTypeOrderByPeriodEndDesc(
                             connectionId, utilityType, pageable
                     );
         }
-        //  Status filter (FULLY PAID / PARTIALLY PAID / PENDING)
         else if (status != null && !status.isBlank()) {
             bills = billRepository
                     .findByConnection_ConnectionIdAndStatusOrderByPeriodEndDesc(
                             connectionId, status, pageable
                     );
         }
-        // Include all bills
         else if (includePaid) {
             bills = billRepository
                     .findByConnection_ConnectionIdOrderByPeriodEndDesc(
                             connectionId, pageable
                     );
         }
-        // Exclude FULLY PAID
         else {
             bills = billRepository
                     .findByConnection_ConnectionIdAndStatusNotOrderByPeriodEndDesc(
@@ -207,6 +197,4 @@ public class CashierPortalService {
     private String blankToNull(String s) {
         return (s == null || s.isBlank()) ? null : s;
     }
-
-
 }

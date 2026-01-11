@@ -108,7 +108,6 @@ public class AuthService {
     }
 
     public void setupPassword(PasswordSetupRequestDTO request) {
-
         switch (request.getUserType()) {
             case "ADMIN" -> {
                 Admin admin = adminRepository.findByUser_UserId(request.getUserId())

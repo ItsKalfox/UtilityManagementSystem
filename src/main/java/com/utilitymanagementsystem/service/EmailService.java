@@ -31,7 +31,6 @@ public class EmailService {
             helper.setSubject("Your Password Has Been Reset");
             helper.setFrom("no-reply@ums.com");
 
-            // Load HTML template
             ClassPathResource htmlFile =
                     new ClassPathResource("static/common/password-reset.html");
 

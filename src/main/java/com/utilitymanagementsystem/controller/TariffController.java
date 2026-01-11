@@ -67,7 +67,7 @@ public class TariffController {
             sm.put("slab_id", s.getSlabId());
             sm.put("slab_order", s.getSlabOrder());
             sm.put("start_unit", s.getStartUnit());
-            sm.put("end_unit", s.getEndUnit()); // can be null
+            sm.put("end_unit", s.getEndUnit());
             sm.put("unit_rate", s.getUnitRate());
             slabList.add(sm);
         }

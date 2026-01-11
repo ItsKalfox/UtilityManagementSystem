@@ -13,5 +13,4 @@ public class AreaListDTO {
     public void setAreaCode(String areaCode) { this.areaCode = areaCode; }
     public String getAreaName() { return areaName; }
     public void setAreaName(String areaName) { this.areaName = areaName; }
-
 }

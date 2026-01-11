@@ -223,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
 window.addRecord = async function () {
     const modal = document.getElementById('recordModal');
     const overlay = document.getElementById('modalOverlay');

@@ -62,5 +62,4 @@ public class Business {
     public void setBusinessType(String businessType) {
         this.businessType = businessType;
     }
-
 }

@@ -51,12 +51,12 @@ window.handleSettings = function () {
 };
 
 function showConfirmModal({
-                              title = "Confirm",
-                              message = "Are you sure?",
-                              confirmText = "OK",
-                              cancelText = "Cancel",
-                              danger = false,
-                          }) {
+    title = "Confirm",
+    message = "Are you sure?",
+    confirmText = "OK",
+    cancelText = "Cancel",
+    danger = false,
+}) {
     return new Promise((resolve) => {
         const modal = document.getElementById("confirmModal");
         const overlay = document.getElementById("confirmOverlay");

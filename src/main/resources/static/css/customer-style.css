@@ -36,7 +36,6 @@ nav a:hover {
     color: rgba(218, 232, 156, 0.24);
 }
 
-/* Optional: disabled look before login */
 nav a.disabled {
     pointer-events: none;opacity: 0.6;
 }
@@ -55,15 +54,11 @@ nav {
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    //align-items: ;
 }
-
-
 
 .logout-btn:hover {
     background-color: rgba(243, 241, 241, 0.7);
 }
-
 
 .btn-outline {
     border: 2px solid #fff;background: rgba(248, 245, 245, 0.09);color: #fff;
@@ -75,6 +70,7 @@ nav {
     margin-right: 10px;
 
 }
+
 .btn-outline:hover {
     background: #fff;color: #0d2b1c;
 }
@@ -89,16 +85,15 @@ nav {
 .hero.small {
     height: 40vh;
 }
+
 .datetime{
     font-size: 36px;
 }
 
-
-/* ===== TEXT BOX ON IMAGE (BLACK TRANSPARENT BLUR) ===== */
-
 .description{
     font-size: 37px;
 }
+
 .hero-content {
     position: absolute;
     top: 50%;left: 60px;
@@ -112,7 +107,6 @@ nav {
     padding: 25px 30px;
     max-width: 420px;
     border-radius: 8px;
-
 }
 
 .hero-text-box h1 {
@@ -126,7 +120,6 @@ nav {
     margin-bottom: 6px;
     color: #f1f1f1;
 }
-
 
 .datetime {
     position: absolute;
@@ -163,7 +156,6 @@ nav {
     display: flex;
 }
 
-
 .modal-box.large {
     background: #fff; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
     width: 420px;
@@ -194,7 +186,6 @@ nav {
     font-size: 14px;
 }
 
-
 .section {
     padding: 60px;
 }
@@ -204,7 +195,6 @@ footer {
     text-align: center;
     padding: 20px;
 }
-
 
 .services {
     display: grid;
@@ -234,7 +224,6 @@ footer {
     margin-top: 10px;
     font-size: 18px;
 }
-
 
 .services-description {
     max-width: 1100px;
@@ -296,7 +285,6 @@ footer {
     border-radius: 12px;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .service-row,
     .service-row.reverse {
@@ -325,15 +313,11 @@ footer {
     right: 18px;
     font-size: 22px;
     cursor: pointer;
-
 }
-
 
 .logo{
     font-family: "Times New Roman";
 }
-
-/* ===== BILL HISTORY SECTION ===== */
 
 .bill-section {
     padding: 80px 60px;
@@ -342,8 +326,8 @@ footer {
 
 .section,
 .bill-section {
-    min-height: 100vh;                /* full screen height */
-    scroll-margin-top: 90px;          /* offset for fixed navbar */
+    min-height: 100vh;
+    scroll-margin-top: 90px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -354,17 +338,15 @@ footer {
     margin-bottom: 30px;
     color: #0d2b1c;
     font-family: "Times New Roman";
-    padding-top: 120px;               /* space from top */
+    padding-top: 120px;
 }
 
-/* Tariff, meter, complaint spacing */
 #tariff,
 #meter,
 #complaint {
     padding-top: 120px;
 }
 
-/* GREEN TRANSPARENT BOX */
 .bill-score-box {
     background: rgb(92, 138, 120);
     border-radius: 20px;
@@ -373,7 +355,6 @@ footer {
     box-sizing: border-box;
 }
 
-/* WHITE CARD */
 .bill-card {
     background: #ffffff;
     border-radius: 16px;
@@ -382,7 +363,6 @@ footer {
     overflow-x: auto;
 }
 
-/* TABLE */
 .bill-table {
     width: 100%;
     border-collapse: collapse;
@@ -409,7 +389,6 @@ footer {
     background: rgba(13, 43, 28, 0.04);
 }
 
-/* STATUS COLORS */
 .paid {
     color: #0a8f4d;
     font-weight: 600;
@@ -419,30 +398,6 @@ footer {
     color: #c0392b;
     font-weight: 600;
 }
-
-
-/* ===== SIGN-IN CTA SHAPE ===== */
-
-/*.signin-cta {*/
-/*    margin: 90px auto;*/
-/*    width: 95%;                 !* slightly wider *!*/
-/*    max-width: 1450px;          !* increased from 1100 *!*/
-/*    height: 300px;              !* increased from 260 *!*/
-/*    border-radius: 24px;*/
-/*    background: linear-gradient(*/
-/*            rgb(13, 44, 29), rgba(13, 43, 28, 0.65)*/
-/*    );*/
-/*    display: flex;*/
-/*    align-items: center;*/
-/*    justify-content: center;*/
-/*    transition: transform 0.3s ease, box-shadow 0.3s ease;*/
-/*}*/
-
-
-/*.signin-cta:hover {*/
-/*    transform: translateY(-6px);*/
-/*    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);*/
-/*}*/
 
 .signin-overlay {
     text-align: center;
@@ -461,9 +416,11 @@ footer {
     font-size: 16px;
     opacity: 0.9;
 }
+
 .footer {
     font-size: 15px;
 }
+
 .header-section{
     font-family: "Times New Roman";
     display: flex;
@@ -471,10 +428,6 @@ footer {
     gap: 20px;
 
 }
-
-/* ===============================
-   TARIFF PLAN SECTION
-================================ */
 
 .tariff-section {
     min-height: 100vh;
@@ -500,16 +453,12 @@ footer {
     margin-bottom: 70px;
 }
 
-/* ===============================
-   CARD ROW (CENTERED 2-COLUMN)
-================================ */
 .tariff-card-row {
     display: grid;
     grid-template-columns: repeat(2, 420px);
-    justify-content: center;   /* center the grid */
+    justify-content: center;
     gap: 190px;
 }
-
 
 .plan-card {
     position: relative;
@@ -521,22 +470,22 @@ footer {
     animation: fadeUp 0.8s ease forwards;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* vertical centering inside card */
+    justify-content: center;
     transition: transform 0.35s ease, box-shadow 0.35s ease;
     animation: fadeUp 0.8s ease forwards;
 }
+
 .plan-card:hover {
     transform: translateY(-12px);
     box-shadow: 0 25px 55px rgba(0, 0, 0, 0.35);
 }
+
 .plan-title {
     font-size: 26px;
     font-weight: 700;
     color: #0f3d2e;
     margin-bottom: 30px;
 }
-
-/* ===== PRICE ===== */
 
 .plan-price {
     font-size: 46px;
@@ -550,8 +499,6 @@ footer {
     font-size: 18px;
     color: #1b5e44;
 }
-
-/* ===== FEATURES ===== */
 
 .plan-features {
     list-style: none;
@@ -568,8 +515,7 @@ footer {
 
 .active-plan {
     border: 3px solid #f5c542;
-    box-shadow:
-            0 0 0 rgba(245, 197, 66, 0), 0 18px 45px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 rgba(245, 197, 66, 0), 0 18px 45px rgba(0, 0, 0, 0.35);
     animation: glowPulse 2.5s infinite ease-in-out;
 }
 
@@ -596,7 +542,7 @@ footer {
         height: auto;
     }
 }
-/* Entrance animation */
+
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -629,10 +575,6 @@ footer {
     animation-delay: 0.25s;
 }
 
-/* ===============================
-   METER READING SECTION
-================================ */
-
 .meter-wrapper {
     width: 100%;
     max-width: 1700px;
@@ -647,14 +589,12 @@ footer {
     margin-bottom: 40px;
 }
 
-/* SUMMARY CARDS */
 .meter-cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
     margin-bottom: 50px;
 }
-
 
 .meter-card:hover {
     transform: translateY(-6px);
@@ -666,11 +606,13 @@ footer {
     margin-bottom: 10px;
     font-size: 18px;
 }
+
 .meter-main {
     display: grid;
-    grid-template-columns: 2fr 1.2fr; /* chart wider than table */
+    grid-template-columns: 2fr 1.2fr;
     gap: 30px;margin-top: 40px;
 }
+
 .meter-card p {
     font-size: 26px;
     font-weight: 700;
@@ -684,13 +626,13 @@ footer {
     transition: all 0.25s ease;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
+
 .meter-chart {
     background: #ffffff; box-shadow: 0 12px 35px rgba(0,0,0,0.18);
     border-radius: 18px;
     padding: 25px;
     transition: all 0.25s ease;
 }
-
 
 .meter-table {
     background: #ffffff;
@@ -700,10 +642,10 @@ footer {
     max-height: 420px;
 }
 
-
 .meter-chart:hover {
     transform: translateY(-4px);
 }
+
 .meter-table:hover {
     transform: translateY(-5px);
     box-shadow: 0 20px 55px rgba(31,122,85,0.35);
@@ -735,13 +677,11 @@ footer {
     transform: scale(1.01);
 }
 
-
 #meter {
     min-height: auto;
     padding-bottom: 80px;
 }
 
-/* RESPONSIVE */
 @media (max-width: 900px) {
     .meter-cards {
         grid-template-columns: repeat(2, 1fr);
@@ -752,14 +692,13 @@ footer {
     }
 }
 
-/* Complaint section takes full width */
 #complaint {
     width: 100%;
     padding: 40px 60px;
 }
 #complaint h2 {
     font-family: "Times New Roman", Times, serif;
-    font-size: 28px;   /* slightly bigger */
+    font-size: 28px;
     margin-bottom: 20px;
 }
 
@@ -768,23 +707,20 @@ footer {
     justify-content: center;
 }
 
-/* Form card */
 .complaint-form {
     width: 100%;
-    max-width: 800px;   /* Uses empty space nicely */
+    max-width: 800px;
     background: #ffffff;box-shadow: 0 6px 20px rgba(0,0,0,0.1);
     padding: 30px;
     border-radius: 12px;
 }
 
-/* Each input group */
 .form-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
 }
 
-/* Inputs */
 .complaint-form select,
 .complaint-form textarea {
     width: 100%;
@@ -794,13 +730,11 @@ footer {
     border: 1px solid #ccc;
 }
 
-/* Textarea size */
 .complaint-form textarea {
     min-height: 120px;
     resize: vertical;
 }
 
-/* Button */
 .complaint-form button {
     padding: 12px;
     width: 200px;
@@ -810,30 +744,29 @@ footer {
     cursor: pointer;
 }
 
-/* Button hover */
 .complaint-form button:hover {
     background-color: #1b5e20;
 }
+
 .complaint-info {
     margin-top: 40px;color: #555;font-size: 14px;
 }
+
 #complaint {
     background: linear-gradient(
             180deg,
             #ffffff 0%, #f4f8f4 100%
     );
 }
+
 #description {
-    min-height: 180px;   /* increased height */
-    resize: vertical;    /* user can resize if needed */
+    min-height: 180px;
+    resize: vertical;
 }
 #complaint.section {
     min-height: unset;
     padding-bottom: 40px;
 }
-/* ===============================
-   PURE CSS SLIDESHOW
-================================ */
 
 .slides {
     position: absolute;
@@ -862,13 +795,13 @@ footer {
     object-fit: cover;
 }
 
-
 .hero-content,
 .datetime,
 .progress-bar {
     position: absolute;
     z-index: 10;
 }
+
 .complaint-error {
     color: #c0392b;
     font-size: 14px;
@@ -879,6 +812,7 @@ footer {
 .invalid {
     border: 2px solid #c0392b;
 }
+
 .complaint-message {
     margin-top: 12px;
     font-size: 14px;

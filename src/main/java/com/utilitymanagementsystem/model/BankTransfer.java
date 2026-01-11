@@ -62,5 +62,4 @@ public class BankTransfer {
     public void setTransactionNum(String transactionNum) {
         this.transactionNum = transactionNum;
     }
-
 }

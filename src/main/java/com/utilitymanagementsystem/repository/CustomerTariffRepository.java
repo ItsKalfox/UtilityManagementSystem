@@ -12,8 +12,6 @@ import java.util.List;
 public interface CustomerTariffRepository
         extends JpaRepository<UtilityConnection, Integer>
 {
-
-
     @Query(value = """
         SELECT
             t.tariff_name,

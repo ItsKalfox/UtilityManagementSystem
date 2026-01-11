@@ -89,5 +89,4 @@ public class Cashier {
     public void setPayments(Set<Payment> payments) {
         this.payments = payments;
     }
-
 }

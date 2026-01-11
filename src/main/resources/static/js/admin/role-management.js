@@ -1,5 +1,3 @@
-
-
 document.addEventListener("DOMContentLoaded", async () => {
     await fetchPermissions();
     await fetchRoles();
@@ -17,11 +15,9 @@ let allPermissions = [];
 let allRoles = [];
 let linkedRoleId = null;
 
-
 function authHeader() {
     return { Authorization: `Bearer ${localStorage.getItem("token")}` };
 }
-
 
 async function fetchRoles() {
     try {
@@ -40,7 +36,6 @@ async function fetchRoles() {
     }
 }
 
-
 async function fetchPermissions() {
     try {
         const response = await fetch("/permissions", { headers: authHeader() });
@@ -56,7 +51,6 @@ async function fetchPermissions() {
         showToast("Error fetching permissions", "error");
     }
 }
-
 
 function applyFilters() {
     const searchValue = (document.getElementById("searchInput")?.value || "")
@@ -93,7 +87,6 @@ function applyFilters() {
     renderRoles(roles);
 }
 
-
 function renderRoles(roles) {
     const container = document.getElementById("recordsContainer");
 
@@ -121,7 +114,6 @@ function renderRoles(roles) {
         .join("");
 }
 
-
 window.addRecord = function () {
     linkedRoleId = null;
     openRoleModal("Add New System Role");
@@ -130,7 +122,6 @@ window.addRecord = function () {
 window.refreshAudits = function () {
     fetchRoles();
 };
-
 
 window.editRole = async function (roleId) {
     linkedRoleId = roleId;
@@ -150,7 +141,6 @@ window.editRole = async function (roleId) {
         showToast("Error fetching role data", "error");
     }
 };
-
 
 function openRoleModal(title, role = null) {
     const modal = document.getElementById("recordModal");
@@ -232,7 +222,6 @@ function openRoleModal(title, role = null) {
     modal.classList.add("active");
     overlay.classList.add("active");
 }
-
 
 window.saveRole = async function () {
     const roleName = document.getElementById("role_name")?.value.trim();

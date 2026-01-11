@@ -17,4 +17,3 @@ public record AdminDetailDTO(
         Integer roleId,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}
-

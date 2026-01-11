@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/cashier")
 @PreAuthorize("hasRole('CASHIER')")
 public class CashierPaymentController {
-
     private final CashierPaymentService cashierPaymentService;
 
     public CashierPaymentController(CashierPaymentService cashierPaymentService) {

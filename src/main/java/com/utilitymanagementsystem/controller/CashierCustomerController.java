@@ -12,7 +12,6 @@ import java.util.List;
 @RequestMapping("/api/cashier/customers")
 @PreAuthorize("hasRole('CASHIER')")
 public class CashierCustomerController {
-
     private final CashierPortalService cashierPortalService;
 
     public CashierCustomerController(CashierPortalService cashierPortalService) {
@@ -32,5 +31,4 @@ public class CashierCustomerController {
     public List<CashierConnectionDTO> getCustomerConnections(@PathVariable Integer customerId) {
         return cashierPortalService.getCustomerConnections(customerId);
     }
-
 }

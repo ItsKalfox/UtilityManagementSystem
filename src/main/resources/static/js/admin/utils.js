@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyPermissionVisibility('adminActionLogTab', 'READ_ACTION_LOGS');
     applyPermissionVisibility('tariffCreationTab', 'READ_TARIFFS');
     applyPermissionVisibility('connectionCreationTab', 'MANAGE_COMPLAINTS');
-
 });
 
 function initDashboard() {
@@ -50,13 +49,10 @@ window.handleLogout = async function() {
     if (!result || !result.confirmed) {
         return;
     }
-
-    // preserve theme
     const theme = localStorage.getItem('theme');
 
     localStorage.clear();
 
-    // restore theme
     if (theme !== null) {
         localStorage.setItem('theme', theme);
     }

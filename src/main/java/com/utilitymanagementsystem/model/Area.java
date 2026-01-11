@@ -52,5 +52,4 @@ public class Area {
     public void setFieldOfficers(Set<FieldOfficer> fieldOfficers) {
         this.fieldOfficers = fieldOfficers;
     }
-
 }

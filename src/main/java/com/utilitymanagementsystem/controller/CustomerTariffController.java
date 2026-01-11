@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/customer")
 public class CustomerTariffController {
-
     private final CustomerTariffService customerTariffService;
 
     @Autowired

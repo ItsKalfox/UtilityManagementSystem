@@ -24,8 +24,6 @@ public class MeterReadingController {
     private final CustomerService customerService;
     private final MeterHistoryRepository meterHistoryRepository;
 
-//    private final MeterReadingService meterReadingService;
-
     public MeterReadingController(
             CustomerService customerService,
             MeterHistoryRepository meterHistoryRepository
@@ -33,8 +31,6 @@ public class MeterReadingController {
         this.customerService = customerService;
         this.meterHistoryRepository = meterHistoryRepository;
     }
-
-    // 🔹 LIST customers for field officer
 
     @GetMapping("customers")
     public Page<CustomerListDTO> listCustomers(
@@ -84,8 +80,6 @@ public class MeterReadingController {
     @GetMapping("get-details/{id}")
     public Map<String, Object> getDetails(@PathVariable Integer id) {
         var meter_readings = meterHistoryRepository.findMeterReadingsByCustomerId(id);
-//        get maximum reading_value record (last reading)
-        // Get FULL record with maximum reading_value
         Map<Integer, Map<String, Object>> lastReadingsPerConnection =
                 meter_readings.stream()
                         .collect(Collectors.groupingBy(
@@ -99,8 +93,6 @@ public class MeterReadingController {
                                         opt -> opt.orElse(null)
                                 )
                         ));
-
-
         var meters = meterHistoryRepository.findSerialNumberByCustomerId(id);
 
         Map<String, Object> data = new HashMap<>();

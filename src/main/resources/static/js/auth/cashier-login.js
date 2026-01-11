@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     const form = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
@@ -45,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('email', data.email);
             localStorage.setItem('permissions', JSON.stringify(data.permissions));
 
-            // ALWAYS go to cashier dashboard from this page
             window.location.href = '../cashier/cashier-dashboard.html';
 
         } catch (err) {

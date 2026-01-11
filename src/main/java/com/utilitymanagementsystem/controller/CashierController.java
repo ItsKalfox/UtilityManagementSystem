@@ -82,7 +82,7 @@ public class CashierController {
     @PostMapping("/{id}/reset-password")
     public ResponseEntity<Void> resetCashierPassword(@PathVariable Integer id) {
         cashierService.resetCashierPassword(id);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAuthority('UPDATE_CASHIER')")

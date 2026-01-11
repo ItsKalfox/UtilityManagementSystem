@@ -101,5 +101,4 @@ public class Admin {
     public void setComplaints(Set<Complaint> complaints) {
         this.complaints = complaints;
     }
-
 }

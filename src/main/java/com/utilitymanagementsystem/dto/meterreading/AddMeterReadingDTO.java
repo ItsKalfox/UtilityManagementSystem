@@ -2,7 +2,6 @@ package com.utilitymanagementsystem.dto.meterreading;
 
 import jakarta.validation.constraints.NotBlank;
 
-
 public record AddMeterReadingDTO (
         @NotBlank Integer field_officer_id,
         @NotBlank Integer connection_id,
@@ -11,5 +10,4 @@ public record AddMeterReadingDTO (
         @NotBlank String billing_period_start,
         @NotBlank String billing_period_end
 
-){
-}
+) { }

@@ -28,7 +28,6 @@ public class ManagerUsageController {
         this.utilityConnectionRepository = utilityConnectionRepository;
     }
 
-    // ===== 1) Summary KPIs =====
     @GetMapping("/summary")
     public ResponseEntity<UsageSummaryDTO> summary() {
         UsageSummaryDTO dto = new UsageSummaryDTO();
@@ -38,15 +37,11 @@ public class ManagerUsageController {
         return ResponseEntity.ok(dto);
     }
 
-    // ===== 2) Utility overview =====
     @GetMapping("/utilities")
     public ResponseEntity<List<UtilityOverviewDTO>> utilities() {
-
-        // Always return these 3 even if DB has none
         List<String> order = List.of("ELECTRICITY", "WATER", "GAS");
         Map<String, UtilityOverviewDTO> map = new HashMap<>();
 
-        // default zeros
         for (String t : order) {
             UtilityOverviewDTO d = new UtilityOverviewDTO();
             d.utilityType = t;
@@ -69,7 +64,6 @@ public class ManagerUsageController {
         List<UtilityOverviewDTO> out = new ArrayList<>();
         for (String t : order) out.add(map.get(t));
 
-        // include any extra types in DB (if they exist)
         for (String t : map.keySet()) {
             if (!order.contains(t)) out.add(map.get(t));
         }
@@ -77,7 +71,6 @@ public class ManagerUsageController {
         return ResponseEntity.ok(out);
     }
 
-    // ===== 3) Utility income detail report =====
     @GetMapping("/utilities/{utilityType}/income")
     public ResponseEntity<UtilityIncomeReportDTO> incomeReport(
             @PathVariable String utilityType,
@@ -98,7 +91,6 @@ public class ManagerUsageController {
 
         ZoneId zone = ZoneId.systemDefault();
         Instant fromInstant = fromDate.atStartOfDay(zone).toInstant();
-        // inclusive end (end of day)
         Instant toInstant = toDate.plusDays(1).atStartOfDay(zone).toInstant().minusMillis(1);
 
         UtilityIncomeReportDTO dto = new UtilityIncomeReportDTO();

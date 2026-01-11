@@ -100,5 +100,4 @@ public class Bill {
     public void setPayments(Set<Payment> payments) {
         this.payments = payments;
     }
-
 }

@@ -29,7 +29,6 @@ public class RoleController {
         this.rolePermissionRepository = rolePermissionRepository;
     }
 
-    // ✅ SAFE: return only what UI needs (prevents infinite recursion)
     @PreAuthorize("hasAuthority('MANAGE_ADMIN_ROLES')")
     @GetMapping
     public List<Map<String, Object>> getAllRoles() {
@@ -76,7 +75,6 @@ public class RoleController {
             }
         }
 
-        // ✅ Return safe JSON (no entity recursion)
         Map<String, Object> res = new HashMap<>();
         res.put("role_id", saved.getRoleId());
         res.put("role_name", saved.getRoleName());
@@ -104,7 +102,6 @@ public class RoleController {
             }
         }
 
-        // ✅ Return safe JSON
         Map<String, Object> res = new HashMap<>();
         res.put("role_id", saved.getRoleId());
         res.put("role_name", saved.getRoleName());

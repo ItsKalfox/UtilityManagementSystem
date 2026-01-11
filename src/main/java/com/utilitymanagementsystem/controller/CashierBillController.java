@@ -7,12 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import com.utilitymanagementsystem.dto.cashier.CashierBillHistoryDTO;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/cashier/connections")
 @PreAuthorize("hasRole('CASHIER')")
 public class CashierBillController {
-
     private final CashierPortalService cashierPortalService;
 
     public CashierBillController(CashierPortalService cashierPortalService) {
@@ -35,7 +33,4 @@ public class CashierBillController {
                 connectionId, includePaid, status, utilityType, limit
         );
     }
-
-
-
 }

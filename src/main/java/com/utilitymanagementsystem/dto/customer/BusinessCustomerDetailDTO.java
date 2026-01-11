@@ -23,4 +23,3 @@ public record BusinessCustomerDetailDTO(
         String taxId,
         List<PhoneNumberDTO> phoneNumbers
 ) implements CustomerDetailView {}
-

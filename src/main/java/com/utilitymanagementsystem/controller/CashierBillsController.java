@@ -11,7 +11,6 @@ import java.util.List;
 @RequestMapping("/api/cashier/bills")
 @PreAuthorize("hasRole('CASHIER')")
 public class CashierBillsController {
-
     private final CashierPortalService cashierPortalService;
 
     public CashierBillsController(CashierPortalService cashierPortalService) {

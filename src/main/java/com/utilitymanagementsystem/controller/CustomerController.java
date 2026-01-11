@@ -18,7 +18,6 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    // 🔹 LIST customers (pagination + search + filter + sort)
     @PreAuthorize("hasAuthority('READ_CUSTOMER')")
     @GetMapping
     public Page<CustomerListDTO> listCustomers(
@@ -71,19 +70,18 @@ public class CustomerController {
         return customerService.createFullCustomer(dto);
     }
 
-    // 🔹 DELETE customer (cascades to Household / Business / GovernmentOrganization)
     @PreAuthorize("hasAuthority('DELETE_CUSTOMER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Integer id) {
         customerService.deleteCustomer(id);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAuthority('UPDATE_CUSTOMER')")
     @PostMapping("/{id}/reset-password")
     public ResponseEntity<Void> resetCustomerPassword(@PathVariable Integer id) {
         customerService.resetCustomerPassword(id);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAuthority('UPDATE_CUSTOMER')")
@@ -99,5 +97,4 @@ public class CustomerController {
         customerService.deactivateCustomer(id);
         return ResponseEntity.noContent().build();
     }
-
 }

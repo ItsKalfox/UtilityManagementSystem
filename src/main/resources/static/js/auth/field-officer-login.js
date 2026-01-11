@@ -1,7 +1,5 @@
 console.log("Field Officer auth JS loaded");
-
 document.addEventListener('DOMContentLoaded', () => {
-
     const form = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
@@ -23,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         hideError();
 
         try {
-            // FIELD OFFICER LOGIN API
             const response = await fetch('/api/auth/field-officer/login', {
                 method: 'POST',
                 headers: {
@@ -46,14 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
 
-            // Save auth data
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId', data.userId);
             localStorage.setItem('fullName', data.fullName);
             localStorage.setItem('email', data.email);
             localStorage.setItem('role', 'FIELD_OFFICER');
 
-            // Redirect to Field Officer Dashboard
             window.location.href = '../field-officer/field-officer-dashboard.html';
 
         } catch (err) {

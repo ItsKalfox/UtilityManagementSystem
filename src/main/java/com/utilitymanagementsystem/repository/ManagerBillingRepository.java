@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ManagerBillingRepository extends JpaRepository<Bill, Integer> {
-
     @Query("""
         SELECT
           c.userId AS customerId,

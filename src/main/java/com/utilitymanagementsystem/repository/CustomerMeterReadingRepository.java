@@ -28,4 +28,3 @@ public interface CustomerMeterReadingRepository
             @Param("customerId") int customerId
     );
 }
-

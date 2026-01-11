@@ -18,7 +18,6 @@ window.CashierBillsDashboard = (() => {
 
     if (!els.list) return;
 
-
     if (init._wired) return;
     init._wired = true;
 

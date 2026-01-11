@@ -11,19 +11,19 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
     })
-        .then(res => {
-            if (!res.ok) throw new Error("Login failed");
-            return res.json();
-        })
-        .then(data => {
-            console.log("Login success:", data);
+    .then(res => {
+        if (!res.ok) throw new Error("Login failed");
+        return res.json();
+    })
+    .then(data => {
+        console.log("Login success:", data);
 
-            localStorage.setItem("customerId", data.userId);
-            localStorage.setItem("customerEmail", data.email);
-            localStorage.setItem("customerLoggedIn", "true");
+        localStorage.setItem("customerId", data.userId);
+        localStorage.setItem("customerEmail", data.email);
+        localStorage.setItem("customerLoggedIn", "true");
 
-            window.location.replace("customer/customer-dashboard.html");
-        })
+        window.location.replace("customer/customer-dashboard.html");
+    })
 
-        .catch(err => alert("Login failed"));
+    .catch(err => alert("Login failed"));
 });

@@ -42,12 +42,11 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer>, Jp
             :connectionType is null or :connectionType = ''
             or lower(uc.utilityType) = lower(:connectionType)
         )
-""")
+    """)
     List<Customer> cashierSearchCustomers(
             @Param("q") String q,
             @Param("customerType") String customerType,
             @Param("connectionType") String connectionType,
             Pageable pageable
     );
-
 }

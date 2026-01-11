@@ -3,6 +3,7 @@ package com.utilitymanagementsystem.service;
 import com.utilitymanagementsystem.dto.customer.CustomerBillDTO;
 import com.utilitymanagementsystem.model.Bill;
 import com.utilitymanagementsystem.repository.BillRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,4 +35,3 @@ public class CustomerBillService {
         }).collect(Collectors.toList());
     }
 }
-

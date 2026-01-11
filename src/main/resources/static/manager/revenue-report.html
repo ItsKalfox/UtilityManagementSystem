@@ -19,7 +19,6 @@
 <div class="toast" id="toast"></div>
 
 <div class="dashboard-container">
-    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header-container">
             <div class="sidebar-header">
@@ -62,9 +61,7 @@
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
-        <!-- HEADER -->
         <header class="header">
             <div class="user-info">
                 <div class="user-avatar" id="userAvatar">M</div>
@@ -75,14 +72,10 @@
             </div>
         </header>
 
-        <!-- CONTENT -->
         <div class="content-area">
-
-            <!-- PAGE TITLE -->
             <section class="stats-section">
                 <h3 class="section-title">Revenue Reports</h3>
 
-                <!-- FILTERS -->
                 <div class="datetime-filters">
                     <div class="filter-group">
                         <label for="startDate">Start Date</label>
@@ -107,14 +100,11 @@
                     </div>
                 </div>
 
-                <!-- INFO BOX -->
                 <div class="info-box">
                     <h4>Total Revenue:</h4>
                     <p id="totalRevenue">Rs. 0</p>
                 </div>
 
-                <!-- TABLE -->
-                <!-- TABLE HEADER -->
                 <div class="record-item record-header">
                     <div>#</div>
                     <div>Customer</div>
@@ -123,13 +113,7 @@
                     <div>Status</div>
                 </div>
 
-                <!-- BACKEND DATA WILL COME HERE -->
-                <div class="records-container" id="revenueRecords">
-                    <!-- JS injects rows here -->
-                </div>
-
-
-
+                <div class="records-container" id="revenueRecords"></div>
             </section>
         </div>
     </main>

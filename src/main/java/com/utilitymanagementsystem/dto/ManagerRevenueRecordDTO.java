@@ -8,7 +8,7 @@ public class ManagerRevenueRecordDTO {
     private String customerName;
     private String utilityType;
     private double amount;
-    private String paymentStatus;   // ✅ ADD THIS
+    private String paymentStatus;
     private LocalDateTime paymentDate;
 
     public ManagerRevenueRecordDTO(

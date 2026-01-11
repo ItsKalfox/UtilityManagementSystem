@@ -24,4 +24,3 @@ public class ManagerDashboardSummaryDTO {
         return totalCustomers;
     }
 }
-

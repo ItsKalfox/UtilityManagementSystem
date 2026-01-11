@@ -1,6 +1,5 @@
 package com.utilitymanagementsystem.service;
 
-
 import com.utilitymanagementsystem.dto.manager.ManagerRevenueRecordDTO;
 import com.utilitymanagementsystem.repository.ManagerRevenueRepository;
 import org.springframework.stereotype.Service;

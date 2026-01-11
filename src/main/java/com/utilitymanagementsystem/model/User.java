@@ -8,6 +8,7 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
@@ -22,8 +23,9 @@ public class User {
     @Column(name = "nic", nullable = false, length = 20)
     private String nic;
 
-    @ManyToMany(mappedBy = "user")
-    private Set<Role> roles = new LinkedHashSet<>();
+    // ✅ Removed Many-to-Many roles mapping.
+    // Roles are assigned only for Admin via admin.role_id (see schema).
+    // This prevents Hibernate from expecting a join table like "role_users".
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Cashier cashier;
@@ -75,14 +77,6 @@ public class User {
         this.nic = nic;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
     public Cashier getCashier() {
         return cashier;
     }
@@ -115,9 +109,13 @@ public class User {
         this.manager = manager;
     }
 
-    public Admin getAdmin() { return admin; }
+    public Admin getAdmin() {
+        return admin;
+    }
 
-    public void setAdmin(Admin admin) { this.admin = admin; }
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
+    }
 
     public Set<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;

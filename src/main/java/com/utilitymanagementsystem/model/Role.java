@@ -8,6 +8,7 @@ import java.util.Set;
 @Entity
 @Table(name = "role")
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id", nullable = false)
@@ -16,8 +17,12 @@ public class Role {
     @Column(name = "role_name", nullable = false, length = 100)
     private String roleName;
 
-    @ManyToMany
-    private Set<User> user = new LinkedHashSet<>();
+    // ✅ Removed Many-to-Many users mapping.
+    // In this system, roles are assigned to Admin via admin.role_id (single role per admin),
+    // and permissions are linked via role_permission.
+    // Keeping this would make Hibernate expect a join table like "role_users".
+    //
+    // private Set<User> user;
 
     @OneToMany(mappedBy = "role")
     private Set<RolePermission> rolePermissions = new LinkedHashSet<>();
@@ -36,14 +41,6 @@ public class Role {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
-    }
-
-    public Set<User> getUser() {
-        return user;
-    }
-
-    public void setUser(Set<User> user) {
-        this.user = user;
     }
 
     public Set<RolePermission> getRolePermissions() {

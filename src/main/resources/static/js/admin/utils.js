@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyPermissionVisibility('areaCreationTab', 'MANAGE_AREAS');
     applyPermissionVisibility('adminActionLogTab', 'READ_ACTION_LOGS');
     applyPermissionVisibility('tariffCreationTab', 'READ_TARIFFS');
-    applyPermissionVisibility('complaintManagementTab', 'MANAGE_COMPLAINTS');
     applyPermissionVisibility('connectionCreationTab', 'MANAGE_COMPLAINTS');
 
 });
@@ -231,7 +230,7 @@ function applyPermissionVisibility(id, permission) {
     if (!el) return;
 
     if (id == "addCustomerBtn" || id == "addManagerBtn" || id == "addCashierBtn" || id == "addFieldOfficerBtn" || id == "addAdminBtn"
-    || id=="addAreaBtn" || id=="addRoleBtn" || id=="addTariffBtn" || id=="addComplaintBtn" || id=="addConnectionBtn"){
+    || id=="addAreaBtn" || id=="addRoleBtn" || id=="addTariffBtn" || id=="addConnectionBtn"){
         el.style.display = hasPermission(permission) ? 'block' : 'none';
         return
     }

@@ -1,1317 +1,401 @@
-let currentPage = 0;
-const pageSize = 20;
 
-let searchTerm = '';
-let filterStatus = 'all';
-let sortBy = 'userId';
-let sortDirection = 'asc';
-let cachedAreas = null;
-let linkedUserId = null;
-let nicCheckInProgress = false;
-let lastCheckedNic = null;
+let linkedTariffId = null;
+let allTariffs = [];
 
-async function fetchManagers() {
-    const params = new URLSearchParams({
-        page: currentPage,
-        size: pageSize,
-        sortBy,
-        direction: sortDirection
-    });
+document.addEventListener("DOMContentLoaded", () => {
+    // Search input should filter live
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) searchInput.addEventListener("input", applyTariffFilters);
 
-    if (searchTerm) params.append('search', searchTerm);
-    if (filterStatus !== 'all') params.append('status', filterStatus);
-
-    console.log('FETCH:', params.toString());
-
-    try {
-        const response = await fetch(`/managers?${params.toString()}`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.status === 401) {
-            let data;
-            try {
-                data = await response.json();
-            } catch {
-                data = {};
-            }
-            if (data.message === 'Token expired') {
-                const confirmed = await handleTokenExpired();
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-                localStorage.clear();
-                if (theme !== null) {
-                    localStorage.setItem('theme', theme);
-                }
-
-                window.location.replace('../../index.html');
-            }
-        }
-
-        if (!response.ok) {
-            let message = 'Failed to fetch manager';
-            try {
-                const err = await response.json();
-                if (err.message) message = err.message;
-            } catch {}
-            showToast(message, 'error');
-            return;
-        }
-
-        const data = await response.json();
-
-        renderRecords(data.content);
-        renderPagination(data.totalPages);
-
-        return true;
-
-    } catch (err) {
-        console.error(err);
-        showToast('Unexpected error while fetching manager records', 'error');
-    }
-}
-
-function renderRecords(records) {
-    const container = document.getElementById('recordsContainer');
-
-    if (!records || records.length === 0) {
-        container.innerHTML = `<p class="empty-state">No records found</p>`;
-        return;
-    }
-
-    container.innerHTML = records.map(record => `
-        <div class="record-item">
-            <div class="record-info">
-                <div class="record-id">#${record.userId}</div>
-                <div class="record-name">${record.fullName}</div>
-                <div class="record-nic">${record.nic}</div>
-                <div class="record-department">${record.department}</div>
-                <div>
-                    <span class="status-badge status-${record.status.toLowerCase()}">
-                        ${record.status}
-                    </span>
-                </div>
-            </div>
-
-            <div class="record-actions">
-                <button class="btn btn-view"
-                    onclick="viewRecord(${record.userId})">
-                    Full View
-                </button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function renderPagination(totalPages) {
-    const pagination = document.getElementById('pagination');
-    let buttons = [];
-
-    for (let i = 0; i < totalPages; i++) {
-        buttons.push(`
-            <button class="page-btn ${i === currentPage ? 'active' : ''}"
-                onclick="goToPage(${i})">
-                ${i + 1}
-            </button>
-        `);
-    }
-
-    pagination.innerHTML = buttons.join('');
-}
-
-window.goToPage = function (page) {
-    currentPage = page;
-    fetchManagers();
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    fetchManagers();
-    applyPermissionVisibility('addManagerBtn', 'CREATE_MANAGER');
-
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', e => {
-            searchTerm = e.target.value.trim();
-            currentPage = 0;
-            fetchManagers();
-        });
-    }
-
-    const filterStatusSelect = document.getElementById('filterStatus');
-    if (filterStatusSelect) {
-        filterStatusSelect.addEventListener('change', e => {
-            filterStatus = e.target.value;
-            currentPage = 0;
-            fetchManagers();
-        });
-    }
-
-    const sortBySelect = document.getElementById('sortBySelect');
-    if (sortBySelect) {
-        sortBySelect.addEventListener('change', e => {
-            sortBy = e.target.value;
-            currentPage = 0;
-            fetchManagers();
-        });
-    }
-
-    const sortOrderSelect = document.getElementById('sortOrderSelect');
-    if (sortOrderSelect) {
-        sortOrderSelect.addEventListener('change', e => {
-            sortDirection = e.target.value;
-            currentPage = 0;
-            fetchManagers();
-        });
-    }
+    // Initial load
+    fetchTariffs();
 });
 
 
-window.addRecord = async function () {
-    const modal = document.getElementById('recordModal');
-    const overlay = document.getElementById('modalOverlay');
+function authHeader() {
+    return { Authorization: `Bearer ${localStorage.getItem("token")}` };
+}
 
-    linkedUserId = null;
+function safeFloat(v) {
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : null;
+}
+
+function safeInt(v) {
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) ? n : null;
+}
+
+
+window.fetchTariffs = async function fetchTariffs() {
+    try {
+        const res = await fetch("/tariffs", { headers: authHeader() });
+        if (!res.ok) throw new Error("Failed to fetch tariffs");
+
+        allTariffs = await res.json();
+        applyTariffFilters();
+    } catch (err) {
+        console.error(err);
+        showToast("Error loading tariffs", "error");
+    }
+};
+
+window.refreshAudits = function () {
+    window.fetchTariffs();
+};
+
+
+function applyTariffFilters() {
+    const searchValue = (document.getElementById("searchInput")?.value || "")
+        .trim()
+        .toLowerCase();
+
+    const statusFilter = document.getElementById("filterStatus")?.value || "all";
+    const utilityFilter = document.getElementById("filterUtilityType")?.value || "all";
+
+    const sortBy = document.getElementById("sortBySelect")?.value || "tariffId";
+    const sortOrder = document.getElementById("sortOrderSelect")?.value || "asc";
+
+    let tariffs = Array.isArray(allTariffs) ? [...allTariffs] : [];
+
+    if (searchValue) {
+        tariffs = tariffs.filter((t) =>
+            String(t.tariff_name || "").toLowerCase().includes(searchValue)
+        );
+    }
+
+    if (statusFilter !== "all") {
+        tariffs = tariffs.filter((t) => String(t.status) === statusFilter);
+    }
+
+    if (utilityFilter !== "all") {
+        tariffs = tariffs.filter((t) => String(t.utility_type) === utilityFilter);
+    }
+
+    tariffs.sort((a, b) => {
+        let va, vb;
+
+        if (sortBy === "tariffName") {
+            va = String(a.tariff_name || "").toLowerCase();
+            vb = String(b.tariff_name || "").toLowerCase();
+        } else if (sortBy === "fixedCharge") {
+            va = Number(a.fixed_charge || 0);
+            vb = Number(b.fixed_charge || 0);
+        } else {
+            // tariffId
+            va = Number(a.tariff_id || 0);
+            vb = Number(b.tariff_id || 0);
+        }
+
+        if (va < vb) return sortOrder === "asc" ? -1 : 1;
+        if (va > vb) return sortOrder === "asc" ? 1 : -1;
+        return 0;
+    });
+
+    renderTariffs(tariffs);
+}
+
+
+function renderTariffs(tariffs) {
+    const container = document.getElementById("recordsContainer");
+    if (!container) return;
+
+    if (!tariffs || tariffs.length === 0) {
+        container.innerHTML = `<p class="empty-state">No tariffs found</p>`;
+        return;
+    }
+
+    container.innerHTML = tariffs
+        .map(
+            (t) => `
+      <div class="record-item">
+        <div class="record-info">
+          <div class="record-id">ID: ${t.tariff_id}</div>
+          <div class="record-name">${t.tariff_name}</div>
+          <div class="record-meta">
+            Utility: ${t.utility_type} • Status: ${t.status} • Prorated: ${t.is_prorated ? "Yes" : "No"}
+          </div>
+          <div class="record-meta">
+            Fixed: ${t.fixed_charge} • Tax: ${t.tax_percentage}%
+          </div>
+        </div>
+        <div class="record-actions">
+          <button class="btn btn-view" onclick="editTariff(${t.tariff_id})">Edit</button>
+        </div>
+      </div>
+    `
+        )
+        .join("");
+}
+
+
+window.addRecord = function () {
+    linkedTariffId = null;
+    openTariffModal("Add New Tariff", null);
+};
+
+function openTariffModal(title, tariff) {
+    const modal = document.getElementById("recordModal");
+    const overlay = document.getElementById("modalOverlay");
+    if (!modal || !overlay) return;
 
     modal.innerHTML = `
     <div class="modal-header">
-        <div class="modal-header-left">
-            <h3>Add New Tariff</h3>
-        </div>
-        <div class="modal-header-right">
-            <button class="close-btn" onclick="closeModal()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-        </div>
+      <div class="modal-header-left"><h3>${title}</h3></div>
+      <div class="modal-header-right">
+        <button class="close-btn" onclick="closeModal()">✕</button>
+      </div>
     </div>
 
     <div class="modal-body">
-        <div class="detail-grid-top">
-            <div>
-                <div class="info-box">
-                    <div style="display: flex; gap: 10px;">
-                        <img src="../../images/info-icon.svg" alt="Info" style="width: 18px; height: 18px; margin-top: 2px; filter: var(--icon-filter); transition: filter 0.3s ease;">
-                        <h4>How tariff creation works</h4>
-                    </div>
-                    <ul>
-                        <li>
-                            <strong>Select Utility Type first</strong>. 
-                            This determines which category the tariff will be applied to (e.g., Water or Electricity).
-                        </li>
-                        <li>
-                            After saving:
-                            <ul>
-                                <li>Tariff is saved with an <strong>ACTIVE</strong> status by default.</li>
-                                <li>You can link this tariff to specific consumer categories in the <strong>Settings</strong> page.</li>    
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div>
-                <div class="detail-item">
-                    <span class="detail-label">Tariff Name</span>
-                    <input class="detail-value detail-input" id="tariff_name" placeholder="e.g. Domestic Standard">
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Utility Type</span>
-                    <select class="detail-value detail-input" id="utility_type">
-                        <option value="ELECTRICITY">ELECTRICITY</option>
-                        <option value="WATER">WATER</option>
-                        <option value="GAS">GAS</option>
-                    </select>
-                </div>
-                <div class="detail-item">
-                    <span class="detail-label">Fixed Charge</span>
-                    <input class="detail-value detail-input" id="fixed_charge" type="number" step="0.01">
-                </div>
-            </div>
-
-            <div>
-                <div class="detail-item">
-                    <span class="detail-label">Tax Percentage (%)</span>
-                    <input class="detail-value detail-input" id="tax_percentage" type="number" step="0.01">
-                </div>
-                <div class="detail-item" style="display: flex; align-items: center; gap: 10px; padding-top: 10px;">
-                    <span class="detail-label">Prorated Billing</span>
-                    <input type="checkbox" id="is_prorated" style="width: 18px; height: 18px;">
-                </div>
-            </div>
+      <div class="detail-grid-top">
+        <div>
+          <div class="info-box">
+            <h4>Tariff setup</h4>
+            <ul>
+              <li><strong>Slabs</strong> define rates by unit ranges.</li>
+              <li>Leave <strong>End Unit</strong> blank for last slab (∞).</li>
+            </ul>
+          </div>
         </div>
 
-        <div class="detail-grid-middle">
-            <div>
-                <div class="detail-item" style="grid-column: 1 / -1;">
-                    <span class="detail-label">Tariff Description</span>
-                    <textarea class="detail-value detail-input" id="tariff_description" rows="2" style="width: 100%; border: 1px solid var(--border-color); border-radius: 4px; padding: 8px;"></textarea>
-                </div>
-            </div>
+        <div>
+          <div class="detail-item">
+            <span class="detail-label">Tariff Name</span>
+            <input class="detail-value detail-input" id="tariff_name" placeholder="e.g. Domestic Standard">
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Utility Type</span>
+            <select class="detail-value detail-input" id="utility_type">
+              <option value="ELECTRICITY">ELECTRICITY</option>
+              <option value="WATER">WATER</option>
+              <option value="GAS">GAS</option>
+            </select>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Fixed Charge</span>
+            <input class="detail-value detail-input" id="fixed_charge" type="number" step="0.01">
+          </div>
         </div>
 
-        <div class="detail-grid-bottom">
-            <div></div>
-            <button class="btn-adv btn-save" onclick="saveNewTariff()">Save</button>
+        <div>
+          <div class="detail-item">
+            <span class="detail-label">Tax Percentage (%)</span>
+            <input class="detail-value detail-input" id="tax_percentage" type="number" step="0.01">
+          </div>
+          <div class="detail-item" style="display:flex;align-items:center;gap:10px;padding-top:10px;">
+            <span class="detail-label">Prorated Billing</span>
+            <input type="checkbox" id="is_prorated" style="width:18px;height:18px;">
+          </div>
+          <div class="detail-item" style="margin-top:10px;">
+            <span class="detail-label">Status</span>
+            <select class="detail-value detail-input" id="status">
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="INACTIVE">INACTIVE</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-grid-middle">
+        <div class="detail-item" style="grid-column:1 / -1;">
+          <span class="detail-label">Tariff Description</span>
+          <textarea class="detail-value detail-input" id="tariff_description" rows="2"
+            style="width:100%; border:1px solid var(--border-color); border-radius:4px; padding:8px;"></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h4 style="margin:0;">Slabs</h4>
+          <button class="btn btn-view" type="button" onclick="addSlabRow()">+ Add Slab</button>
         </div>
 
+        <div style="margin-top:10px; border:1px solid var(--border-color); border-radius:6px; padding:10px;">
+          <div style="display:grid; grid-template-columns:90px 1fr 1fr 1fr 60px; gap:10px; font-size:12px; opacity:.8; margin-bottom:6px;">
+            <div>Order</div><div>Start</div><div>End</div><div>Rate</div><div></div>
+          </div>
+          <div id="slabsContainer"></div>
+          <p id="slabsEmpty" class="empty-state" style="margin:10px 0 0; display:none;">No slabs yet. Add at least one.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:18px; display:flex; justify-content:flex-end; gap:10px;">
+        <button class="btn btn-secondary" type="button" onclick="closeModal()">Cancel</button>
+        <button class="btn-adv btn-save" type="button" onclick="saveTariff()">Save</button>
+      </div>
     </div>
+  `;
 
-    <div class="modal-footer">
-    </div>
-`;
+    modal.classList.add("active");
+    overlay.classList.add("active");
 
-    modal.classList.add('active');
-    overlay.classList.add('active');
-    addPhoneNew();
+    if (tariff) {
+        document.getElementById("tariff_name").value = tariff.tariff_name ?? "";
+        document.getElementById("utility_type").value = tariff.utility_type ?? "ELECTRICITY";
+        document.getElementById("fixed_charge").value = tariff.fixed_charge ?? "";
+        document.getElementById("tax_percentage").value = tariff.tax_percentage ?? "";
+        document.getElementById("is_prorated").checked = !!tariff.is_prorated;
+        document.getElementById("tariff_description").value = tariff.tariff_description ?? "";
+        document.getElementById("status").value = tariff.status ?? "ACTIVE";
 
-    const nicInput = modal.querySelector('#nic');
+        const slabs = Array.isArray(tariff.slabs) ? [...tariff.slabs] : [];
+        slabs.sort((a, b) => (a.slab_order ?? 0) - (b.slab_order ?? 0));
 
-    nicInput.addEventListener('blur', () => handleNicCheck(nicInput));
-    nicInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleNicCheck(nicInput);
-        }
-    });
+        if (slabs.length) slabs.forEach((s) => addSlabRow(s));
+        else addSlabRow();
+    } else {
+        document.getElementById("status").value = "ACTIVE";
+        addSlabRow();
+    }
 
-    nicInput.addEventListener('input', () => resetIdentityFields());
+    refreshSlabEmpty();
+}
+
+
+window.addSlabRow = function (slab = null) {
+    const container = document.getElementById("slabsContainer");
+    if (!container) return;
+
+    const rowId = `slab_${Math.random().toString(16).slice(2)}`;
+
+    const row = document.createElement("div");
+    row.className = "slab-row";
+    row.id = rowId;
+    row.style.display = "grid";
+    row.style.gridTemplateColumns = "90px 1fr 1fr 1fr 60px";
+    row.style.gap = "10px";
+    row.style.marginBottom = "10px";
+
+    row.innerHTML = `
+    <input class="detail-value detail-input slab-order" type="number" min="1" placeholder="1" value="${slab?.slab_order ?? ""}">
+    <input class="detail-value detail-input slab-start" type="number" min="1" placeholder="1" value="${slab?.start_unit ?? ""}">
+    <input class="detail-value detail-input slab-end" type="number" min="1" placeholder="(blank = ∞)" value="${slab?.end_unit ?? ""}">
+    <input class="detail-value detail-input slab-rate" type="number" step="0.01" min="0" placeholder="7.00" value="${slab?.unit_rate ?? ""}">
+    <button class="icon-btn" type="button" onclick="removeSlabRow('${rowId}')">✕</button>
+  `;
+
+    container.appendChild(row);
+    refreshSlabEmpty();
 };
 
-window.addPhoneNew = function () {
-    const container = document.getElementById('newPhoneNumbers');
-
-    if (container.children.length >= 3) {
-        showToast('Maximum 3 phone numbers allowed', 'error');
-        return;
-    }
-
-    const div = document.createElement('div');
-    div.className = 'phone-item';
-
-    div.innerHTML = `
-        <input class="phone-number" placeholder="+947XXXXXXX">
-        <select class="phone-category">
-            <option value="MOBILE">Mobile</option>
-            <option value="HOME">Home</option>
-            <option value="WORK">Work</option>
-        </select>
-        <button class="remove-phone-btn" onclick="removePhoneNew(this)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-        </button>
-    `;
-
-    container.appendChild(div);
-
-    updatePhoneRemoveButtons();
+window.removeSlabRow = function (rowId) {
+    document.getElementById(rowId)?.remove();
+    refreshSlabEmpty();
 };
 
-function removePhoneNew(btn) {
-    const container = document.getElementById('newPhoneNumbers');
+function refreshSlabEmpty() {
+    const rows = document.querySelectorAll("#slabsContainer .slab-row");
+    const empty = document.getElementById("slabsEmpty");
+    if (empty) empty.style.display = rows.length ? "none" : "block";
+}
 
-    if (container.children.length <= 1) {
+
+window.editTariff = async function (tariffId) {
+    linkedTariffId = tariffId;
+
+    try {
+        const res = await fetch(`/tariffs/${tariffId}`, { headers: authHeader() });
+        if (!res.ok) throw new Error("Failed to fetch tariff");
+
+        const t = await res.json();
+        openTariffModal("Edit Tariff", t);
+    } catch (err) {
+        console.error(err);
+        showToast("Error fetching tariff data", "error");
+    }
+};
+
+
+window.saveTariff = async function () {
+    const tariffName = document.getElementById("tariff_name")?.value.trim();
+    const utilityType = document.getElementById("utility_type")?.value;
+    const fixedCharge = safeFloat(document.getElementById("fixed_charge")?.value);
+    const taxPercentage = safeFloat(document.getElementById("tax_percentage")?.value);
+    const isProrated = !!document.getElementById("is_prorated")?.checked;
+    const description = document.getElementById("tariff_description")?.value.trim();
+    const status = document.getElementById("status")?.value || "ACTIVE";
+
+    if (!tariffName || fixedCharge === null || taxPercentage === null) {
+        showToast("Please fill all required fields correctly", "error");
         return;
     }
 
-    btn.closest('.phone-item').remove();
-    updatePhoneRemoveButtons();
-}
-
-function updatePhoneRemoveButtons() {
-    const items = document.querySelectorAll('#newPhoneNumbers .phone-item');
-
-    items.forEach((item, index) => {
-        const removeBtn = item.querySelector('.remove-phone-btn');
-        if (!removeBtn) return;
-
-        removeBtn.style.display = items.length > 1 ? 'inline-flex' : 'none';
-    });
-}
-
-function resetIdentityFields() {
-    const modal = document.getElementById('recordModal');
-
-    linkedUserId = null;
-    lastCheckedNic = null;
-
-    ['fullName', 'email'].forEach(id => {
-        const el = modal.querySelector(`#${id}`);
-        if (el) {
-            el.disabled = false;
-            el.value = '';
-        }
-    });
-
-    modal.querySelector('#newPhoneNumbers').innerHTML = '';
-
-    const addPhoneBtn = modal.querySelector('.add-phone-btn');
-    if (addPhoneBtn) {
-        addPhoneBtn.disabled = false;
-        addPhoneBtn.style.display = 'inline-flex';
-    }
-    addPhoneNew();
-}
-
-async function handleNicCheck(nicInput) {
-    const nic = nicInput.value.trim();
-    if (!nic || nicCheckInProgress || nic === lastCheckedNic) return;
-
-    lastCheckedNic = nic;
-    nicCheckInProgress = true;
-
-    try {
-        const response = await fetch(`/managers/check-nic/${nic}`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-
-        if (response.status === 401) {
-            let data = {};
-            try {
-                data = await response.json();
-            } catch {}
-
-            if (data.message === 'Token expired') {
-                result.close();
-                const confirmed = await handleTokenExpired();
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-                localStorage.clear();
-                if (theme !== null) localStorage.setItem('theme', theme);
-
-                window.location.replace('../../index.html');
-                return;
-            }
-        }
-
-        if (!response.ok) {
-            let message = 'Failed to check NIC';
-            try {
-                const err = await response.json();
-                if (err.message) message = err.message;
-            } catch {}
-            showToast(message, 'error');
-            return;
-        }
-
-        const data = await response.json();
-
-        if (data.exists && data.hasManagerProfile) {
-            showToast('Manager already exists.', 'error');
-
-            nicInput.value = '';
-            nicInput.focus();
-
-            resetIdentityFields();
-            lastCheckedNic = null;
-
-            return;
-        }
-
-        if (data.exists && !data.hasManagerProfile && data.userId) {
-            const result = await showConfirmModal({
-                title: 'Details Found',
-                message: 'An existing user was found with this NIC. Do you want to link to this user and create a manager profile?',
-                confirmText: 'Yes',
-                cancelText: 'No',
-                danger: false
-            });
-
-            if (!result || !result.confirmed) {
-                nicInput.value = '';
-                nicInput.focus();
-                resetIdentityFields();
-                lastCheckedNic = null;
-                return;
-            }
-
-            result.close();
-            await hydrateExistingUser(data.userId);
-        }
-
-    } catch (err) {
-        console.error(err);
-        showToast('Unexpected error while checking NIC', 'error');
-    } finally {
-        nicCheckInProgress = false;
-    }
-}
-
-async function hydrateExistingUser(userId) {
-    try {
-        const response = await fetch(`/users/${userId}`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-
-        if (response.status === 401) {
-            let data = {};
-            try {
-                data = await response.json();
-            } catch {}
-
-            if (data.message === 'Token expired') {
-                result.close();
-                const confirmed = await handleTokenExpired();
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-                localStorage.clear();
-                if (theme !== null) localStorage.setItem('theme', theme);
-
-                window.location.replace('../../index.html');
-                return;
-            }
-        }
-
-        if (!response.ok) {
-            let message = 'Failed to load user details';
-
-            try {
-                const err = await response.json();
-                if (err.message) message = err.message;
-            } catch {}
-
-            result.close();
-            showToast(message, 'error');
-            return;
-        }
-
-        const user = await response.json();
-        linkedUserId = user.userId;
-
-        const modal = document.getElementById('recordModal');
-
-        modal.querySelector('#fullName').value = user.fullName;
-        modal.querySelector('#email').value = user.email;
-        modal.querySelector('#fullName').disabled = true;
-        modal.querySelector('#email').disabled = true;
-        modal.querySelector('#nic').disabled = true;
-
-        const phoneContainer = modal.querySelector('#newPhoneNumbers');
-        phoneContainer.innerHTML = '';
-
-        user.phoneNumbers.forEach(p => {
-            const div = document.createElement('div');
-            div.className = 'phone-item';
-            div.innerHTML = `
-                <input class="phone-number" value="${p.phoneNumber}" disabled>
-                <select class="phone-category" disabled>
-                    <option selected>${
-                p.numberType.charAt(0) + p.numberType.slice(1).toLowerCase()
-            }</option>
-                </select>
-            `;
-            phoneContainer.appendChild(div);
-        });
-
-        const addPhoneBtn = modal.querySelector('.add-phone-btn');
-        if (addPhoneBtn) {
-            addPhoneBtn.disabled = true;
-            addPhoneBtn.style.display = 'none';
-        }
-
-        showToast('User details loaded successfully.', 'success');
-
-    } catch (err) {
-        console.error(err);
-        result.close();
-        showToast('Unexpected error while loading details', 'error');
-    }
-}
-
-window.saveNewManager = async function () {
-    const modal = document.getElementById('recordModal');
-
-    const fullNameEl = modal.querySelector('#fullName');
-    const emailEl = modal.querySelector('#email');
-    const nicEl = modal.querySelector('#nic');
-    const departmentEl = modal.querySelector('#department');
-
-    if (!fullNameEl || !emailEl || !nicEl || !departmentEl) {
-        showToast('Form is not ready. Please reopen the dialog.', 'error');
+    const rows = Array.from(document.querySelectorAll("#slabsContainer .slab-row"));
+    if (rows.length === 0) {
+        showToast("Please add at least one slab", "error");
         return;
     }
+
+    const slabs = [];
+    for (const r of rows) {
+        const slabOrder = safeInt(r.querySelector(".slab-order")?.value);
+        const startUnit = safeInt(r.querySelector(".slab-start")?.value);
+        const endRaw = (r.querySelector(".slab-end")?.value ?? "").trim();
+        const endUnit = endRaw === "" ? null : safeInt(endRaw);
+        const unitRate = safeFloat(r.querySelector(".slab-rate")?.value);
+
+        if (!slabOrder || !startUnit || unitRate === null) {
+            showToast("Each slab needs Order, Start Unit, and Unit Rate", "error");
+            return;
+        }
+        if (endUnit !== null && endUnit < startUnit) {
+            showToast("End Unit must be >= Start Unit (or blank)", "error");
+            return;
+        }
+
+        slabs.push({
+            slab_order: slabOrder,
+            start_unit: startUnit,
+            end_unit: endUnit,
+            unit_rate: unitRate,
+        });
+    }
+
+    slabs.sort((a, b) => a.slab_order - b.slab_order);
 
     const payload = {
-        fullName: fullNameEl.value.trim(),
-        email: emailEl.value.trim(),
-        nic: nicEl.value.trim(),
-        department: departmentEl.value.trim(),
-        phoneNumbers: []
+        tariff_name: tariffName,
+        utility_type: utilityType,
+        fixed_charge: fixedCharge,
+        tax_percentage: taxPercentage,
+        is_prorated: isProrated,
+        tariff_description: description,
+        status,
+        slabs,
     };
 
-    if (!payload.fullName || !payload.email || !payload.nic || !payload.department) {
-        showToast('Please fill all required fields', 'error');
-        return;
-    }
-
-    modal.querySelectorAll('#newPhoneNumbers .phone-item').forEach(item => {
-        const number = item.querySelector('.phone-number')?.value?.trim();
-        const type = item.querySelector('.phone-category')?.value;
-
-        if (number) {
-            payload.phoneNumbers.push({
-                phoneNumber: number,
-                numberType: type
-            });
-        }
-    });
-
-    if (payload.phoneNumbers.length === 0) {
-        showToast('At least one phone number is required', 'error');
-        return;
-    }
-
-    const isExistingUser = linkedUserId !== null;
-
-    const endpoint = isExistingUser
-        ? '/managers'
-        : '/managers/full';
-
-    if (isExistingUser) {
-        payload.managerId = linkedUserId;
-        delete payload.fullName;
-        delete payload.email;
-        delete payload.nic;
-        delete payload.phoneNumbers;
-    }
+    const url = linkedTariffId ? `/tariffs/${linkedTariffId}` : "/tariffs";
+    const method = linkedTariffId ? "PUT" : "POST";
 
     try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
+        const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json", ...authHeader() },
+            body: JSON.stringify(payload),
         });
 
-        if (response.status === 401) {
-            let data = {};
+        if (!res.ok) {
+            let msg = "Failed to save tariff";
             try {
-                data = await response.json();
-            } catch {}
-
-            if (data.message === 'Token expired') {
-                result.close();
-                const confirmed = await handleTokenExpired();
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-                localStorage.clear();
-                if (theme !== null) localStorage.setItem('theme', theme);
-
-                window.location.replace('../../index.html');
-                return;
-            }
-        }
-
-        if (!response.ok) {
-            let message = 'Failed to create manager';
-            try {
-                const err = await response.json();
-                if (err.message) message = err.message;
-            } catch {}
-            showToast(message, 'error');
+                const err = await res.json();
+                msg = err.message || msg;
+            } catch (_) {}
+            showToast(msg, "error");
             return;
         }
 
-        const record = await response.json();
-
+        showToast(linkedTariffId ? "Tariff updated successfully" : "Tariff created successfully", "success");
         closeModal();
-        showToast('Manager added successfully', 'success');
-        fetchManagers();
-        viewRecord(record.userId);
-
+        window.fetchTariffs();
     } catch (err) {
         console.error(err);
-        showToast('Unexpected error while creating manager', 'error');
+        showToast("Server error while saving tariff", "error");
     }
 };
 
-window.viewRecord = async function (id) {
-    try {
-        const response = await fetch(`/managers/${id}`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            }
-        });
 
-        if (response.status === 401) {
-            let data;
-            try {
-                data = await response.json();
-            } catch {
-                data = {};
-            }
-            if (data.message === 'Token expired') {
-                const confirmed = await handleTokenExpired();
-
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-
-                localStorage.clear();
-
-                if (theme !== null) {
-                    localStorage.setItem('theme', theme);
-                }
-
-                window.location.replace('../../index.html');
-            }
-        }
-
-        if (!response.ok) {
-            showToast('Failed to load record', 'error');
-            return;
-        }
-
-        const record = await response.json();
-        currentEditRecord = { ...record };
-        isEditMode = false;
-
-        const modal = document.getElementById('recordModal');
-        const overlay = document.getElementById('modalOverlay');
-
-        let editButtonHtml = '';
-        let deleteButtonHtml = '';
-        let statusButtonHtml = '';
-        let resetPasswordButtonHtml = '';
-        let advancedSectionHtml = '';
-
-        if (hasPermission('DELETE_MANAGER')) {
-            deleteButtonHtml = `<button class="btn-adv btn-delete" onclick="deleteRecord(${record.userId})">Delete Record</button>`;
-        } else {
-            deleteButtonHtml = '';
-        }
-
-        if (hasPermission('UPDATE_MANAGER')) {
-            editButtonHtml = `<button class="icon-btn-long" id="editBtn" onclick="enableEdit()">
-                                <img src="../images/edit-icon-text.svg" alt="EditBtn">
-                            </button>`;
-            if (record.status === 'ACTIVE') {
-                statusButtonHtml = `
-                <button class="btn-adv btn-secondary" onclick="deactivateAccount(${record.userId})">Deactivate Account</button>`;
-            } else {
-                statusButtonHtml = `
-                <button class="btn-adv btn-secondary" onclick="activateAccount(${record.userId})">Activate Account</button>`;
-            }
-            resetPasswordButtonHtml = `<button class="btn-adv btn-secondary" onclick="resetPassword(${record.userId})">Reset Password</button>`
-        } else {
-            editButtonHtml = '';
-            statusButtonHtml = '';
-            resetPasswordButtonHtml = '';
-        }
-
-        if (hasPermission('UPDATE_MANAGER') || hasPermission('DELETE_MANAGER')) {
-            advancedSectionHtml = `
-                    <div class="expandable-section">
-                        <div class="expandable-header" onclick="toggleExpandable()">
-                            <span class="expandable-title">Advanced</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="expandIcon">
-                                <polyline points="6 9 12 15 18 9"/>
-                            </svg>
-                        </div>
-                        <div class="expandable-content" id="expandableContent">
-                            <div class="system-actions">
-                                <div class="system-actions-left">
-                                    ${statusButtonHtml}
-                                    ${resetPasswordButtonHtml}
-                                </div>
-                                <div class="system-actions-right">
-                                    ${deleteButtonHtml}
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-        } else {
-            advancedSectionHtml = ``;
-        }
-
-        modal.innerHTML = `
-            <div class="modal-header">
-                <div class="modal-header-left">
-                    <h3>Full Details</h3>
-                    <div class="modal-header-id">ID #${record.userId}</div>
-                    ${editButtonHtml}
-                </div>
-                <div class="modal-header-right">
-                    <button class="btn btn-save" id="saveBtn" style="display:none" onclick="saveRecord(${id})">Save</button>
-                    <button class="btn btn-secondary" id="editCancelBtn" style="display:none" onclick="disableEdit(${id})"> Cancel</button>
-                    <button class="close-btn" onclick="closeModal()">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="modal-body">
-                <div class="detail-grid-top"  id="detailGrid">
-                    <div>
-                        <div class="detail-item">
-                            <span class="detail-label">Full Name</span>
-                            <span class="detail-value" id="field-name">${record.fullName}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Email</span>
-                            <span class="detail-value" id="field-email">${record.email}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">NIC</span>
-                            <span class="detail-value" id="field-nic">${record.nic}</span>
-                        </div>
-                    </div>
-
-                    <div class="detail-item">
-                        <span class="detail-label">Phone Numbers</span>
-                        <div class="detail-value-number phone-numbers" id="phoneNumbers">
-                            ${record.phoneNumbers.map((p, i) => `
-                                <div class="phone-item" data-index="${i}">
-                                    <input type="text" value="${p.phoneNumber}" class="phone-number" disabled>
-                                    <select class="phone-category" disabled>
-                                        <option value="MOBILE" ${p.numberType === 'MOBILE' ? 'selected' : ''}>Mobile</option>
-                                        <option value="HOME" ${p.numberType === 'HOME' ? 'selected' : ''}>Home</option>
-                                        <option value="WORK" ${p.numberType === 'WORK' ? 'selected' : ''}>Work</option>
-                                    </select>
-                                    <button class="remove-phone-btn" style="display: none;" onclick="removePhone(${i})">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="18" y1="6" x2="6" y2="18"/>
-                                            <line x1="6" y1="6" x2="18" y2="18"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <button class="add-phone-btn" style="display: none;" onclick="addPhone()">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"/>
-                                <line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            Add Phone Number
-                        </button>
-                    </div>
-
-                    <div>
-                        <div class="detail-item">
-                            <span class="detail-label">Status</span>
-                            <span class="detail-value">
-                                <span class="status-badge status-${record.status.toLowerCase()}">${record.status}</span>
-                            </span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Created Date</span>
-                            <span class="detail-value">${new Date(record.createdAt).toLocaleString()}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="detail-label">Updated Date</span>
-                            <span class="detail-value">${new Date(record.updatedAt).toLocaleString()}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="detail-grid-middle"  id="detailGrid">
-                    <div>
-                        <div class="detail-item">
-                            <span class="detail-label">Department</span>
-                            <span class="detail-value" id="field-department">${record.department}</span>
-                        </div>
-                    </div>
-                </div>
-                ${advancedSectionHtml}
-            </div>
-
-            <div class="modal-footer">
-            </div>
-        `;
-
-        modal.classList.add('active');
-        overlay.classList.add('active');
-
-    } catch (e) {
-        console.error(e);
-        showToast('Unexpected error', 'error');
-    }
+window.closeModal = function () {
+    document.getElementById("recordModal")?.classList.remove("active");
+    document.getElementById("modalOverlay")?.classList.remove("active");
 };
-
-window.disableEdit = function(id) {
-    closeModal();
-    viewRecord(id);
-}
-
-window.enableEdit = async function() {
-    isEditMode = true;
-    document.getElementById('editBtn').style.display = 'none';
-    document.getElementById('saveBtn').style.display = 'block';
-    document.getElementById('editCancelBtn').style.display = 'block';
-
-    const editableFields = ['name', 'email', 'nic', 'department'];
-
-    editableFields.forEach(field => {
-        const element = document.getElementById(`field-${field}`);
-        if (!element) return;
-        const value = element.textContent;
-        element.innerHTML = `<input type="text" value="${value}" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--gray-50); color: var(--text-primary);">`;
-    });
-
-    document.querySelectorAll('.phone-number, .phone-category').forEach(el => {
-        el.disabled = false;
-    });
-
-    document.querySelectorAll('.remove-phone-btn').forEach(btn => {
-        if (document.querySelectorAll('.phone-item').length > 1) {
-            btn.style.display = 'block';
-        }
-    });
-
-    document.querySelector('.add-phone-btn').style.display = 'inline-flex';
-};
-
-window.addPhone = function() {
-    const phoneNumbers = document.getElementById('phoneNumbers');
-    const currentPhones = phoneNumbers.querySelectorAll('.phone-item').length;
-
-    if (currentPhones >= 3) {
-        showToast('Maximum 3 phone numbers allowed', 'error');
-        return;
-    }
-
-    const newIndex = currentPhones;
-    const phoneItem = document.createElement('div');
-    phoneItem.className = 'phone-item';
-    phoneItem.setAttribute('data-index', newIndex);
-    phoneItem.innerHTML = `
-        <input type="text" value="" class="phone-number" placeholder="Enter phone number">
-        <select class="phone-category">
-            <option value="mobile">Mobile</option>
-            <option value="home">Home</option>
-            <option value="work">Work</option>
-        </select>
-        <button class="remove-phone-btn" onclick="removePhone(${newIndex})">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-        </button>
-    `;
-
-    phoneNumbers.appendChild(phoneItem);
-};
-
-window.removePhone = function(index) {
-    const phoneItem = document.querySelector(`.phone-item[data-index="${index}"]`);
-    if (phoneItem) {
-        phoneItem.remove();
-    }
-};
-
-window.saveRecord = async function (id) {
-    try {
-        const payload = {
-            fullName: document.querySelector('#field-name input').value.trim(),
-            email: document.querySelector('#field-email input').value.trim(),
-            nic: document.querySelector('#field-nic input').value.trim(),
-            department: document.querySelector('#field-department input').value.trim(),
-            phoneNumbers: []
-        };
-
-        document.querySelectorAll('.phone-item').forEach(item => {
-            const number = item.querySelector('.phone-number')?.value.trim();
-            const category = item.querySelector('.phone-category')?.value;
-
-            if (number) {
-                payload.phoneNumbers.push({
-                    phoneNumber: number,
-                    numberType: category.toUpperCase()
-                });
-            }
-        });
-
-        Object.keys(payload).forEach(key => {
-            if (
-                payload[key] === '' ||
-                (Array.isArray(payload[key]) && payload[key].length === 0)
-            ) {
-                delete payload[key];
-            }
-        });
-
-        console.log('PATCH PAYLOAD:', payload);
-
-        const response = await fetch(`/managers/${id}`, {
-            method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (response.status === 401) {
-            let data;
-            try {
-                data = await response.json();
-            } catch {
-                data = {};
-            }
-            if (data.message === 'Token expired') {
-                const confirmed = await handleTokenExpired();
-
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-
-                localStorage.clear();
-
-                if (theme !== null) {
-                    localStorage.setItem('theme', theme);
-                }
-
-                window.location.replace('../../index.html');
-            }
-        }
-
-        if (!response.ok) {
-            const err = await response.json();
-            console.error(err);
-            showToast(err.message || 'Failed to update record', 'error');
-            return;
-        }
-
-        closeModal();
-        showToast('Record updated successfully', 'success');
-
-        fetchManagers();
-
-    } catch (err) {
-        console.error(err);
-        showToast('Unexpected error while saving record', 'error');
-    }
-};
-
-window.deleteRecord = async function (id) {
-    const result = await showConfirmModal({
-        title: 'Delete Manager',
-        message: 'Are you sure you want to permanently delete this manager? This action cannot be undone.',
-        confirmText: 'Delete',
-        cancelText: 'Cancel',
-        danger: true
-    });
-
-    if (!result || !result.confirmed) {
-        return;
-    }
-
-    result.setLoading();
-
-    try {
-        const response = await fetch(`/managers/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-
-        if (response.status === 401) {
-            let data;
-            try {
-                data = await response.json();
-            } catch {
-                data = {};
-            }
-            if (data.message === 'Token expired') {
-                const confirmed = await handleTokenExpired();
-
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-
-                localStorage.clear();
-
-                if (theme !== null) {
-                    localStorage.setItem('theme', theme);
-                }
-
-                window.location.replace('../../index.html');
-            }
-        }
-
-        if (!response.ok) {
-            let message = 'Failed to delete record';
-
-            try {
-                const err = await response.json();
-                if (err.message) message = err.message;
-            } catch (_) { }
-
-            result.close();
-            showToast(message, 'error');
-            return;
-        }
-
-        result.close();
-        showToast('Record deleted successfully', 'success');
-        closeModal();
-
-        fetchManagers();
-
-    } catch (err) {
-        console.error(err);
-        result.close();
-        showToast('Unexpected error while deleting record', 'error');
-    }
-};
-
-window.activateAccount = async function(id) {
-    const result = await showConfirmModal({
-        title: 'Activate Account',
-        message: 'Are you sure you want to activate this account? This will enable user access.',
-        confirmText: 'Activate',
-        cancelText: 'Cancel',
-        danger: false
-    });
-
-    if (!result || !result.confirmed) {
-        return;
-    }
-
-    result.setLoading();
-
-    try {
-        const response = await fetch(`/managers/${id}/activate`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-
-        if (response.status === 401) {
-            let data;
-            try {
-                data = await response.json();
-            } catch {
-                data = {};
-            }
-            if (data.message === 'Token expired') {
-                const confirmed = await handleTokenExpired();
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-                localStorage.clear();
-                if (theme !== null) {
-                    localStorage.setItem('theme', theme);
-                }
-
-                window.location.replace('../../index.html');
-            }
-        }
-
-        if (!response.ok) {
-            let message = 'Failed to activate account';
-
-            try {
-                const err = await response.json();
-                if (err.message) message = err.message;
-            } catch (_) { }
-
-            result.close();
-            showToast(message, 'error');
-            return;
-        }
-
-        result.close();
-        closeModal();
-        showToast('Account activated successfully', 'success');
-
-        fetchManagers();
-
-    } catch (err) {
-        console.error(err);
-        result.close();
-        showToast('Unexpected error while activating account', 'error');
-    }
-};
-
-window.deactivateAccount = async function(id) {
-    const result = await showConfirmModal({
-        title: 'Deactivate Account',
-        message: 'Are you sure you want to deactivate this account? This will disable user access.',
-        confirmText: 'Deactivate',
-        cancelText: 'Cancel',
-        danger: true
-    });
-
-    if (!result || !result.confirmed) {
-        return;
-    }
-
-    result.setLoading();
-
-    try {
-        const response = await fetch(`/managers/${id}/deactivate`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-
-        if (response.status === 401) {
-            let data;
-            try {
-                data = await response.json();
-            } catch {
-                data = {};
-            }
-            if (data.message === 'Token expired') {
-                const confirmed = await handleTokenExpired();
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-                localStorage.clear();
-                if (theme !== null) {
-                    localStorage.setItem('theme', theme);
-                }
-
-                window.location.replace('../../index.html');
-            }
-        }
-
-        if (!response.ok) {
-            let message = 'Failed to deactivate account';
-
-            try {
-                const err = await response.json();
-                if (err.message) message = err.message;
-            } catch (_) { }
-
-            result.close();
-            showToast(message, 'error');
-            return;
-        }
-
-        result.close();
-        closeModal();
-        showToast('Account deactivated successfully', 'success');
-
-        fetchManagers();
-
-    } catch (err) {
-        console.error(err);
-        result.close();
-        showToast('Unexpected error while deactivating account', 'error');
-    }
-};
-
-window.resetPassword = async function (id) {
-    const result = await showConfirmModal({
-        title: 'Reset Password',
-        message: 'The existing password will be invalidated, and a new password will be generated and sent to the user’s email address.',
-        confirmText: 'Reset',
-        cancelText: 'Cancel',
-        danger: false
-    });
-
-    if (!result || !result.confirmed) {
-        return;
-    }
-
-    result.setLoading();
-
-    try {
-        const response = await fetch(`/managers/${id}/reset-password`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        });
-
-        if (response.status === 401) {
-            let data = {};
-            try {
-                data = await response.json();
-            } catch {}
-
-            if (data.message === 'Token expired') {
-                result.close();
-                const confirmed = await handleTokenExpired();
-                if (!confirmed) return;
-
-                const theme = localStorage.getItem('theme');
-                localStorage.clear();
-                if (theme !== null) localStorage.setItem('theme', theme);
-
-                window.location.replace('../../index.html');
-                return;
-            }
-        }
-
-        if (!response.ok) {
-            let message = 'Failed to reset password';
-
-            try {
-                const err = await response.json();
-                if (err.message) message = err.message;
-            } catch {}
-
-            result.close();
-            showToast(message, 'error');
-            return;
-        }
-
-        result.close();
-        closeModal();
-        showToast('Password reset email sent', 'success');
-
-    } catch (err) {
-        console.error(err);
-        result.close();
-        showToast('Unexpected error while resetting password', 'error');
-    }
-};
-
-async function refreshAudits() {
-    const btn = document.getElementById('refreshBtn');
-    const img = btn?.querySelector('img');
-
-    if (!btn || !img) return;
-
-    btn.disabled = true;
-    btn.classList.add('spinning');
-
-    const startTime = Date.now();
-
-    const success = await fetchAudits();
-
-    const elapsed = Date.now() - startTime;
-    const remaining = Math.max(800 - elapsed, 0);
-
-    cachedAdmins = null;
-    populateAdminFilter();
-
-    setTimeout(() => {
-        btn.classList.remove('spinning');
-        btn.disabled = false;
-
-        if (success) {
-            showToast('Records refreshed', 'success');
-        } else {
-            showToast('Failed to refresh records', 'error');
-        }
-    }, remaining);
-}
-
-document.getElementById('modalOverlay').addEventListener('click', closeModal);

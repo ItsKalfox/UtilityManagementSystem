@@ -1,0 +1,38 @@
+spring.application.name=UtilityManagementSystem
+
+# ================================
+# DATABASE CONFIG
+# ================================
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=DATABASE_NAME;encrypt=false
+spring.datasource.username=YOUR_USERNAME_HERE
+spring.datasource.password=YOUR_PASSWORD_HERE
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+# ================================
+# JPA / HIBERNATE
+# ================================
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.SQLServerDialect
+
+# Optional logging
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.orm.mapping=TRACE
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+spring.jpa.hibernate.naming.implicit-strategy=org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+
+# Mail (Gmail SMTP)
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=novabanking.noreply@gmail.com
+spring.mail.password=EMAIL_PASSWORD_HERE
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+
+jwt.secret=SECRET_KEY(32)
+jwt.expiration=36000000
+# 10 hour in ms
+
+spring.jackson.deserialization.fail-on-unknown-properties=true

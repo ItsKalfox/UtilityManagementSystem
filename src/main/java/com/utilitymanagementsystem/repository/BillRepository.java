@@ -14,13 +14,12 @@ import java.util.Optional;
 
 public interface BillRepository extends JpaRepository<Bill, Integer> {
 
-    // ✅ Latest bill (most recent periodEnd) for a connection
     Optional<Bill> findFirstByConnection_ConnectionIdOrderByPeriodEndDesc(Integer connectionId);
     List<Bill> findByConnection_ConnectionIdOrderByPeriodEndDesc(Integer connectionId, Pageable pageable);
 
     List<Bill> findByConnection_ConnectionIdAndStatusNotOrderByPeriodEndDesc(Integer connectionId, String status, Pageable pageable);
 
-    // ✅ If you want “current unpaid/partially paid” instead (optional later)
+
     Optional<Bill> findFirstByConnection_ConnectionIdAndStatusNotOrderByPeriodEndDesc(Integer connectionId, String status);
     List<Bill> findByConnection_ConnectionIdAndStatusOrderByPeriodEndDesc(
             Integer connectionId,

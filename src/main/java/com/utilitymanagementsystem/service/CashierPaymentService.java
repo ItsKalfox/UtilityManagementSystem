@@ -50,7 +50,7 @@ public class CashierPaymentService {
 
     @Transactional
     public CashierPayBillResponseDTO payBill(CashierPayBillRequestDTO req) {
-        // 1) Validate bill exists
+
         Bill bill = billRepository.findById(req.billId())
                 .orElseThrow(() -> new RuntimeException("Bill not found: " + req.billId()));
 
@@ -63,13 +63,12 @@ public class CashierPaymentService {
             throw new RuntimeException("Amount must be > 0");
         }
 
-        // Optional: stop overpay if you want
-        // if (amount.compareTo(bill.getOutstandingAmount()) > 0) throw new RuntimeException("Overpay not allowed");
 
-        // 2) Get cashier user_id from JWT/Security context
-        Integer cashierId = getCurrentUserId(); // expects your principal stores userId
 
-        // 3) Insert into payment (TRIGGER will update bill automatically)
+
+        Integer cashierId = getCurrentUserId();
+
+
         Payment payment = new Payment();
         payment.setBill(bill);
         Cashier cashier = cashierRepository.findById(cashierId)
@@ -80,11 +79,11 @@ public class CashierPaymentService {
         payment.setAmount(amount);
 
         Payment saved = paymentRepository.save(payment);
-        paymentRepository.flush();          // ✅ forces INSERT to DB (trigger runs now)
+        paymentRepository.flush();
         entityManager.refresh(bill);
-        entityManager.clear();              // ✅ clears 1st-level cache so next fetch is fresh
+        entityManager.clear();
 
-        // 4) Insert into method-specific table (cash/card/bank_transfer)
+
         String method = normalizeMethod(req.method());
 
         if ("CASH".equals(method)) {
@@ -124,7 +123,7 @@ public class CashierPaymentService {
             throw new RuntimeException("Invalid method: " + req.method());
         }
 
-        // 5) Reload bill to return updated status/outstanding (trigger updated it)
+
         Bill updatedBill = billRepository.findById(req.billId()).orElseThrow();
 
         return new CashierPayBillResponseDTO(
@@ -147,14 +146,14 @@ public class CashierPaymentService {
             throw new RuntimeException("No authentication found");
         }
 
-        String name = auth.getName(); // usually email
+        String name = auth.getName();
 
-        // If name is numeric, treat it as userId
+
         try {
             return Integer.parseInt(name);
         } catch (NumberFormatException ignored) {}
 
-        // Otherwise treat it as email and lookup user
+
         return userRepository.findByEmail(name)
                 .map(User::getUserId)
                 .orElseThrow(() -> new RuntimeException("User not found for email: " + name));

@@ -262,5 +262,5 @@ SELECT * FROM meter_reading;
 
 drop database ums_dev;
 
-select * from card;
+select * from payment;
 

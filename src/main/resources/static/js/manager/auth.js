@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const form = document.getElementById('loginForm');
@@ -50,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('fullName', data.fullName);
             localStorage.setItem('email', data.email);
 
-            window.location.href = '../manager/dashboard.html';
+            window.location.href = '../../manager/dashboard.html';
 
         } catch (err) {
             console.error(err);

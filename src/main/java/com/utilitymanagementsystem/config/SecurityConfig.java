@@ -40,9 +40,9 @@ public class SecurityConfig {
                                 "/js/**",
                                 "/login/**",
                                 "/admin/**",
-                                "/manager/**",
                                 "/images/**",
-                                "/favicon.ico"
+                                "/favicon.ico",
+                                "/manager/**"
                         ).permitAll()
 
                         .requestMatchers(

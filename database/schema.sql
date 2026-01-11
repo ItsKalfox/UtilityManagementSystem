@@ -432,3 +432,15 @@ BEGIN
     INNER JOIN inserted i ON b.bill_id = i.bill_id;
 END;
 GO
+
+
+CREATE TRIGGER trg_manager_payment_update
+    ON payment
+    AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    PRINT 'Payment processed for manager reporting';
+END;
+GO

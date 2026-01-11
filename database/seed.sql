@@ -178,10 +178,6 @@ VALUES
 (12, 1, 'ELX-1001', 'ELECTRICITY', '2025-01-01', 'ACTIVE'),
 (13, 2, 'ELX-2001', 'ELECTRICITY', '2025-01-01', 'ACTIVE');
 
-INSERT INTO utility_connection (customer_id, tariff_id, meter_serial_number, utility_type, install_date, status)
-VALUES
-(12, 1, 'ELX-3001', 'WATER', '2025-01-01', 'ACTIVE'),
-(13, 2, 'ELX-4001', 'GAS', '2025-01-01', 'ACTIVE');
 
 INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
 VALUES (8, 1, 300);
@@ -193,16 +189,11 @@ VALUES (8, 1, 450);
 INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
 VALUES (9, 2, 500);
 INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
-VALUES (9, 2, 650);
-
-INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
-VALUES (9, 4, 220);
-INSERT INTO meter_reading (field_officer_id, connection_id, reading_value)
-VALUES (9, 5, 200);
+VALUES (9, 2, 580);
 
 SELECT * FROM meter_reading;
 SELECT * FROM bill;
-    
+
 -- Cash payment
 INSERT INTO payment (bill_id, cashier_id, payment_method, amount)
 VALUES (1, 10, 'CASH', 200.00);
@@ -254,13 +245,3 @@ LEFT JOIN cash c ON p.payment_id = c.payment_id
 LEFT JOIN card ca ON p.payment_id = ca.payment_id
 LEFT JOIN bank_transfer bt ON p.payment_id = bt.payment_id
 ORDER BY p.payment_id;
-
-ALTER TABLE cashier
-DROP COLUMN role_id;
-
-SELECT * FROM meter_reading;
-
-drop database ums_dev;
-
-select * from payment;
-

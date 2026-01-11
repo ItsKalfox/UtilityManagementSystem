@@ -10,5 +10,4 @@ public class UtilityManagementSystemApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(UtilityManagementSystemApplication.class, args);
 	}
-	
 }

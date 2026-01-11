@@ -265,16 +265,12 @@ public class AuthService {
         String fullName = user.getFullName();
         String email = user.getEmail();
 
-        /*List<String> roles = new ArrayList<>();
-        List<String> permissions = new ArrayList<>();
-
-        String token = jwtUtil.generateToken(email, roles, permissions);*/
         List<String> roles = new ArrayList<>();
         roles.add("CASHIER");
 
         List<String> permissions = new ArrayList<>();
-        String token = jwtUtil.generateToken(email, roles, permissions);
 
+        String token = jwtUtil.generateToken(email, roles, permissions);
         LoginResponseDTO response = new LoginResponseDTO(userId, fullName, email);
         response.setToken(token);
 
@@ -317,5 +313,4 @@ public class AuthService {
 
         return response;
     }
-    
 }

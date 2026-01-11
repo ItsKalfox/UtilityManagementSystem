@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     applyPermissionVisibility('roleCreationTab', 'MANAGE_ADMIN_ROLES');
     applyPermissionVisibility('areaCreationTab', 'MANAGE_AREAS');
     applyPermissionVisibility('adminActionLogTab', 'READ_ACTION_LOGS');
+    applyPermissionVisibility('tariffCreationTab', 'READ_TARIFFS');
+    applyPermissionVisibility('connectionCreationTab', 'MANAGE_COMPLAINTS');
+
 });
 
 function initDashboard() {
@@ -226,7 +229,8 @@ function applyPermissionVisibility(id, permission) {
     const el = document.getElementById(id);
     if (!el) return;
 
-    if (id == "addCustomerBtn" || id == "addManagerBtn" || id == "addCashierBtn" || id == "addFieldOfficerBtn" || id == "addAdminBtn"){
+    if (id == "addCustomerBtn" || id == "addManagerBtn" || id == "addCashierBtn" || id == "addFieldOfficerBtn" || id == "addAdminBtn"
+    || id=="addAreaBtn" || id=="addRoleBtn" || id=="addTariffBtn" || id=="addConnectionBtn"){
         el.style.display = hasPermission(permission) ? 'block' : 'none';
         return
     }

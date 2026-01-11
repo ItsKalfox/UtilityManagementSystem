@@ -1,8 +1,18 @@
 console.log("Manager Dashboard JS loaded");
 
-document.getElementById("totalRevenue").innerText = "Rs. 450,000";
-document.getElementById("totalUnpaid").innerText = "Rs. 75,000";
-document.getElementById("totalCustomers").innerText = "120";
+fetch("/api/manager/dashboard")
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("totalRevenue").innerText =
+            "Rs. " + data.totalRevenue;
+
+        document.getElementById("totalUnpaid").innerText =
+            "Rs. " + data.totalUnpaid;
+
+        document.getElementById("totalCustomers").innerText =
+            data.totalCustomers;
+    })
+    .catch(err => console.error("Dashboard API error:", err));
 
 const monthlyCtx = document
     .getElementById("monthlyRevenueChart")

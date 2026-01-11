@@ -9,135 +9,123 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<div class="theme-toggle-container">
-    <label class="theme-toggle">
-        <input type="checkbox" id="themeToggle">
-        <span class="slider"></span>
-    </label>
-</div>
+    <div class="theme-toggle-container">
+        <label class="theme-toggle">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+        </label>
+    </div>
 
-<div class="toast" id="toast"></div>
+    <div class="toast" id="toast"></div>
 
-<div class="dashboard-container">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-header-container">
-            <div class="sidebar-header">
-                <h2>Manager Panel</h2>
-            </div>
-        </div>
-
-        <nav class="sidebar-nav">
-            <a href="dashboard.html" class="nav-item active" data-tab="dashboard">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"/>
-                    <rect x="14" y="3" width="7" height="7"/>
-                    <rect x="14" y="14" width="7" height="7"/>
-                    <rect x="3" y="14" width="7" height="7"/>
-                </svg>
-                Dashboard
-            </a>
-
-            <a href="revenue-report.html" class="nav-item">
-                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon">
-                Revenue Reports
-            </a>
-
-            <a href="manager-defaulters.html" class="nav-item">
-                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon">
-                Defaulters
-            </a>
-
-            <a href="manager-usage.html" class="nav-item">
-                <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon">
-                Usage Report
-            </a>
-        </nav>
-
-        <div class="sidebar-footer-container">
-            <div class="sidebar-footer">
-                <button class="icon-btn" onclick="handleSettings()">
-                    <img src="../images/settings-icon.svg" alt="settings">
-                </button>
-                <button class="icon-btn logout-btn" id="logoutBtn" onclick="handleLogout()">
-                    <img src="../images/logout-icon.svg" alt="logout">
-                </button>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-
-        <!-- HEADER -->
-        <header class="header">
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">M</div>
-                <div class="user-details">
-                    <div class="user-name" id="fullName">Manager</div>
-                    <div class="user-email" id="email">manager@ums.com</div>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header-container">
+                <div class="sidebar-header">
+                    <h2>Manager Panel</h2>
                 </div>
             </div>
-        </header>
 
-        <!-- CONTENT -->
-        <div class="content-area">
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active" data-tab="dashboard">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="revenue-report.html" class="nav-item">
+                    <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon">
+                    Revenue Reports
+                </a>
+                <a href="defaulters.html" class="nav-item">
+                    <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon">
+                    Defaulters
+                </a>
+                <a href="usage.html" class="nav-item">
+                    <img src="../images/manager-icon.svg" class="nav-icon" alt="manager-icon">
+                    Usage Report
+                </a>
+            </nav>
+            <div class="sidebar-footer-container">
+                <div class="sidebar-footer">
+                    <button class="icon-btn" onclick="handleSettings()">
+                        <img src="../images/settings-icon.svg" alt="settings">
+                    </button>
+                    <button class="icon-btn logout-btn" id="logoutBtn" onclick="handleLogout()">
+                        <img src="../images/logout-icon.svg" alt="logout">
+                    </button>
+                </div>
+            </div>
+        </aside>
 
-            <!-- STATS -->
-            <section class="stats-section">
-                <h3 class="section-title">System Overview</h3>
-
-                <div class="stats-grid">
-                    <div class="stat-card success">
-                        <div class="stat-label">Total Revenue</div>
-                        <div class="stat-value" id="totalRevenue">Rs. 0</div>
-                    </div>
-
-                    <div class="stat-card alert">
-                        <div class="stat-label">Total Unpaid Amount</div>
-                        <div class="stat-value" id="totalUnpaid">Rs. 0</div>
-                    </div>
-
-                    <div class="stat-card highlight">
-                        <div class="stat-label">Total Customers</div>
-                        <div class="stat-value" id="totalCustomers">0</div>
+        <main class="main-content">
+            <header class="header">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">M</div>
+                    <div class="user-details">
+                        <div class="user-name" id="fullName">Manager</div>
+                        <div class="user-email" id="email">manager@ums.com</div>
                     </div>
                 </div>
-            </section>
+            </header>
 
-            <!-- CHARTS -->
-            <section class="stats-section">
-                <h3 class="section-title">Revenue Analysis</h3>
+            <div class="content-area">
+                <section class="stats-section">
+                    <h3 class="section-title">System Overview</h3>
 
-                <div class="chart-grid">
-                    <div class="chart-card">
-                        <h4 class="chart-title">Monthly Revenue</h4>
-                        <div class="chart-container">
-                            <canvas id="monthlyRevenueChart"></canvas>
+                    <div class="stats-grid">
+                        <div class="stat-card success">
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value" id="totalRevenue">Rs. 0</div>
+                        </div>
+
+                        <div class="stat-card alert">
+                            <div class="stat-label">Total Unpaid Amount</div>
+                            <div class="stat-value" id="totalUnpaid">Rs. 0</div>
+                        </div>
+
+                        <div class="stat-card highlight">
+                            <div class="stat-label">Total Customers</div>
+                            <div class="stat-value" id="totalCustomers">0</div>
                         </div>
                     </div>
+                </section>
 
-                    <div class="chart-card">
-                        <h4 class="chart-title">Revenue by Utility</h4>
-                        <div class="chart-container">
-                            <canvas id="utilityRevenueChart"></canvas>
+                <section class="stats-section">
+                    <h3 class="section-title">Revenue Analysis</h3>
+
+                    <div class="chart-grid">
+                        <div class="chart-card">
+                            <h4 class="chart-title">Monthly Revenue</h4>
+                            <div class="chart-container">
+                                <canvas id="monthlyRevenueChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <h4 class="chart-title">Revenue by Utility</h4>
+                            <div class="chart-container">
+                                <canvas id="utilityRevenueChart"></canvas>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-        </div>
-    </main>
-</div>
+            </div>
+        </main>
+    </div>
 
-<div class="modal-overlay" id="modalOverlay"></div>
-<div class="modal" id="recordModal"></div>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal" id="recordModal"></div>
 
-<div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
-<div id="confirmModal" class="modal modal-confirm"></div>
+    <div id="confirmOverlay" class="modal-overlay confirm-overlay"></div>
+    <div id="confirmModal" class="modal modal-confirm"></div>
 
-<script src="../js/common/theme.js"></script>
-<script src="../js/manager/utils.js"></script>
-<script src="../js/manager/dashboard.js"></script>
+    <script src="../js/common/theme.js"></script>
+    <script src="../js/manager/utils.js"></script>
+    <script src="../js/manager/dashboard.js"></script>
 </body>
 </html>

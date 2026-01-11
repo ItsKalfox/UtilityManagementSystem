@@ -1,9 +1,19 @@
 console.log("Manager Dashboard JS loaded");
 
-// ===== KPI VALUES (TEMP DATA – BACKEND LATER) =====
-document.getElementById("totalRevenue").innerText = "Rs. 450,000";
-document.getElementById("totalUnpaid").innerText = "Rs. 75,000";
-document.getElementById("totalCustomers").innerText = "120";
+// ===== DASHBOARD SUMMARY (BACKEND DATA) =====
+fetch("/api/manager/dashboard")
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("totalRevenue").innerText =
+            "Rs. " + data.totalRevenue;
+
+        document.getElementById("totalUnpaid").innerText =
+            "Rs. " + data.totalUnpaid;
+
+        document.getElementById("totalCustomers").innerText =
+            data.totalCustomers;
+    })
+    .catch(err => console.error("Dashboard API error:", err));
 
 // ===== BAR CHART: MONTHLY REVENUE =====
 const monthlyCtx = document
@@ -50,4 +60,3 @@ new Chart(utilityCtx, {
         responsive: true
     }
 });
-

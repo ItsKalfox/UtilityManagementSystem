@@ -51,7 +51,10 @@ public class SecurityConfig {
                                 "/api/auth/customer/login",
                                 "/api/auth/manager/login",
                                 "/api/auth/cashier/login",
-                                "/api/auth/field-officer/login"
+                                "/api/auth/field-officer/login",
+                                "/api/manager/dashboard",
+                                "/api/manager/revenue/report"
+
                         ).permitAll()
 
                         .anyRequest().authenticated()

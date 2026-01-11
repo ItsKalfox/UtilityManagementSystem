@@ -254,7 +254,7 @@ CREATE TABLE complaint (
     FOREIGN KEY (field_officer_id) REFERENCES field_officer(user_id),
     FOREIGN KEY (admin_id) REFERENCES admin(user_id)
 );
-GO
+
 CREATE TRIGGER trg_after_meterreading_insert
 ON meter_reading
 AFTER INSERT
@@ -409,7 +409,7 @@ BEGIN
     );
 
 END;
-GO
+
 CREATE TRIGGER trg_after_payment
 ON payment
 AFTER INSERT

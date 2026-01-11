@@ -5,8 +5,6 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
-
-
     const fullName = localStorage.getItem("fullName") || "Manager";
     const email = localStorage.getItem("email") || "manager@ums.com";
     const fullNameEl = document.getElementById("fullName");
@@ -15,9 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (fullNameEl) fullNameEl.textContent = fullName;
     if (emailEl) emailEl.textContent = email;
     if (avatarEl) avatarEl.textContent = String(fullName).charAt(0).toUpperCase();
-
-
-
 
     const recordsContainer = document.getElementById("recordsContainer");
     const searchInput = document.getElementById("searchInput");
@@ -172,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }).join("")
         );
 
-        // detail clicks
         recordsContainer.querySelectorAll(".btn-view").forEach(btn => {
             btn.addEventListener("click", () => openDetails(btn.getAttribute("data-id")));
         });
@@ -261,8 +255,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         </div>
       `);
-
-
             const saveBtn = document.getElementById("saveStatusBtn");
             const statusSelect = document.getElementById("statusSelect");
             const statusMsg = document.getElementById("statusMsg");
@@ -356,7 +348,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }).join("");
     }
 
-    // events
     reloadBtn.addEventListener("click", fetchDefaulters);
 
     let debounceTimer = null;

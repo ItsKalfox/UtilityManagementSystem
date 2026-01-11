@@ -5,8 +5,6 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
-
-    // header info
     const fullName = localStorage.getItem("fullName") || "Manager";
     const email = localStorage.getItem("email") || "manager@ums.com";
     const fullNameEl = document.getElementById("fullName");
@@ -16,11 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (emailEl) emailEl.textContent = email;
     if (avatarEl) avatarEl.textContent = String(fullName).charAt(0).toUpperCase();
 
-    // ✅ logout modal (uses existing showConfirmModal from utils.js if available)
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", async () => {
-            // If you have showConfirmModal (from your utils.js), use it.
             if (typeof window.showConfirmModal === "function") {
                 const result = await window.showConfirmModal({
                     title: "Logout",
@@ -32,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!result || !result.confirmed) return;
 
-                // preserve theme (same behavior as your utils.js)
                 const theme = localStorage.getItem("theme");
                 localStorage.clear();
                 if (theme !== null) localStorage.setItem("theme", theme);
@@ -41,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // fallback (if utils modal not present)
             if (confirm("Are you sure you want to logout?")) {
                 localStorage.removeItem("token");
                 localStorage.removeItem("fullName");
@@ -58,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const utilityContainer = document.getElementById("utilityContainer");
     const reloadBtn = document.getElementById("reloadBtn");
 
-    // --- Modal helpers (✅ fixed close buttons + overlay + ESC)
     function openModal(html) {
         const overlay = document.getElementById("modalOverlay");
         const modal = document.getElementById("recordModal");
@@ -68,18 +61,12 @@ document.addEventListener("DOMContentLoaded", () => {
         modal.style.display = "block";
         modal.innerHTML = html;
 
-        // ✅ bind ALL close buttons
         modal.querySelectorAll("[data-close]").forEach((btn) => {
             btn.addEventListener("click", closeModal);
         });
 
-        // ✅ click outside closes
         overlay.onclick = closeModal;
-
-        // ✅ prevent modal click from closing
         modal.onclick = (e) => e.stopPropagation();
-
-        // ✅ Esc closes
         document.addEventListener("keydown", onEsc);
     }
 
@@ -294,7 +281,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (runMsg) runMsg.textContent = "Loading...";
 
-        // clear rows keep header
         const header = incomeRows ? incomeRows.querySelector(".record-item") : null;
         if (incomeRows) {
             incomeRows.innerHTML = "";
@@ -363,7 +349,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ✅ Print current modal report
     function printIncomeReport(utilityType) {
         const from = document.getElementById("fromDate")?.value || "";
         const to = document.getElementById("toDate")?.value || "";

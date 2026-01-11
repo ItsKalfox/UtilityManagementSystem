@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initHeaderSafe();
 });
 
-/** Manager header init (won't crash if some ids don't exist) */
 function initHeaderSafe() {
     const fullName = localStorage.getItem("fullName") || "Manager";
     const email = localStorage.getItem("email") || "manager@ums.com";
